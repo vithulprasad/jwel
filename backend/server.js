@@ -1,24 +1,42 @@
-import express from "express";
-import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
-import connectDb from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js";
-import { notFound ,errorHandler} from "./middlewares/errorMiddlewares.js";
+// server/server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const path = require('path')
+const User = require('./models/userModel')
+const routes = require('./routes/route.js');
 
+require("dotenv").config({
+ path: path.join(__dirname, "../.env")
+});
 
-dotenv.config();
 const app = express();
-const port = process.env.PORT || 5000;
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-connectDb();
-app.use("/api/users", userRoutes);
 
-app.get("/", (req, res) => {
-  res.send("server is ready");
+const PORT = process.env.PORT || 3000;
+
+mongoose
+ .connect('mongodb://localhost:27017/rbac')
+ .then(() => {
+  console.log('Connected to the Database successfully');
+ });
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(async (req, res, next) => {
+ if (req.headers["x-access-token"]) {
+  const accessToken = req.headers["x-access-token"];
+  const { userId, exp } = await jwt.verify(accessToken, process.env.JWT_SECRET);
+  // Check if token has expired
+  if (exp < Date.now().valueOf() / 1000) { 
+   return res.status(401).json({ error: "JWT token has expired, please login to obtain a new one" });
+  } 
+  res.locals.loggedInUser = await User.findById(userId); next(); 
+ } else { 
+  next(); 
+ } 
 });
-app.listen(port, () => {
-  console.log(`server is running of ${port}`);
-});
-app.use(notFound, errorHandler);
+
+app.use('/', routes); app.listen(PORT, () => {
+  console.log('Server is listening on Port:', PORT)
+})

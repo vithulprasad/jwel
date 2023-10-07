@@ -1,57 +1,132 @@
-import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
-import generateToken from "../utils/generateToken.js";
+// controllers/userController.js
 
-//@desc Registser a new User/User Signup
-//route POST /api/users/register
-//@access Public
-const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  const userExist = await User.findOne({ email });
-  if (userExist) {
-    res.status(400);
-    throw new Error("User already exist with this email");
-  }
-  const user = await User.create({ name, email, password });
-  if (user) {
-    generateToken(res, user._id);
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-    });
-  } else {
-    res.status(400);
-    throw new Error("Invald user data");
-  }
-});
-//@desc login an existing User/User Login
-//route POST /api/users/login
-//@access Public
-const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-    });
-  } else {
-    res.status(401);
-    throw new Error("Invald email or password ");
-  }
-});
-const getUserProfile = asyncHandler(async (req, res) => {
-    const user = {
-      _id: req.user._id,
-      name: req.user.name,
-      email: req.user.email,
-    };
-    res.status(200).json(user);
-  });
+const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const Roles = require('../models/rolesModel');
+require('dotenv').config();
+const RolesController = require('./rolesController');
 
-export { registerUser, loginUser ,getUserProfile};
+async function hashPassword(password) {
+    return await bcrypt.hash(password, 10);
+}
+
+async function validatePassword(plainPassword, hashedPassword) {
+    return await bcrypt.compare(plainPassword, hashedPassword);
+}
+
+exports.signup = async (req, res, next) => {
+    try {
+        const { email, password, role } = req.body;
+        const userrole = await Roles.find({'role' : role});
+        let roleId;
+        for await (const doc of userrole) {
+            roleId = doc._id;
+        }
+        if(roleId == undefined){
+            res.status(404).json({
+                error: "Role you have provided is not exist."
+            })
+        }else{
+            const hashedPassword = await hashPassword(password);
+            const newUser = new User({ email : email, password: hashedPassword, role : roleId });
+            const accessToken = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+                expiresIn: "1d"
+            });
+            newUser.accessToken = accessToken;
+            await newUser.save();
+            res.status(200).json({
+                data: newUser,
+                accessToken
+            })
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user){
+            return next(new Error('Email does not exist'));
+        } 
+        const validPassword = await validatePassword(password, user.password);
+        if (!validPassword){
+            return next(new Error('Password is not correct'));
+        }
+        const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1d"
+        });
+        await User.findByIdAndUpdate(user._id, { accessToken })
+        res.status(200).json({
+            data: { email: user.email, role: user.role },
+            accessToken
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.getUsers = async (req, res, next) => {
+    const users = await User.find({});
+    res.status(200).json({
+        data: users
+    });
+}
+
+exports.getUser = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
+        if (!user) return next(new Error('User does not exist'));
+        res.status(200).json({
+            data: user
+        });
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.updateUser = async (req, res, next) => {
+    try {
+        const update = req.body
+        const userId = req.params.userId;
+        await User.findByIdAndUpdate(userId, update);
+        const user = await User.findById(userId)
+        res.status(200).json({
+            data: user,
+            message: 'User has been updated'
+        });
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.deleteUser = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        await User.findByIdAndDelete(userId);
+        res.status(200).json({
+            data: null,
+            message: 'User has been deleted'
+        });
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.allowIfLoggedin = async (req, res, next) => {
+    try {
+        const user = res.locals.loggedInUser;
+        if (!user)
+            return res.status(401).json({
+                error: "You need to be logged in to access this route"
+            });
+        req.user = user;
+        next();
+    } catch (error) {
+        next(error);
+    }
+}

@@ -3,8 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-const path = require('path')
-const User = require('./models/userModel')
+const path = require('path');
+const User = require('./models/userModel');
 const routes = require('./routes/route.js');
 
 require("dotenv").config({
@@ -13,7 +13,7 @@ require("dotenv").config({
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6000;
 
 mongoose
  .connect('mongodb://localhost:27017/rbac')

@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "headTitle1": "General",
+      "headTitle2": "Dashboards,Widgets & Layout.",
+      "type": "headtitle"
+    },
+    {
+      "path": "/",
+      "title": "Dashboard",
+      "icon": "stroke-home",
+      "iconf":"fill-home",
+      "type": "link",
+      "active": false
+    }
+    
+  ]
+}

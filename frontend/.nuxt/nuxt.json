@@ -1,9 +1,9 @@
 {
-  "_hash": "qWCS5Rgkfc",
+  "_hash": "MglY2JQ1Np",
   "project": {
-    "rootDir": "C:/Node/Bluewhistle/frontend"
+    "rootDir": "D:/BlueWhistle/Bluewhistle/frontend"
   },
   "versions": {
-    "nuxt": "3.4.1"
+    "nuxt": "3.9.0"
   }
 }

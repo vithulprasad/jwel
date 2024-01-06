@@ -15,10 +15,14 @@
   </div> -->
   <div class="container-lg">
     <div class="row">
-      <div class="col-sm-12 col-md-6  "  >
-        <LoginTestSelfie />
+      <div class="col-sm-12 col-md-6">
+        <!-- <LoginTestSelfie /> -->
+        <LoginSelfie />
       </div>
-      <div class="col-sm-12 col-md-6 " style="display: flex; align-items: center;">
+      <div
+        class="col-sm-12 col-md-6"
+        style="display: flex; align-items: center"
+      >
         <LoginForm />
       </div>
     </div>

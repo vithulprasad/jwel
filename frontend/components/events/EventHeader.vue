@@ -1,24 +1,4 @@
-<!-- components/Navbar.vue -->
-
 <template>
-  <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-      <div class="left-nav" id="navbarNav">
-        <span> <img src="/static/logo/HeaderLogo.svg" alt="" /> </span>
-        <span>Icon1</span>
-        <span>Icon2</span>
-        <span>Icon3</span>
-        <span>Icon4</span>
-
-       
-      </div>
-
-      <div class="right-nav">
-        <span>Ion1</span>
-        <span>Ion2</span>
-      </div>
-    </div>
-  </nav> -->
   <nav class="navbar navbar-expand-lg navbar-light ">
     <div class="container">
       <div class="collapse navbar-collapse" id="navbarNav">

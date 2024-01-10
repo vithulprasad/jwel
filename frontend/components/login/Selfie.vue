@@ -26,6 +26,7 @@ export default {
   line-height: 2.6rem;
   color: #072a85;
   padding-top: 1.5rem;
+  
 }
 .selfie-div {
   /* height: 100vh; */

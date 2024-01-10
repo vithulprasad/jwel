@@ -16,7 +16,6 @@
   <div class="container-lg">
     <div class="row">
       <div class="col-sm-12 col-md-6">
-        <!-- <LoginTestSelfie /> -->
         <LoginSelfie />
       </div>
       <div

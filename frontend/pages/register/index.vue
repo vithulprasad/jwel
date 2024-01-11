@@ -1,14 +1,14 @@
 <template>
     <div>
+        This is register page
 
     </div>
 </template>
 
-<script >
+<script>
 definePageMeta({
-    layout:"main"
-})
-
+  layout: "defaults",
+});
 </script>
 
 <style lang="scss" scoped>

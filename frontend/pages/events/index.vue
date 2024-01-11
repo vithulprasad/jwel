@@ -3,17 +3,15 @@
     <EventsEventHeader />
     <EventsEmptyPage />
   </div>
-  
 </template>
 
-<script lang="ts">
+<script>
 definePageMeta({
-  layout: "default",
+  layout: "main",
 });
 </script>
 
 <style scoped>
-
 .contain {
 }
 </style>

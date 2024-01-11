@@ -1,14 +1,14 @@
 <template>
     <div>
+        This is the School page
 
     </div>
 </template>
 
-<script >
+<script>
 definePageMeta({
-    layout:"main"
-})
-
+  layout: "main",
+});
 </script>
 
 <style lang="scss" scoped>

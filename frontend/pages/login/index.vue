@@ -36,10 +36,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+body{
+  background-color:white;
+}
+
 /* .login-page-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
 } */
+
 </style>

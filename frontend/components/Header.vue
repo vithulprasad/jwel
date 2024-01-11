@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
       <!-- Left part of the navbar -->
-      <div class="navbar-left bg-white shadow-sm d-flex rounded-3">
+      <div class="navbar-left bg-white shadow d-flex rounded-3">
         <img src="/static/logo/HeaderLogo.svg" alt="" class="px-2" />
         <div class="navbar-icons d-flex p-2">
           <div
@@ -30,7 +30,7 @@
       </div>
 
       <!-- Right part of the navbar -->
-      <div class="navbar-right bg-white shadow-sm rounded-3">
+      <div class="navbar-right bg-white shadow rounded-3">
         <div class="navbar-icons p-2">
           <a href="" class="navbar-icon px-1"
             ><img src="/static/icons/Notificationn.svg" alt="Notification Icon"

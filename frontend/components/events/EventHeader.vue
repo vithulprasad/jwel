@@ -1,9 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light ">
+  <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
       <div class="collapse navbar-collapse" id="navbarNav">
         <form class="form-inline my-2 my-lg-0">
-          <!-- <span > <img src="/static/icon/search.svg" alt=""> </span> -->
           <input
             class="form-control mr-sm-2"
             type="search"
@@ -21,8 +20,11 @@
       </div>
     </div>
   </nav>
-  <div class="chips">
-    <button type="button" class="btn btn-primary btn-sm chip">Ongoing</button>
+
+  <div class=" container chips">
+    <button type="button" class="btn btn-primary btn-sm chip ">
+      Ongoing
+    </button>
     <button type="button" class="btn btn-secondary btn-sm chip chip2" disabled>
       Completed
     </button>
@@ -64,7 +66,7 @@ export default {
 .chip2 {
   margin-left: 0.8rem;
 }
-.chips{
+.chips {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }

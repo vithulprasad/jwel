@@ -4,7 +4,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <form class="form-inline my-2 my-lg-0">
           <input
-            class="form-control mr-sm-2"
+            class="form-control mr-sm-2 bg-body-secondary custom-search"
             type="search"
             placeholder="Search Events"
             aria-label="Search"
@@ -13,7 +13,7 @@
       </div>
 
       <div>
-        <button class="btn btn-primary ml-2 add-button" @click="addEvent">
+        <button class="btn btn-primary ml-2 add-button "  @click="openDialog">
           <img class="plus-icon" src="/static/icon/add_circle.svg" alt="" />
           Add Event
         </button>
@@ -21,10 +21,8 @@
     </div>
   </nav>
 
-  <div class=" container chips">
-    <button type="button" class="btn btn-primary btn-sm chip ">
-      Ongoing
-    </button>
+  <div class="container chips">
+    <button type="button" class="btn btn-primary btn-sm chip">Ongoing</button>
     <button type="button" class="btn btn-secondary btn-sm chip chip2" disabled>
       Completed
     </button>
@@ -37,9 +35,9 @@
 <script>
 export default {
   methods: {
-    addEvent() {
-      // Handle the logic for adding an event
-      console.log("Add Event clicked!");
+    openDialog() {
+      //Logic for dilog box opening
+      this.$emit("openDialog");
     },
   },
 };
@@ -69,5 +67,8 @@ export default {
 .chips {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+.custom-search{
+  width: 320px;
 }
 </style>

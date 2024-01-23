@@ -1,24 +1,31 @@
 <template>
-  <div class="empty">
-    <img src="/static/img/Group 23.svg" alt="" />
-    <div>
-      <h5 class="heading">
-        It looks like there are <br />
-        no events available at <br />
-        the moment.
-      </h5>
-      <p class="sub-heading">
-        Stay tuned for exciting updates and <br />
-        upcoming opportunities
-      </p>
+  <div
+    :class="{
+      'empty-with-dialog': isDialogOpen,
+      'empty-without-dialog': !isDialogOpen,
+    }"
+  >
+    <div class="empty">
+      <img src="/static/img/Group 23.svg" alt="" />
+      <div>
+        <h5 class="heading">
+          It looks like there are <br />
+          no events available at <br />
+          the moment.
+        </h5>
+        <p class="sub-heading">
+          Stay tuned for exciting updates and <br />
+          upcoming opportunities
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  setup() {
-    return {};
+  props: {
+    isDialogOpen: Boolean,
   },
 };
 </script>
@@ -43,5 +50,12 @@ export default {
   line-height: 1.25;
   padding-left: 2rem;
   color: #6e7ca8;
+}
+.empty-with-dialog {
+  width: 50%; /* Adjust the width as needed */
+}
+
+.empty-without-dialog {
+  width: 100%;
 }
 </style>

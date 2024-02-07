@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-items-center mainCard rounded">
+  <div class="d-flex align-items-center mainCard rounded my-2">
     <div class="flex-shrink-0 m-2 p-2">
       <!-- <img src="..." alt="..." /> -->
       <svg
@@ -29,7 +29,8 @@
             "
             class="card-title"
           >
-            Citizenship Education Seminar
+            <!-- Citizenship Education Seminar -->
+            {{ eventValues?.event_name }}
           </h5>
         </div>
         <div class="">
@@ -43,7 +44,12 @@
               <img src="/static/icon/more_vert.svg" alt="" />
             </button>
             <ul class="dropdown-menu" style="">
-              <li><a class="dropdown-item" href="#">View Details</a></li>
+              <li>
+               
+                <NuxtLink class="dropdown-item" :to="'/events/listEvents/' + eventValues.event_id">
+                  View Details
+                </NuxtLink>
+              </li>
               <li><a class="dropdown-item" href="#">Edit</a></li>
               <li><a class="dropdown-item" href="#">Delete</a></li>
             </ul>
@@ -68,12 +74,12 @@
         <p class="card-text icon-text">
           <small class="text-body-secondary"
             ><img src="/static/icon/account_circle.svg" alt="" />
-            {{ number }} Joined</small
+            {{ eventValues.event_id }} Joined</small
           >
         </p>
         <p class="card-text pl-2 ml-2 icon-text">
           <small class="text-body-secondary"
-            ><img src="/static/icon/theater_comedy.svg" alt="" /> Debate</small
+            ><img src="/static/icon/theater_comedy.svg" alt="" /> {{ eventValues.event_type }} </small
           >
         </p>
         <p class="card-text pl-2 ml-2 icon-text">
@@ -91,11 +97,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  // Component logic
-};
-let number = 23;
+<script setup>
+const number = 1000;
+const test = 1;
+const props = defineProps(["eventValues"]);
 </script>
 
 <style scoped>

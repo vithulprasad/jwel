@@ -24,7 +24,9 @@
                   <div class="d-flex">
                     <div class="flex-grow-1">
                       <h5 class="card-title event_title">
-                        Mock Parliment Debate
+                        <!-- event name -->
+                        <!-- Mock Parliment Debate -->
+                        {{ events?.data?.event_name || "Loading..." }}
                       </h5>
                     </div>
                     <div class="">
@@ -50,6 +52,7 @@
 
                   <div class="d-flex">
                     <p class="card-text icon-text">
+                      <!-- event venue -->
                       <small class="text-body-secondary"
                         ><img src="/static/icon/distance.svg" alt="" /> Wellness
                         Convention Center</small
@@ -57,8 +60,8 @@
                     </p>
                     <p class="card-text icon-text pl-2 ml-2">
                       <small class="text-body-secondary"
-                        ><img src="/static/icon/account_circle.svg" alt="" />
-                         13 Joined</small
+                        ><img src="/static/icon/account_circle.svg" alt="" /> 13
+                        Joined</small
                       >
                     </p>
                     <p class="card-text pl-2 ml-2 icon-text">
@@ -98,7 +101,7 @@
             </div>
             <div class="">
               <template v-if="tab === 1">
-                <EventDetails />
+                <EventDetails :eventDetails="events.data" />
               </template>
               <template v-else-if="tab === 2">
                 <Parties @addPartyDilog="addPartyDilog" />
@@ -125,35 +128,41 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import EventDetails from "~/components/events/EventDetails.vue";
 import Alliance from "~/components/events/Alliance.vue";
 import Parties from "~/components/events/Parties.vue";
 import Committee from "~/components/events/Committee.vue";
+import { getOneEvent } from "~/apiConfig/apiConfig";
+defineProps(["isDialogOpen"]);
+
+const tab = ref(null);
+const events = ref(null);
+const { id } = useRoute().params;
+
+const addPartyDilog = () => {
+  isDialogOpen.value = true;
+};
+
+const closeDialog = () => {
+  isDialogOpen.value = false;
+};
+const fetchData = async () => {
+  try {
+    const res = await getOneEvent(id);
+    events.value = res.data;
+    console.log(events.value.data, "this is event name");
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
 definePageMeta({
   layout: "main",
 });
-export default {
-  data: () => ({
-    tab: null,
-    isDialogOpen: false,
-  }),
-  methods: {
-    addPartyDilog() {
-      this.isDialogOpen = true;
-    },
-    closeDialog() {
-      this.isDialogOpen = false;
-    },
-  },
-  components: {
-    EventDetails,
-    Parties,
-    Alliance,
-    Parties,
-    Committee,
-  },
-};
 </script>
 
 <style scoped>
@@ -201,5 +210,4 @@ word-wrap: break-word
   word-wrap: break-word;
   text-transform: none;
 }
-
 </style>

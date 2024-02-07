@@ -1,18 +1,11 @@
 <template>
-  <!-- <div class="container bg-white rounded" style="max-height: 100%;" >
-    <div class="d-flex justify-content-between align-items-center">
-      <h4>Add New Event</h4>
-      <img src="/static/icon/search.svg" alt="" />
-    </div>
-  </div> -->
-
   <div class="container bg-white rounded shadow" style="max-height: 100%">
     <div class="p-3">
       <div class="d-flex justify-content-between align-items-center">
         <h4>Add New Event</h4>
-        <button class="btn " @click="closeDialog"><img src="/static/icon/close_button.svg" alt="" /></button>
-
-        
+        <button class="btn" @click="closeDialog">
+          <img src="/static/icon/close_button.svg" alt="" />
+        </button>
       </div>
       <!-- <div class="d-flex">
         <img src="/static/icon/search.svg" alt="" />
@@ -22,15 +15,15 @@
       </div> -->
 
       <!-- <EventsTestForm/> -->
-      <EventsTestStepper/>
+      <EventsTestStepper :closeDialog="closeDialog"/>
     </div>
-
-   
   </div>
 </template>
 
 <!-- Button with close logic -->
 <!-- <button class="btn btn-danger" @click="closeDialog">Close</button> -->
+
+
 
 <script>
 export default {
@@ -44,8 +37,8 @@ export default {
 
 <style scoped>
 .form-container {
-  max-height: 400px; /* Set the maximum height for the form container */
+  max-height: 400x; /* Set the maximum height for the form container */
   overflow-y: auto; /* Enable vertical scrolling */
-  padding: 15px; 
+  padding: 15px;
 }
 </style>

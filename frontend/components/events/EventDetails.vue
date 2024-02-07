@@ -7,7 +7,7 @@
             <h5 class="card-title event_title">About This event</h5>
             <p class="card-text event_description">
               With supporting text below as a natural lead-in to additional
-              content.
+              content. {{ eventDetails.event_name }}
             </p>
           </div>
         </div>
@@ -88,7 +88,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+defineProps(["eventDetails"]);
+</script>
 
 <style scoped>
 .card {

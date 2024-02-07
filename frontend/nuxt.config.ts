@@ -4,7 +4,7 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 export default defineNuxtConfig({
   devtools: { enabled: true },
   build: {
-    transpile: ["vuetify"],
+    transpile: ["vuetify",'@vuepic/vue-datepicker'],
   },
   modules: [
     (_options, nuxt) => {
@@ -13,6 +13,7 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
+    '@pinia/nuxt',
     //...
   ],
   vite: {

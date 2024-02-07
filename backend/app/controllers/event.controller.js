@@ -52,32 +52,19 @@ exports.getAllEvents = async (req, res) => {
   try {
     const allEvents = await Events.findAll();
 
-    // if (allEvents.length === 0) {
-    //   return res.status(200).json({
-    //     data: [],
-    //     message: "No events found.",
-    //     statusCode: 200,
-    //   });
-    // }
-    if(allEvents.length){
+    if (allEvents.length) {
       return res.json({
-        data:allEvents,
-        message:"scucess",
-        statusCode:200
-      })
-    }else{
+        data: allEvents,
+        message: "scucess",
+        statusCode: 200,
+      });
+    } else {
       return res.send({
-        data:[],
+        data: [],
         statusCode: 400,
-        message:"Some error occurred while retrieving event details.",
+        message: "Some error occurred while retrieving event details.",
       });
     }
-
-    // return res.status(200).json({
-    //   data: allEvents,
-    //   message: "Events retrieved successfully.",
-    //   statusCode: 200,
-    // });
   } catch (error) {
     console.error("Error retrieving events:", error);
 

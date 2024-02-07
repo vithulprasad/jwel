@@ -18,7 +18,7 @@
             <div
               v-else
               class="col-lg-12 col-md-12 col-sm-12 mx-auto"
-              v-for="eventDetails in events.data"
+              v-for="eventDetails in events"
               :key="eventDetails.event_id"
             >
               <!-- Render event list component with event details as props -->
@@ -69,9 +69,7 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
-console.log(events.value.length,"Event lendght")
-console.log(events,"eventssss")
-
+console.log(events, "eventssss");
 </script>
 
 <style scoped>

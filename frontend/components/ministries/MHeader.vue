@@ -8,32 +8,20 @@
               v-model="searchQuery"
               class="form-control mr-sm-2 bg-body-secondary custom-search"
               type="search"
-              placeholder="Search Events"
+              placeholder="Search Ministries"
               aria-label="Search"
             />
           </form>
         </div>
 
         <div>
-          <button class="btn btn-primary ml-2 add-button " @click="openDialog">
+          <button class="btn btn-primary ml-2 add-button" @click="openDialogM">
             <img class="plus-icon" src="/static/icon/add_circle.svg" alt="" />
-            Add Event
+            Add Ministry
           </button>
         </div>
       </div>
     </nav>
-
-    <div class="container chips">
-      <button
-        v-for="(chip, index) in chips"
-        :key="index"
-        :class="['btn btn-sm chip', chip.status === 'disabled' ? 'btn-secondary' : 'btn-primary']"
-        :disabled="chip.status === 'disabled'"
-        :aria-disabled="chip.status === 'disabled'"
-      >
-        {{ chip.label }}
-      </button>
-    </div>
   </div>
 </template>
 
@@ -41,18 +29,14 @@
 export default {
   data() {
     return {
-      searchQuery: '',
-      chips: [
-        { label: 'Ongoing', status: 'enabled' },
-        { label: 'Completed', status: 'disabled' },
-        { label: 'Draft', status: 'disabled' }
-      ]
+      searchQuery: "",
+     
     };
   },
   methods: {
-    openDialog() {
+    openDialogM() {
       // Logic for dialog box opening
-      this.$emit("openDialog");
+      this.$emit("openDialogM");
     },
   },
 };

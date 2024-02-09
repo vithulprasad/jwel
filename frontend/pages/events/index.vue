@@ -69,7 +69,6 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
-console.log(events, "eventssss");
 </script>
 
 <style scoped>

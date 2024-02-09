@@ -17,6 +17,9 @@ exports.create = async (req, res) => {
       eventStartTime,
       eventEndTime,
     } = req.body;
+    const formattedStartTime = `${eventStartTime.hours}:${eventStartTime.minutes}:${eventStartTime.seconds}`;
+    const formattedEndTime = `${eventEndTime.hours}:${eventEndTime.minutes}:${eventEndTime.seconds}`;
+    console.log(formattedEndTime, formattedStartTime, "zzzzz");
     const newEvent = await Events.create({
       event_name: eventName,
       event_start_date: eventStartDate,
@@ -28,8 +31,8 @@ exports.create = async (req, res) => {
       event_venue: eventVenue,
       event_orientation_date: eventOrientationDate,
       event_age_restriction: eventAgeRestriction,
-      event_end_time: eventEndTime,
-      event_start_time: eventStartTime,
+      event_end_time: formattedEndTime,
+      event_start_time: formattedStartTime,
       created_at: new Date(),
       updated_at: new Date(),
     });

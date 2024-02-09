@@ -8,31 +8,39 @@
               v-model="searchQuery"
               class="form-control mr-sm-2 bg-body-secondary custom-search"
               type="search"
-              placeholder="Search Events"
+              placeholder="Search Users"
               aria-label="Search"
             />
           </form>
         </div>
 
         <div>
-          <button class="btn btn-primary ml-2 add-button " @click="openDialog">
+          <button class="btn btn-primary ml-2 add-button" @click="openDialog">
             <img class="plus-icon" src="/static/icon/add_circle.svg" alt="" />
-            Add Event
+            Add Users
           </button>
         </div>
       </div>
     </nav>
 
-    <div class="container chips">
-      <button
-        v-for="(chip, index) in chips"
-        :key="index"
-        :class="['btn btn-sm chip', chip.status === 'disabled' ? 'btn-secondary' : 'btn-primary']"
-        :disabled="chip.status === 'disabled'"
-        :aria-disabled="chip.status === 'disabled'"
-      >
-        {{ chip.label }}
-      </button>
+    <div class="container chips d-flex">
+      <div class="flex-grow-1">
+        <button
+          v-for="(chip, index) in chips"
+          :key="index"
+          :class="[
+            'btn btn-sm chip',
+            chip.status === 'disabled' ? 'btn-secondary' : 'btn-primary',
+          ]"
+          :disabled="chip.status === 'disabled'"
+          :aria-disabled="chip.status === 'disabled'"
+        >
+          {{ chip.label }}
+        </button>
+      </div>
+      <div class="">
+        <v-checkbox label="Select all"></v-checkbox>
+      </div>
     </div>
   </div>
 </template>
@@ -41,12 +49,12 @@
 export default {
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
       chips: [
-        { label: 'Ongoing', status: 'enabled' },
-        { label: 'Completed', status: 'disabled' },
-        { label: 'Draft', status: 'disabled' }
-      ]
+        { label: "All Users", status: "enabled" },
+        { label: "Students", status: "disabled" },
+        { label: "Admins", status: "disabled" },
+      ],
     };
   },
   methods: {

@@ -8,23 +8,19 @@
         </button>
       </div>
       <!-- <div class="d-flex">
-        <img src="/static/icon/search.svg" alt="" />
-        <h6>Event information</h6>
-        <img src="/static/icon/search.svg" alt="" />
-        <h6>Event management</h6>
-      </div> -->
+          <img src="/static/icon/search.svg" alt="" />
+          <h6>Event information</h6>
+          <img src="/static/icon/search.svg" alt="" />
+          <h6>Event management</h6>
+        </div> -->
 
-      <!-- <EventsTestForm/> -->
-      <EventsTestStepper :closeDialog="closeDialog"/>
+      <SchoolsIndiStepper />
     </div>
   </div>
-  
 </template>
 
 <!-- Button with close logic -->
 <!-- <button class="btn btn-danger" @click="closeDialog">Close</button> -->
-
-
 
 <script>
 export default {

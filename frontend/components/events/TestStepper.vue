@@ -107,7 +107,7 @@
               </div>
               <div class="p-1 m-1">
                 <label for="event-datetime">Event start time </label>
-                <VueDatePicker v-model="values.eventStartTime" time-picker  />
+                <VueDatePicker v-model="values.eventStartTime" time-picker />
               </div>
             </div>
             <div class="d-flex">
@@ -120,7 +120,7 @@
               </div>
               <div class="p-1 m-1">
                 <label for="event-datetime">Event End time </label>
-                <VueDatePicker v-model="values.eventEndTime" time-picker  />
+                <VueDatePicker v-model="values.eventEndTime" time-picker />
               </div>
             </div>
           </div>
@@ -278,6 +278,7 @@ const fileInputRef = ref(null);
 import { FormWizard, TabContent } from "vue3-form-wizard";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { createEvent } from "~/apiConfig/apiConfig";
 
 const currentStep = ref(0);
 const formWizard = ref(null);
@@ -377,10 +378,12 @@ const removeImage = () => {
 const onFinish = async () => {
   try {
     console.log(values.value, "this is fomr data");
-    const response = await axios.post(
-      "http://localhost:8088/api/create_event",
-      values.value
-    );
+    // const response = await axios.post(
+    //   "http://localhost:8088/api/create_event",
+    //   values.value
+    // );
+    const response = await createEvent(values.value);
+
     console.log("Form submitted:", response.data);
     props.closeDialog();
   } catch (error) {

@@ -8,3 +8,7 @@ export const getAllEvents = async () => {
 export const getOneEvent = async (id) => {
   return await axios.get(`${baseUrl}get_event/${id}`);
 };
+
+export const createEvent = async (eventData) => {
+  return await axios.post(`${baseUrl}create_event`, eventData);
+};

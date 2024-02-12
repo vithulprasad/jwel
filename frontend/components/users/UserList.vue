@@ -33,7 +33,8 @@
             "
             class="card-title"
           >
-            Vishnu V R
+          <!-- student name -->
+          {{ studentValues.student_name  }}
           </h5>
         </div>
         <div class="d-flex">
@@ -88,7 +89,10 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps(["studentValues"]);
+
+</script>
 
 <style scoped>
 .mainCard {

@@ -7,6 +7,7 @@ module.exports = (app) => {
   router.post("/create_event", events.create);
   router.get("/get_all_events", events.getAllEvents);
   router.get("/get_event/:id", events.findOne);
+  
 
   app.use("/api", router);
 };

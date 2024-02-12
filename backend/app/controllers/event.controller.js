@@ -39,7 +39,7 @@ exports.create = async (req, res) => {
 
     return res.status(201).json({
       data: newEvent,
-      message: "Module created successfully.",
+      message: "Event created successfully.",
       statusCode: 201,
     });
   } catch (error) {

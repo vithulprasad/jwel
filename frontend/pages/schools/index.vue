@@ -10,6 +10,7 @@
         >
           <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
+              <!-- <SchoolsEmptyUser/> -->
               <SchoolsSchoolList />
             </div>
           </div>
@@ -42,6 +43,8 @@ const openDialog = () => {
 const closeDialog = () => {
   isDialogOpen.value = false;
 };
+
+//fucnton to fetch all students data to display 
 </script>
 
 <style scoped>

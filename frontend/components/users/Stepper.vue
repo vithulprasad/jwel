@@ -1,11 +1,11 @@
 <template>
   <div>
-    <form action="">
+    <form @submit.prevent="submitForm">
       <!-- user type -->
 
       <div>
         <label for=""> User types</label>
-        <v-radio-group inline>
+        <v-radio-group inline v-model="userType">
           <v-radio label="Student" value="student"></v-radio>
           <v-radio label="Admin" value="admin"></v-radio>
           <v-radio label="Not Defined" value="notDefined"></v-radio>
@@ -14,7 +14,7 @@
       <!-- User name -->
       <div>
         <label for="name">User naame</label>
-        <input id="name" placeholder="Enter User Name" />
+        <input v-model="userName" id="name" placeholder="Enter User Name" />
       </div>
       <!-- email -->
 
@@ -25,14 +25,14 @@
       <!-- user Phone -->
       <div>
         <label for="phone">Phone Number</label>
-        <input type="tel" v-model="phone" placeholder="Enter User Phone" />
+        <input type="tel" v-model="userPhone" placeholder="Enter User Phone" />
       </div>
       <!-- parents phone -->
       <div>
         <label for="Parentsphone">Parents Number</label>
         <input
           type="tel"
-          v-model="Parentsphone"
+          v-model="parentsPhone"
           placeholder="Enter User Phone"
         />
       </div>
@@ -41,7 +41,7 @@
         <label for="event-type" class="form-label">Schools</label>
         <select
           aria-placeholder="plese select School"
-          v-model="schools"
+          v-model="selectedSchool"
           class="form-select"
         >
           <option value="" disabled selected>Please select an School</option>
@@ -57,27 +57,70 @@
       <!-- school address -->
       <div>
         <label for="school-address" class="form-label">School Address</label>
-        <textarea v-model="address" class="form-control" rows="3"></textarea>
+        <textarea
+          v-model="schoolAddress"
+          class="form-control"
+          rows="3"
+        ></textarea>
       </div>
       <!-- file upload -->
+
       <!-- submit button -->
 
       <div class="d-grid mt-4">
-        <button class="btn btn-primary text-white" type="button">Submit</button>
+        <button class="btn btn-primary text-white" type="submit">Submit</button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
+import { createUser } from "~/apiConfig/apiConfig";
+
 const schools = [
   { label: "School1", value: "School1" },
   { label: "School2", value: "School2" },
   { label: "School3", value: "School3" },
 ];
+const userType = ref("");
+const userName = ref("");
+const email = ref("");
+const userPhone = ref("");
+const parentsPhone = ref("");
+const selectedSchool = ref("");
+const schoolAddress = ref("");
+
+const submitForm = async () => {
+  const formData = {
+    student_type: userType.value,
+    student_name: userName.value,
+    email_address: email.value,
+    phone_number: userPhone.value,
+    parents_phone_number: parentsPhone.value,
+    school: selectedSchool.value,
+    school_address: schoolAddress.value,
+  };
+  try {
+    const response = await createUser(formData);
+    console.log(response.data, "this the school data");
+    resetForm();
+  } catch (error) {
+    console.log("error in creating student", error);
+  }
+};
+const resetForm = () => {
+  userType.value = "";
+  userName.value = "";
+  email.value = "";
+  userPhone.value = "";
+  parentsPhone.value = "";
+  selectedSchool.value = "";
+  schoolAddress.value = "";
+};
 </script>
 
-<style >
+<style>
 label {
   display: block;
   margin-bottom: 5px;

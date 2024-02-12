@@ -101,8 +101,7 @@
 </template>
 
 <script setup>
-const number = 1000;
-const test = 1;
+
 const props = defineProps(["eventValues"]);
 </script>
 

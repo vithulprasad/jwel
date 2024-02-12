@@ -21,8 +21,8 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-//Auth
 db.modules = require("./module.model.js")(sequelize, Sequelize);
 db.events = require("./event.model.js")(sequelize, Sequelize);
+db.students = require("./student.model.js")(sequelize, Sequelize);
 
 module.exports = db;

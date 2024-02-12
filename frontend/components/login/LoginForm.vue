@@ -35,7 +35,10 @@
 
         <a class="forgot-password" href="">Forgot Password?</a>
       </div>
-      <button type="submit" class="btn btn-primary login-button">Login</button>
+
+      <NuxtLink to="/events" class="btn btn-primary login-button">
+        Login
+      </NuxtLink>
     </form>
   </div>
 </template>

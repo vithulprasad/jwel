@@ -14,14 +14,10 @@
             <a :href="page.path" class="nav-atag">
               <img
                 v-if="currentRouteName === page.path"
-                :src="'/_nuxt/static' + page.activeIcon"
+                :src="page.activeIcon"
                 alt="Active Icon"
               />
-              <img
-                v-else
-                :src="'/_nuxt/static' + page.inactiveIcon"
-                alt="Inactive Icon"
-              />
+              <img v-else :src="page.inactiveIcon" alt="Inactive Icon" />
               &nbsp;
               <span v-if="currentRouteName === page.path">{{ page.name }}</span>
             </a>

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center mainCard rounded">
+  <div class="d-flex align-items-center justify-content-center mainCard rounded my-2">
     <div class="pl-3 pt-3">
       <v-checkbox ></v-checkbox>
     </div>

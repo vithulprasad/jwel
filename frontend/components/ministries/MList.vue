@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex align-items-center justify-content-center mainCard rounded"
+    class="d-flex align-items-center justify-content-center mainCard rounded my-2"
   >
     <div class="pl-3 pt-3">
       <v-checkbox></v-checkbox>
@@ -18,7 +18,7 @@
             "
             class="card-title"
           >
-            Ministries of public affaris
+            {{ ministryValues.ministry_name }}
           </h5>
         </div>
         <div class="d-flex">
@@ -59,7 +59,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps(["ministryValues"]);
+</script>
 
 <style scoped>
 .mainCard {

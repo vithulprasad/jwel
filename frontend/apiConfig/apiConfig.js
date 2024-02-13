@@ -31,3 +31,12 @@ export const createSchool = async (formData) => {
 export const getAllSchools = async () => {
   return (await axios.get(`${baseUrl}get_all_schools`)).data;
 };
+
+// Mininstry
+
+export const createMinistry = async (formData) => {
+  return await axios.post(`${baseUrl}create_ministry`, formData);
+};
+export const getAllMinstry = async () => {
+  return (await axios.get(`${baseUrl}get_all_ministry`)).data;
+};

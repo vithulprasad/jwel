@@ -30,6 +30,20 @@
           <v-radio label="Group shcool" value="group"></v-radio>
         </v-radio-group>
       </div>
+      <!-- School logo -->
+      <div>
+        <label>School logo</label>
+
+        <div>
+          <label for="customFileInput" class="custom-file-label">Upload</label>
+          <input
+            class="form-control custom-file-input"
+            type="file"
+            id="customFileInput"
+            @change="handleFileChange"
+          />
+        </div>
+      </div>
 
       <!-- School Address -->
       <div>
@@ -136,5 +150,24 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 10px;
+}
+.custom-file-input {
+  opacity: 0;
+  position: relative; 
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.custom-file-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
 }
 </style>

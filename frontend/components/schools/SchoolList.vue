@@ -34,7 +34,7 @@
             "
             class="card-title"
           >
-            Oliver High Shchool
+            {{ schoolValues.school_name }}
           </h5>
         </div>
         <div class="d-flex">
@@ -89,7 +89,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps(["schoolValues"]);
+</script>
 
 <style scoped>
 .mainCard {

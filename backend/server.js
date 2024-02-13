@@ -48,6 +48,7 @@ app.get("/", (req, res) => {
 require("./app/routes/module.routes")(app);
 require("./app/routes/event.routes")(app);
 require("./app/routes/student.routes")(app);
+require("./app/routes/school.routes")(app)
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8088;

@@ -1,66 +1,126 @@
 <template>
   <div>
-    <form action="">
-      <!-- User name -->
+    <form @submit.prevent="submitForm">
+      <!-- School Name -->
       <div>
-        <label for="name">School naame</label>
-        <input id="name" placeholder="Enter School Name" />
+        <label for="school-name">School Name</label>
+        <input
+          v-model="schoolName"
+          id="school-name"
+          placeholder="Enter School Name"
+        />
       </div>
-      <!-- School Phone -->
+
+      <!-- School Contact Number -->
       <div>
-        <label for="phone">School Contact Number</label>
+        <label for="school-phone">School Contact Number</label>
         <input
           type="tel"
-          v-model="phone"
+          v-model="schoolPhone"
+          id="school-phone"
           placeholder="Enter School Contact Number"
         />
       </div>
-      <!--  type -->
 
+      <!-- User Type -->
       <div>
-        <label for=""> User types</label>
-        <v-radio-group inline>
-          <v-radio label="Student" value="student"></v-radio>
-          <v-radio label="Admin" value="admin"></v-radio>
+        <label>User Type</label>
+        <v-radio-group inline v-model="schoolType">
+          <v-radio label="Indipendant School" value="independant"></v-radio>
+          <v-radio label="Group shcool" value="group"></v-radio>
         </v-radio-group>
       </div>
-      <!-- school logo -->
-      <div></div>
 
-      <!-- school address -->
+      <!-- School Address -->
       <div>
-        <label for="school-address" class="form-label">School Address</label>
-        <textarea v-model="address" class="form-control" rows="3"></textarea>
+        <label for="school-address">School Address</label>
+        <textarea
+          v-model="schoolAddress"
+          id="school-address"
+          rows="3"
+          placeholder="Enter School Address"
+        ></textarea>
       </div>
 
       <!-- Principal Details -->
-
-      <label for="">Principal Details</label>
       <div>
-        <input id="name" placeholder="Enter  Name" />
-      </div>
-
-      <div>
-        <input type="email" v-model="email" placeholder="Email" />
-      </div>
-      <div>
+        <label for="principal-name">Principal Name</label>
         <input
-          type="tel"
-          v-model="phone"
-          placeholder="Enter School Contact Number"
+          v-model="principalName"
+          id="principal-name"
+          placeholder="Enter Principal Name"
         />
       </div>
 
-      <!-- submit button -->
+      <div>
+        <label for="principal-email">Principal Email</label>
+        <input
+          type="email"
+          v-model="principalEmail"
+          id="principal-email"
+          placeholder="Enter Principal Email"
+        />
+      </div>
 
+      <div>
+        <label for="principal-phone">Principal Phone Number</label>
+        <input
+          type="tel"
+          v-model="principalPhone"
+          id="principal-phone"
+          placeholder="Enter Principal Phone Number"
+        />
+      </div>
+
+      <!-- Submit Button -->
       <div class="d-grid mt-4">
-        <button class="btn btn-primary text-white" type="button">Submit</button>
+        <button class="btn btn-primary text-white" type="submit">Submit</button>
       </div>
     </form>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { createSchool } from "~/apiConfig/apiConfig";
+
+const schoolName = ref("");
+const schoolPhone = ref("");
+const schoolType = ref("");
+const schoolAddress = ref("");
+const principalName = ref("");
+const principalEmail = ref("");
+const principalPhone = ref("");
+
+const submitForm = async () => {
+  const formData = {
+    school_name: schoolName.value,
+    school_phone_number: schoolPhone.value,
+    school_type: schoolType.value,
+    school_address: schoolAddress.value,
+    principal_name: principalName.value,
+    principal_email: principalEmail.value,
+    principal_phone_number: principalPhone.value,
+  };
+  try {
+    const response = await createSchool(formData);
+    console.log(response.data, "school created successfully");
+    resetForm();
+  } catch (error) {
+    console.log("error in creating school", error);
+  }
+};
+
+const resetForm = () => {
+  schoolName.value = "";
+  schoolPhone.value = "";
+  schoolType.value = "";
+  schoolAddress.value = "";
+  principalName.value = "";
+  principalEmail.value = "";
+  principalPhone.value = "";
+};
+</script>
 
 <style>
 label {
@@ -68,7 +128,8 @@ label {
   margin-bottom: 5px;
 }
 
-input {
+input,
+textarea {
   display: block;
   width: 100%;
   padding: 10px;

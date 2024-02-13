@@ -20,6 +20,14 @@ export const createEvent = async (eventData) => {
 export const createUser = async (formData) => {
   return await axios.post(`${baseUrl}create_student`, formData);
 };
-export const getAllStudents = async (formData) => {
+export const getAllStudents = async () => {
   return (await axios.get(`${baseUrl}get_all_students`)).data;
+};
+
+//Schools
+export const createSchool = async (formData) => {
+  return await axios.post(`${baseUrl}create_school`, formData);
+};
+export const getAllSchools = async () => {
+  return (await axios.get(`${baseUrl}get_all_schools`)).data;
 };

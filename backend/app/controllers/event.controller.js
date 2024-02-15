@@ -36,6 +36,7 @@ exports.create = async (req, res) => {
       created_at: new Date(),
       updated_at: new Date(),
     });
+    console.log(newEvent,"new eeeeeeeeeeevene")
 
     return res.status(201).json({
       data: newEvent,

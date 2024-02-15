@@ -10,22 +10,54 @@
           <v-radio label="Admin" value="admin"></v-radio>
           <v-radio label="Not Defined" value="notDefined"></v-radio>
         </v-radio-group>
+        <span
+          style="color: red"
+          v-for="error in v$.userType.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- User name -->
       <div>
         <label for="name">User naame</label>
         <input v-model="userName" id="name" placeholder="Enter User Name" />
+        <span
+          style="color: red"
+          v-for="error in v$.userName.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- email -->
 
       <div>
         <label for="email">Email Address</label>
-        <input type="email" v-model="email" placeholder="Enter User Email" />
+        <input
+          type="email"
+          v-model="userEmail"
+          placeholder="Enter User Email"
+        />
+        <span
+          style="color: red"
+          v-for="error in v$.userEmail.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- user Phone -->
       <div>
         <label for="phone">Phone Number</label>
         <input type="tel" v-model="userPhone" placeholder="Enter User Phone" />
+        <span
+          style="color: red"
+          v-for="error in v$.userPhone.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- parents phone -->
       <div>
@@ -35,6 +67,13 @@
           v-model="parentsPhone"
           placeholder="Enter User Phone"
         />
+        <span
+          style="color: red"
+          v-for="error in v$.parentsPhone.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- School -->
       <div>
@@ -53,6 +92,13 @@
             {{ school.label }}
           </option>
         </select>
+        <span
+          style="color: red"
+          v-for="error in v$.selectedSchool.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- school address -->
       <div>
@@ -62,6 +108,13 @@
           class="form-control"
           rows="3"
         ></textarea>
+        <span
+          style="color: red"
+          v-for="error in v$.schoolAddress.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        >
       </div>
       <!-- file upload -->
 
@@ -75,7 +128,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { required, email, numeric, helpers } from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
+
 import { createUser } from "~/apiConfig/apiConfig";
 
 const schools = [
@@ -85,30 +141,81 @@ const schools = [
 ];
 const userType = ref("");
 const userName = ref("");
-const email = ref("");
+const userEmail = ref("");
 const userPhone = ref("");
 const parentsPhone = ref("");
 const selectedSchool = ref("");
 const schoolAddress = ref("");
+const rules = computed(() => {
+  return {
+    userType: {
+      required: helpers.withMessage("Please select user type", required),
+    },
+    userName: {
+      required: helpers.withMessage("Please enter user name", required),
+    },
+    userEmail: {
+      required: helpers.withMessage("Please enter email address", required),
+      email: helpers.withMessage("Please enter a valid email address", email),
+    },
+    userPhone: {
+      required: helpers.withMessage("Please enter phone number", required),
+      numeric: helpers.withMessage(
+        "Please enter a valid phone number",
+        numeric
+      ),
+    },
+    parentsPhone: {
+      required: helpers.withMessage(
+        "Please enter parents phone number",
+        required
+      ),
+      numeric: helpers.withMessage(
+        "Please enter a valid phone number",
+        numeric
+      ),
+    },
+    selectedSchool: {
+      required: helpers.withMessage("Please select a school", required),
+    },
+    schoolAddress: {
+      required: helpers.withMessage("Please enter school address", required),
+    },
+  };
+});
+const v$ = useVuelidate(rules, {
+  userType,
+  userName,
+  userEmail,
+  userPhone,
+  parentsPhone,
+  selectedSchool,
+  schoolAddress,
+});
 
 const submitForm = async () => {
-  const formData = {
-    student_type: userType.value,
-    student_name: userName.value,
-    email_address: email.value,
-    phone_number: userPhone.value,
-    parents_phone_number: parentsPhone.value,
-    school: selectedSchool.value,
-    school_address: schoolAddress.value,
-  };
-  try {
-    const response = await createUser(formData);
-    console.log(response.data, "this the school data");
-    resetForm();
-  } catch (error) {
-    console.log("error in creating student", error);
+  const result = await v$.value.$validate();
+  if (result) {
+    try {
+      const response = await createUser({
+        student_type: userType.value,
+        student_name: userName.value,
+        email_address: userEmail.value,
+        phone_number: userPhone.value,
+        parents_phone_number: parentsPhone.value,
+        school: selectedSchool.value,
+        school_address: schoolAddress.value,
+      });
+      console.log(response.data, "this the school data");
+      resetForm();
+    } catch (error) {
+      console.log("error in creating student", error);
+    }
+  } else {
+    alert("Form validation failed");
   }
 };
+
 const resetForm = () => {
   userType.value = "";
   userName.value = "";
@@ -118,6 +225,34 @@ const resetForm = () => {
   selectedSchool.value = "";
   schoolAddress.value = "";
 };
+
+// const submitForm = async () => {
+//   const formData = {
+//     student_type: userType.value,
+//     student_name: userName.value,
+//     email_address: email.value,
+//     phone_number: userPhone.value,
+//     parents_phone_number: parentsPhone.value,
+//     school: selectedSchool.value,
+//     school_address: schoolAddress.value,
+//   };
+//   try {
+//     const response = await createUser(formData);
+//     console.log(response.data, "this the school data");
+//     resetForm();
+//   } catch (error) {
+//     console.log("error in creating student", error);
+//   }
+// };
+// const resetForm = () => {
+//   userType.value = "";
+//   userName.value = "";
+//   email.value = "";
+//   userPhone.value = "";
+//   parentsPhone.value = "";
+//   selectedSchool.value = "";
+//   schoolAddress.value = "";
+// };
 </script>
 
 <style>

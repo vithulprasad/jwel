@@ -19,6 +19,7 @@ exports.create = async (req, res) => {
       parents_phone_number,
       school,
       school_address,
+      student_status: "active",
     });
     console.log(newStudent, "new student >>>>>>>");
     res
@@ -66,5 +67,24 @@ exports.findOne = async (req, res) => {
       message: "Something went wrong",
       statusCode: 500,
     });
+  }
+};
+
+exports.updateUserStatus = async (req, res) => {
+  const { id } = req.params;
+  const { userStatus } = req.body;
+  console.log(id, "00000000000");
+
+  try {
+    // Update user status in the database
+    await Students.update(
+      { student_status: userStatus },
+      { where: { student_id: id } }
+    );
+
+    res.status(200).json({ message: "User status updated successfully" });
+  } catch (error) {
+    console.error("Error updating user status:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -23,6 +23,11 @@ module.exports = (sequelize, Sequelize) => {
     parents_phone_number: {
       type: Sequelize.STRING,
     },
+    student_status: {
+      type: Sequelize.ENUM,
+      values: ["active", "inactive"],
+      defaultValue: "active",
+    },
     student_type: {
       type: Sequelize.ENUM,
       values: ["student", "admin", "notDefined"],

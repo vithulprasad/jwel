@@ -23,6 +23,9 @@ export const createUser = async (formData) => {
 export const getAllStudents = async () => {
   return (await axios.get(`${baseUrl}get_all_students`)).data;
 };
+export const updateUserStatus = async (userId, newStatus) => {
+  return await axios.put(`${baseUrl}update_user_status/${userId}`, { userStatus: newStatus });
+};
 
 //Schools
 export const createSchool = async (formData) => {

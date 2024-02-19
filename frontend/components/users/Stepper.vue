@@ -30,6 +30,20 @@
           {{ error.$message }}</span
         >
       </div>
+      <!-- User logo -->
+      <div>
+        <label>user logo</label>
+
+        <div>
+          <label for="customFileInput" class="custom-file-label">Upload</label>
+          <input
+            class="form-control custom-file-input"
+            type="file"
+            id="customFileInput"
+            @change="handleFileChange"
+          />
+        </div>
+      </div>
       <!-- email -->
 
       <div>
@@ -127,133 +141,107 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
-import { required, email, numeric, helpers } from "@vuelidate/validators";
-import { useVuelidate } from "@vuelidate/core";
+  <script setup>
+  import { ref, computed } from "vue";
+  import { required, email, numeric, helpers } from "@vuelidate/validators";
+  import { useVuelidate } from "@vuelidate/core";
 
-import { createUser } from "~/apiConfig/apiConfig";
+  import { createUser } from "~/apiConfig/apiConfig";
 
-const schools = [
-  { label: "School1", value: "School1" },
-  { label: "School2", value: "School2" },
-  { label: "School3", value: "School3" },
-];
-const userType = ref("");
-const userName = ref("");
-const userEmail = ref("");
-const userPhone = ref("");
-const parentsPhone = ref("");
-const selectedSchool = ref("");
-const schoolAddress = ref("");
-const rules = computed(() => {
-  return {
-    userType: {
-      required: helpers.withMessage("Please select user type", required),
-    },
-    userName: {
-      required: helpers.withMessage("Please enter user name", required),
-    },
-    userEmail: {
-      required: helpers.withMessage("Please enter email address", required),
-      email: helpers.withMessage("Please enter a valid email address", email),
-    },
-    userPhone: {
-      required: helpers.withMessage("Please enter phone number", required),
-      numeric: helpers.withMessage(
-        "Please enter a valid phone number",
-        numeric
-      ),
-    },
-    parentsPhone: {
-      required: helpers.withMessage(
-        "Please enter parents phone number",
-        required
-      ),
-      numeric: helpers.withMessage(
-        "Please enter a valid phone number",
-        numeric
-      ),
-    },
-    selectedSchool: {
-      required: helpers.withMessage("Please select a school", required),
-    },
-    schoolAddress: {
-      required: helpers.withMessage("Please enter school address", required),
-    },
-  };
-});
-const v$ = useVuelidate(rules, {
-  userType,
-  userName,
-  userEmail,
-  userPhone,
-  parentsPhone,
-  selectedSchool,
-  schoolAddress,
-});
+  const schools = [
+    { label: "School1", value: "School1" },
+    { label: "School2", value: "School2" },
+    { label: "School3", value: "School3" },
+  ];
+  const userType = ref("");
+  const userName = ref("");
+  const userEmail = ref("");
+  const userPhone = ref("");
+  const parentsPhone = ref("");
+  const selectedSchool = ref("");
+  const schoolAddress = ref("");
+  const rules = computed(() => {
+    return {
+      userType: {
+        required: helpers.withMessage("Please select user type", required),
+      },
+      userName: {
+        required: helpers.withMessage("Please enter user name", required),
+      },
+      userEmail: {
+        required: helpers.withMessage("Please enter email address", required),
+        email: helpers.withMessage("Please enter a valid email address", email),
+      },
+      userPhone: {
+        required: helpers.withMessage("Please enter phone number", required),
+        numeric: helpers.withMessage(
+          "Please enter a valid phone number",
+          numeric
+        ),
+      },
+      parentsPhone: {
+        required: helpers.withMessage(
+          "Please enter parents phone number",
+          required
+        ),
+        numeric: helpers.withMessage(
+          "Please enter a valid phone number",
+          numeric
+        ),
+      },
+      selectedSchool: {
+        required: helpers.withMessage("Please select a school", required),
+      },
+      schoolAddress: {
+        required: helpers.withMessage("Please enter school address", required),
+      },
+    };
+  });
+  const v$ = useVuelidate(rules, {
+    userType,
+    userName,
+    userEmail,
+    userPhone,
+    parentsPhone,
+    selectedSchool,
+    schoolAddress,
+  });
 
-const submitForm = async () => {
-  const result = await v$.value.$validate();
-  if (result) {
-    try {
-      const response = await createUser({
-        student_type: userType.value,
-        student_name: userName.value,
-        email_address: userEmail.value,
-        phone_number: userPhone.value,
-        parents_phone_number: parentsPhone.value,
-        school: selectedSchool.value,
-        school_address: schoolAddress.value,
-      });
-      console.log(response.data, "this the school data");
-      resetForm();
-    } catch (error) {
-      console.log("error in creating student", error);
+  const submitForm = async () => {
+    const result = await v$.value.$validate();
+    if (result) {
+      try {
+        const response = await createUser({
+          student_type: userType.value,
+          student_name: userName.value,
+          email_address: userEmail.value,
+          phone_number: userPhone.value,
+          parents_phone_number: parentsPhone.value,
+          school: selectedSchool.value,
+          school_address: schoolAddress.value,
+        });
+        console.log(response.data, "this the school data");
+        resetForm();
+      } catch (error) {
+        console.log("error in creating student", error);
+      }
+    } else {
+      alert("Form validation failed");
     }
-  } else {
-    alert("Form validation failed");
-  }
-};
+  };
 
-const resetForm = () => {
-  userType.value = "";
-  userName.value = "";
-  email.value = "";
-  userPhone.value = "";
-  parentsPhone.value = "";
-  selectedSchool.value = "";
-  schoolAddress.value = "";
-};
+  const resetForm = () => {
+    userType.value = "";
+    userName.value = "";
+    email.value = "";
+    userPhone.value = "";
+    parentsPhone.value = "";
+    selectedSchool.value = "";
+    schoolAddress.value = "";
+  };
 
-// const submitForm = async () => {
-//   const formData = {
-//     student_type: userType.value,
-//     student_name: userName.value,
-//     email_address: email.value,
-//     phone_number: userPhone.value,
-//     parents_phone_number: parentsPhone.value,
-//     school: selectedSchool.value,
-//     school_address: schoolAddress.value,
-//   };
-//   try {
-//     const response = await createUser(formData);
-//     console.log(response.data, "this the school data");
-//     resetForm();
-//   } catch (error) {
-//     console.log("error in creating student", error);
-//   }
-// };
-// const resetForm = () => {
-//   userType.value = "";
-//   userName.value = "";
-//   email.value = "";
-//   userPhone.value = "";
-//   parentsPhone.value = "";
-//   selectedSchool.value = "";
-//   schoolAddress.value = "";
-// };
-</script>
+
+  </script>
 
 <style>
 label {
@@ -268,5 +256,24 @@ input {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 10px;
+}
+.custom-file-input {
+  opacity: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.custom-file-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
 }
 </style>

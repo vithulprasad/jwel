@@ -1,7 +1,10 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center mainCard rounded my-2">
+  <div
+    :class="{ inactive: userStatus === 'inactive' }"
+    class="d-flex align-items-center justify-content-center mainCard rounded my-2"
+  >
     <div class="pl-3 pt-3">
-      <v-checkbox ></v-checkbox>
+      <v-checkbox></v-checkbox>
     </div>
     <div class="flex-shrink-0 m-2 p-2">
       <!-- <img src="..." alt="..." /> -->
@@ -14,7 +17,6 @@
         aria-label="Placeholder: Image"
         preserveAspectRatio="xMidYMid slice"
         focusable="false"
-        
       >
         <title>Placeholder</title>
         <rect width="100%" height="100%" fill="#e5e5e5"></rect>
@@ -33,13 +35,13 @@
             "
             class="card-title"
           >
-          <!-- student name -->
-          {{ studentValues.student_name  }}
+            <!-- student name -->
+            {{ studentValues.student_name }}
           </h5>
         </div>
         <div class="d-flex">
           <div class="pt-1">
-            <v-chip color="green" size="small"> Active </v-chip>
+            <v-chip :color="chipColor" size="small">{{ chipText }}</v-chip>
           </div>
 
           <div class="dropdown-center ms-auto">
@@ -52,16 +54,34 @@
               <img src="/static/icon/more_vert.svg" alt="" />
             </button>
             <ul class="dropdown-menu" style="">
-              <!-- <li>
-                <NuxtLink
-                  class="dropdown-item"
-                  :to="'/events/listEvents/' + eventValues.event_id"
+              <!-- user status radio button -->
+              <li>
+                <div
+                  class="form-switch d-flex justify-content-start align-items-center"
                 >
-                  View Details
-                </NuxtLink>
-
-              </li> -->
-              <li><a class="dropdown-item" href="#">User Status</a></li>
+                  <div>
+                    <label class="mb-0">User Status</label>
+                  </div>
+                  <div>
+                    <v-switch
+                      v-model="model"
+                      color="primary"
+                      true-value="active"
+                      false-value="inactive"
+                      @change="toggleStatus"
+                    ></v-switch>
+                    <!-- <input
+                      class="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="flexSwitchCheckDefault"
+                      v-model="userStatus"
+                      :checked="userStatus === 'active'"
+                      @change="toggleStatus"
+                    /> -->
+                  </div>
+                </div>
+              </li>
 
               <li><a class="dropdown-item" href="#">Edit</a></li>
               <li><a class="dropdown-item" href="#">Delete</a></li>
@@ -84,13 +104,59 @@
             (904) 335-2403
           </small>
         </p>
+        <p>{{ studentValues.student_status }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, watch } from "vue";
+import { updateUserStatus } from "../../apiConfig/apiConfig";
 const props = defineProps(["studentValues"]);
+
+const userStatus = ref(props.studentValues.student_status);
+
+// Computed properties to determine chip color and text based on user's status
+const chipColor = computed(() =>
+  userStatus.value === "active" ? "green" : "grey"
+);
+const chipText = computed(() =>
+  userStatus.value === "active" ? "Active" : "Inactive"
+);
+
+
+//  reactive reference for the switch model
+const model = ref(userStatus.value);
+
+// Watch for changes in userStatus and update model accordingly
+watch(userStatus, (newValue) => {
+  model.value = newValue;
+});
+
+// Method to toggle user's status
+const toggleStatus = async () => {
+  console.log(props.studentValues.student_id, "User ID");
+  console.log(userStatus.value, "Current user status");
+  try {
+    // Toggle the user status
+    const newStatus = userStatus.value === "active" ? "inactive" : "active";
+    console.log(newStatus, "New student status");
+
+    // Update the user status in the database
+    await updateUserStatus(props.studentValues.student_id, newStatus);
+
+    // Update userStatus after updating in the database
+    userStatus.value = newStatus;
+    console.log(
+      userStatus.value,
+      "userStatus.value =newStatus after db update"
+    );
+  } catch (error) {
+    console.error("Error toggling user status:", error);
+  }
+};
+
 
 </script>
 
@@ -103,9 +169,7 @@ const props = defineProps(["studentValues"]);
   border: 0cap !important;
   background: none !important;
 }
-/* .icon-text {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 14px;
-  } */
+.inactive {
+  opacity: 0.5;
+}
 </style>

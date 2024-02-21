@@ -34,6 +34,7 @@
           ]"
           :disabled="chip.status === 'disabled'"
           :aria-disabled="chip.status === 'disabled'"
+          @click="filterStudents(chip.label)"
         >
           {{ chip.label }}
         </button>
@@ -52,8 +53,8 @@ export default {
       searchQuery: "",
       chips: [
         { label: "All Users", status: "enabled" },
-        { label: "Students", status: "disabled" },
-        { label: "Admins", status: "disabled" },
+        { label: "Student", status: "enabled" },
+        { label: "Admin", status: "enabled" },
       ],
     };
   },
@@ -61,6 +62,11 @@ export default {
     openDialog() {
       // Logic for dialog box opening
       this.$emit("openDialog");
+    },
+    filterStudents(label) {
+      console.log("Clicked label:", label);
+
+      this.$emit("filterStudents", label);
     },
   },
 };

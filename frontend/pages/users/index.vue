@@ -1,6 +1,9 @@
 <template>
   <div data-page="users">
-    <UsersUserHeader @openDialog="openDialog" />
+    <UsersUserHeader
+      @openDialog="openDialog"
+      @filterStudents="filterStudents"
+    />
     <div class="container">
       <div class="row">
         <div
@@ -18,7 +21,7 @@
             <div
               v-else
               class="col-lg-12 col-md-12 col-sm-12 mx-auto"
-              v-for="studentDetails in students"
+              v-for="studentDetails in filteredStudents"
               :key="studentDetails.student_id"
             >
               <!-- Render student list component with student details as props -->
@@ -48,7 +51,8 @@ definePageMeta({
 
 const isDialogOpen = ref(false);
 const students = ref([]);
-
+const filteredStudents = ref([]);
+const selectedUserType = ref("All Users"); // Default selected user type
 
 const openDialog = () => {
   isDialogOpen.value = true;
@@ -61,14 +65,31 @@ const fetchData = async () => {
   try {
     const res = await getAllStudents();
     students.value = res.data;
-    
+    filteredStudents.value = [...res.data];
   } catch (error) {
     console.error("Error fetching students:", error.message);
   }
 };
+// Filter students based on user type
+const filterStudents = (userType) => {
+  console.log("Filtering students by:", userType);
+  selectedUserType.value = userType; // Update selected user type
+  console.log(selectedUserType.value, "selected usertype");
+  if (userType === "All Users") {
+    // If 'All Users' is selected, show all students
+    filteredStudents.value = [...students.value];
+  } else {
+    // Filter students based on user type
+    filteredStudents.value = students.value.filter(
+      (student) => student.student_type.toLowerCase() === userType.toLowerCase()
+    );
+  }
+  console.log("Filtered students:", filteredStudents.value);
+};
 
 onMounted(() => {
   fetchData();
+  console.log("Mounted and fetching data... for students");
 });
 </script>
 

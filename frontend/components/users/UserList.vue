@@ -70,15 +70,6 @@
                       false-value="inactive"
                       @change="toggleStatus"
                     ></v-switch>
-                    <!-- <input
-                      class="form-check-input"
-                      type="checkbox"
-                      role="switch"
-                      id="flexSwitchCheckDefault"
-                      v-model="userStatus"
-                      :checked="userStatus === 'active'"
-                      @change="toggleStatus"
-                    /> -->
                   </div>
                 </div>
               </li>
@@ -94,17 +85,17 @@
       <div class="d-flex">
         <p class="card-text icon-text">
           <small class="text-body-secondary"
-            ><img src="/static/user_icons/mail.svg" alt="" /> 13
-            lorri73@gmail.com</small
+            ><img src="/static/user_icons/mail.svg" alt="" />
+            {{ studentValues.email_address }}</small
           >
         </p>
         <p class="card-text pl-2 ml-2 icon-text">
           <small class="text-body-secondary"
             ><img src="/static/user_icons/call.svg" alt="" />
-            (904) 335-2403
+            {{ studentValues.phone_number }}
           </small>
         </p>
-        <p>{{ studentValues.student_status }}</p>
+        <p>{{ studentValues.student_type }}</p>
       </div>
     </div>
   </div>
@@ -124,7 +115,6 @@ const chipColor = computed(() =>
 const chipText = computed(() =>
   userStatus.value === "active" ? "Active" : "Inactive"
 );
-
 
 //  reactive reference for the switch model
 const model = ref(userStatus.value);
@@ -156,8 +146,6 @@ const toggleStatus = async () => {
     console.error("Error toggling user status:", error);
   }
 };
-
-
 </script>
 
 <style scoped>

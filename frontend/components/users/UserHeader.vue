@@ -30,10 +30,8 @@
           :key="index"
           :class="[
             'btn btn-sm chip',
-            chip.status === 'disabled' ? 'btn-secondary' : 'btn-primary',
+            chip.label === selectedUserType ? 'btn-primary' : 'btn-secondary',
           ]"
-          :disabled="chip.status === 'disabled'"
-          :aria-disabled="chip.status === 'disabled'"
           @click="filterStudents(chip.label)"
         >
           {{ chip.label }}
@@ -51,10 +49,12 @@ export default {
   data() {
     return {
       searchQuery: "",
+      selectedUserType: "All Users", // Default selected user type
+
       chips: [
-        { label: "All Users", status: "enabled" },
-        { label: "Student", status: "enabled" },
-        { label: "Admin", status: "enabled" },
+        { label: "All Users" },
+        { label: "Students" },
+        { label: "Admins" },
       ],
     };
   },
@@ -64,6 +64,9 @@ export default {
       this.$emit("openDialog");
     },
     filterStudents(label) {
+      //logic for button style based click
+      this.selectedUserType = label;
+
       console.log("Clicked label:", label);
 
       this.$emit("filterStudents", label);

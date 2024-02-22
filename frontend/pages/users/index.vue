@@ -72,16 +72,24 @@ const fetchData = async () => {
 };
 // Filter students based on user type
 const filterStudents = (userType) => {
+  //Logic to map the label to the db values
+  const userTypeMap = {
+    Students: "student",
+    Admins: "admin",
+  };
+  const userTypeDBValue = userTypeMap[userType];
+
   console.log("Filtering students by:", userType);
   selectedUserType.value = userType; // Update selected user type
   console.log(selectedUserType.value, "selected usertype");
-  if (userType === "All Users") {
+  if (userType === "All Users" || userType === "notDefined") {
     // If 'All Users' is selected, show all students
     filteredStudents.value = [...students.value];
-  } else {
+  } else if (userTypeDBValue) {
     // Filter students based on user type
     filteredStudents.value = students.value.filter(
-      (student) => student.student_type.toLowerCase() === userType.toLowerCase()
+      (student) =>
+        student.student_type.toLowerCase() === userTypeDBValue.toLowerCase()
     );
   }
   console.log("Filtered students:", filteredStudents.value);

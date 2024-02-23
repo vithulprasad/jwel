@@ -94,26 +94,23 @@
         <label for="event-type" class="form-label">Schools</label>
         <select
           aria-placeholder="plese select School"
-          v-model="selectedSchool"
+          v-model="selectedSchoolId"
           class="form-select"
         >
-          <option value="" disabled selected>Please select an School</option>
-          <option
-            v-for="school in schools"
-            :key="school.value"
-            :value="school.value"
-          >
-            {{ school.label }}
+          <option disabled selected>Please select an School</option>
+          <option v-for="school in schools" :key="school.school_id" :value="school.school_id">
+            {{  school.school_name }}
           </option>
         </select>
         <span
           style="color: red"
-          v-for="error in v$.selectedSchool.$errors"
+          v-for="error in v$.selectedSchoolId.$errors"
           :key="error.$uid"
         >
           {{ error.$message }}</span
         >
       </div>
+    
       <!-- school address -->
       <div>
         <label for="school-address" class="form-label">School Address</label>
@@ -141,107 +138,123 @@
   </div>
 </template>
 
-  <script setup>
-  import { ref, computed } from "vue";
-  import { required, email, numeric, helpers } from "@vuelidate/validators";
-  import { useVuelidate } from "@vuelidate/core";
+<script setup>
+import { ref, computed } from "vue";
+import { required, email, numeric, helpers } from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
 
-  import { createUser } from "~/apiConfig/apiConfig";
+import { createUser, getAllSchools } from "~/apiConfig/apiConfig";
 
-  const schools = [
-    { label: "School1", value: "School1" },
-    { label: "School2", value: "School2" },
-    { label: "School3", value: "School3" },
-  ];
-  const userType = ref("");
-  const userName = ref("");
-  const userEmail = ref("");
-  const userPhone = ref("");
-  const parentsPhone = ref("");
-  const selectedSchool = ref("");
-  const schoolAddress = ref("");
-  const rules = computed(() => {
-    return {
-      userType: {
-        required: helpers.withMessage("Please select user type", required),
-      },
-      userName: {
-        required: helpers.withMessage("Please enter user name", required),
-      },
-      userEmail: {
-        required: helpers.withMessage("Please enter email address", required),
-        email: helpers.withMessage("Please enter a valid email address", email),
-      },
-      userPhone: {
-        required: helpers.withMessage("Please enter phone number", required),
-        numeric: helpers.withMessage(
-          "Please enter a valid phone number",
-          numeric
-        ),
-      },
-      parentsPhone: {
-        required: helpers.withMessage(
-          "Please enter parents phone number",
-          required
-        ),
-        numeric: helpers.withMessage(
-          "Please enter a valid phone number",
-          numeric
-        ),
-      },
-      selectedSchool: {
-        required: helpers.withMessage("Please select a school", required),
-      },
-      schoolAddress: {
-        required: helpers.withMessage("Please enter school address", required),
-      },
-    };
-  });
-  const v$ = useVuelidate(rules, {
-    userType,
-    userName,
-    userEmail,
-    userPhone,
-    parentsPhone,
-    selectedSchool,
-    schoolAddress,
-  });
 
-  const submitForm = async () => {
-    const result = await v$.value.$validate();
-    if (result) {
-      try {
-        const response = await createUser({
-          student_type: userType.value,
-          student_name: userName.value,
-          email_address: userEmail.value,
-          phone_number: userPhone.value,
-          parents_phone_number: parentsPhone.value,
-          school: selectedSchool.value,
-          school_address: schoolAddress.value,
-        });
-        console.log(response.data, "this the school data");
-        resetForm();
-      } catch (error) {
-        console.log("error in creating student", error);
-      }
-    } else {
-      alert("Form validation failed");
+
+const schools = ref([]);
+const selectedSchoolId = ref("");
+
+const userType = ref("");
+const userName = ref("");
+const userEmail = ref("");
+const userPhone = ref("");
+const parentsPhone = ref("");
+const schoolAddress = ref("");
+const rules = computed(() => {
+  return {
+    userType: {
+      required: helpers.withMessage("Please select user type", required),
+    },
+    userName: {
+      required: helpers.withMessage("Please enter user name", required),
+    },
+    userEmail: {
+      required: helpers.withMessage("Please enter email address", required),
+      email: helpers.withMessage("Please enter a valid email address", email),
+    },
+    userPhone: {
+      required: helpers.withMessage("Please enter phone number", required),
+      numeric: helpers.withMessage(
+        "Please enter a valid phone number",
+        numeric
+      ),
+    },
+    parentsPhone: {
+      required: helpers.withMessage(
+        "Please enter parents phone number",
+        required
+      ),
+      numeric: helpers.withMessage(
+        "Please enter a valid phone number",
+        numeric
+      ),
+    },
+
+    selectedSchoolId: {
+      required: helpers.withMessage("Please select a school", required),
+    },
+    schoolAddress: {
+      required: helpers.withMessage("Please enter school address", required),
+    },
+  };
+});
+const v$ = useVuelidate(rules, {
+  userType,
+  userName,
+  userEmail,
+  userPhone,
+  parentsPhone,
+  selectedSchoolId,
+  schoolAddress,
+});
+
+// Fetch schools from the database
+const fetchSchoolList = async () => {
+  try {
+    const response = await getAllSchools();
+    schools.value = response.data;
+  } catch (error) {
+    console.error("Error fetching schools:", error);
+  }
+};
+
+
+const submitForm = async () => {
+  console.log(selectedSchoolId.value,"school valuee ")
+
+  const result = await v$.value.$validate();
+  if (result) {
+    try {
+      const response = await createUser({
+        student_type: userType.value,
+        student_name: userName.value,
+        email_address: userEmail.value,
+        phone_number: userPhone.value,
+        parents_phone_number: parentsPhone.value,
+        school: selectedSchoolId.value,
+        school_address: schoolAddress.value,
+      });
+      console.log(response.data, "this the school data");
+      resetForm();
+    } catch (error) {
+      console.log("error in creating student", error);
     }
-  };
+  } else {
+    alert("Form validation failed");
+  }
+};
 
-  const resetForm = () => {
-    userType.value = "";
-    userName.value = "";
-    email.value = "";
-    userPhone.value = "";
-    parentsPhone.value = "";
-    selectedSchool.value = "";
-    schoolAddress.value = "";
-  };
+const resetForm = () => {
+  userType.value = "";
+  userName.value = "";
+  email.value = "";
+  userPhone.value = "";
+  parentsPhone.value = "";
+  selectedSchoolId.value = "";
+  schoolAddress.value = "";
+};
 
-
-  </script>
+onMounted(() => {
+  fetchSchoolList();
+  console.log("Mounted and fetching data... for students");
+});
+</script>
 
 <style>
 label {

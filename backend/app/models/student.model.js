@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
     },
     school: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
     },
     school_address: {
       type: Sequelize.STRING,

@@ -95,7 +95,6 @@
             {{ studentValues.phone_number }}
           </small>
         </p>
-        <p>{{ studentValues.student_type }}</p>
       </div>
     </div>
   </div>

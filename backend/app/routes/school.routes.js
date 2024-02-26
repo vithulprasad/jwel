@@ -1,5 +1,6 @@
 module.exports = (app) => {
   const schools = require("../controllers/school.controller");
+  const Users = require("../controllers/student.controller");
 
   var router = require("express").Router();
 
@@ -7,6 +8,7 @@ module.exports = (app) => {
   router.post("/create_school", schools.create);
   router.get("/get_all_schools", schools.getAllSchools);
   router.get("/get_schools/:id", schools.findOne);
+  router.get("/get_users/:id", Users.getUserBySchoolId);
 
   app.use("/api", router);
 };

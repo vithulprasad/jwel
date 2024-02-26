@@ -1,3 +1,4 @@
+const School = require("./school.model");
 module.exports = (sequelize, Sequelize) => {
   const Student = sequelize.define("students", {
     student_id: {
@@ -8,8 +9,13 @@ module.exports = (sequelize, Sequelize) => {
     student_name: {
       type: Sequelize.STRING,
     },
-    school: {
+    school_id: {
       type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: School,
+        key: "school_id",
+      },
     },
     school_address: {
       type: Sequelize.STRING,

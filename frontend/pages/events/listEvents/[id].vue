@@ -26,7 +26,9 @@
                       <h5 class="card-title event_title">
                         <!-- event name -->
                         <!-- Mock Parliment Debate -->
-                        {{ events?.data?.event_name || "Loading..." }}
+                        {{ events && events.data && events.data.event_name ? events.data.event_name : "Loading..." }}
+
+                        <!-- {{ events?.data?.event_name || "Loading..." }} -->
                       </h5>
                     </div>
                     <div class="">
@@ -151,7 +153,7 @@ const fetchData = async () => {
   try {
     const res = await getOneEvent(id);
     events.value = res.data;
-    console.log(events.value.data, "this is event name");
+    console.log(events.value, "this is event name");
   } catch (error) {
     console.error("Error fetching events:", error.message);
   }

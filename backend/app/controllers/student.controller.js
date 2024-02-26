@@ -8,7 +8,7 @@ exports.create = async (req, res) => {
       email_address,
       phone_number,
       parents_phone_number,
-      school,
+      school_id,
       school_address,
     } = req.body;
     const newStudent = await Students.create({
@@ -17,7 +17,7 @@ exports.create = async (req, res) => {
       email_address,
       phone_number,
       parents_phone_number,
-      school,
+      school_id,
       school_address,
       student_status: "active",
     });
@@ -86,5 +86,15 @@ exports.updateUserStatus = async (req, res) => {
   } catch (error) {
     console.error("Error updating user status:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getUserBySchoolId = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const users = await Students.findAll({ where: { school_id: id } });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

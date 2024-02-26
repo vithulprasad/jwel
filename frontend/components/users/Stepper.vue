@@ -227,7 +227,7 @@ const submitForm = async () => {
         email_address: userEmail.value,
         phone_number: userPhone.value,
         parents_phone_number: parentsPhone.value,
-        school: selectedSchoolId.value,
+        school_id: selectedSchoolId.value,
         school_address: schoolAddress.value,
       });
       console.log(response.data, "this the school data");

@@ -1,5 +1,6 @@
 <template>
   <div
+    @click="fetchUsers(schoolValues.school_id)"
     class="d-flex align-items-center justify-content-center mainCard rounded my-2"
   >
     <div class="pl-3 pt-3">
@@ -90,7 +91,19 @@
 </template>
 
 <script setup>
+import { getUserBySchool } from "~/apiConfig/apiConfig";
 const props = defineProps(["schoolValues"]);
+const fetchUsers = async (schoolId) => {
+  try {
+    console.log(schoolId, "shool id fromthe  frontend");
+    const response = await getUserBySchool(schoolId);
+    const names = response.data.map((student) => student.student_name);
+    // Display names in an alert
+    alert("Users associated with this school:>> " + names.join(", "));
+  } catch (error) {
+    console.error("Error fetching associated users:", error);
+  }
+};
 </script>
 
 <style scoped>

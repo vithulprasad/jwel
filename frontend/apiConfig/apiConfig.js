@@ -24,7 +24,9 @@ export const getAllStudents = async () => {
   return (await axios.get(`${baseUrl}get_all_students`)).data;
 };
 export const updateUserStatus = async (userId, newStatus) => {
-  return await axios.put(`${baseUrl}update_user_status/${userId}`, { userStatus: newStatus });
+  return await axios.put(`${baseUrl}update_user_status/${userId}`, {
+    userStatus: newStatus,
+  });
 };
 
 //Schools
@@ -34,7 +36,10 @@ export const createSchool = async (formData) => {
 export const getAllSchools = async () => {
   return (await axios.get(`${baseUrl}get_all_schools`)).data;
 };
-
+export const getUserBySchool = async (schoolId) => {
+  console.log(schoolId,"school Id in the apiconfig")
+  return await axios.get(`${baseUrl}get_users/${schoolId}`);
+};
 // Mininstry
 
 export const createMinistry = async (formData) => {

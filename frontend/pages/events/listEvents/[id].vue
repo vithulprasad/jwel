@@ -10,7 +10,10 @@
             <div class="container bg-white rounded">
               <div class="mt-2 pt-2 pb-2 d-flex align-items-center">
                 <img src="/static/icon/arrow_back.svg" alt="" class="pt-2" />
-                <a class="link pt-2 pl-1" href="">Back to Events</a>
+                <NuxtLink class="link pt-2 pl-1" :to="`/events`">
+                  Back to Events
+                </NuxtLink>
+                <!-- <a class="link pt-2 pl-1" href="">Back to Events</a> -->
               </div>
               <v-card class="mx-auto">
                 <v-img
@@ -26,7 +29,11 @@
                       <h5 class="card-title event_title">
                         <!-- event name -->
                         <!-- Mock Parliment Debate -->
-                        {{ events && events.data && events.data.event_name ? events.data.event_name : "Loading..." }}
+                        {{
+                          events && events.data && events.data.event_name
+                            ? events.data.event_name
+                            : "Loading..."
+                        }}
 
                         <!-- {{ events?.data?.event_name || "Loading..." }} -->
                       </h5>
@@ -102,18 +109,20 @@
               </v-card>
             </div>
             <div class="">
-              <template v-if="tab === 1">
-                <EventDetails :eventDetails="events.data" />
-              </template>
-              <template v-else-if="tab === 2">
-                <Parties @addPartyDilog="addPartyDilog" />
-              </template>
-              <template v-else-if="tab === 3">
-                <Alliance />
-              </template>
-              <template v-else-if="tab === 4">
-                <Committee />
-              </template>
+              <div v-if="events && events.data">
+                <template v-if="tab === 1">
+                  <EventDetails :eventDetails="events.data" />
+                </template>
+                <template v-else-if="tab === 2">
+                  <Parties @addPartyDilog="addPartyDilog" />
+                </template>
+                <template v-else-if="tab === 3">
+                  <Alliance />
+                </template>
+                <template v-else-if="tab === 4">
+                  <Committee />
+                </template>
+              </div>
             </div>
           </div>
         </div>

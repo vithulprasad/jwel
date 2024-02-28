@@ -126,13 +126,31 @@
           </div>
 
           <!-- school name -->
+         
+
           <div>
-            <label for="name">School Name</label>
-            <input
-              v-model="values.schoolName"
-              id="name"
-              placeholder="Enter School Name"
-            />
+            <label for="event-type" class="form-label">Schools</label>
+            <select
+              aria-placeholder="plese select School"
+              v-model="selectedSchoolId"
+              class="form-select"
+            >
+              <option disabled selected>Please select an School</option>
+              <option
+                v-for="school in schools"
+                :key="school.school_id"
+                :value="school.school_id"
+              >
+                {{ school.school_name }}
+              </option>
+            </select>
+            <!-- <span
+          style="color: red"
+          v-for="error in v$.selectedSchoolId.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        > -->
           </div>
 
           <!-- orientation name -->
@@ -278,12 +296,13 @@ const fileInputRef = ref(null);
 import { FormWizard, TabContent } from "vue3-form-wizard";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { createEvent } from "~/apiConfig/apiConfig";
+import { createEvent, getAllSchools } from "~/apiConfig/apiConfig";
 
 const currentStep = ref(0);
 const formWizard = ref(null);
 const stepLength = 1;
 const props = defineProps(["closeDialog"]);
+const schools = ref([]);
 
 const mentors = [
   { title: "foo" },
@@ -375,6 +394,16 @@ const removeImage = () => {
   fileInputRef.value.value = "";
 };
 
+// Fetch schools from the database
+const fetchSchoolList = async () => {
+  try {
+    const response = await getAllSchools();
+    schools.value = response.data;
+  } catch (error) {
+    console.error("Error fetching schools:", error);
+  }
+};
+
 const onFinish = async () => {
   try {
     console.log(values.value, "this is fomr data");
@@ -391,6 +420,10 @@ const onFinish = async () => {
     // Handle error (e.g., show an error message to the user)
   }
 };
+onMounted(() => {
+  fetchSchoolList();
+  console.log("Mounted and fetching data... for students");
+});
 </script>
 
 <style>

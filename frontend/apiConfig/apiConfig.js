@@ -37,7 +37,7 @@ export const getAllSchools = async () => {
   return (await axios.get(`${baseUrl}get_all_schools`)).data;
 };
 export const getUserBySchool = async (schoolId) => {
-  console.log(schoolId,"school Id in the apiconfig")
+  console.log(schoolId, "school Id in the apiconfig");
   return await axios.get(`${baseUrl}get_users/${schoolId}`);
 };
 // Mininstry
@@ -47,4 +47,21 @@ export const createMinistry = async (formData) => {
 };
 export const getAllMinstry = async () => {
   return (await axios.get(`${baseUrl}get_all_ministry`)).data;
+};
+// Mentors
+export const createMentor = async () => {
+  return await axios.post(`${baseUrl}create_mentor`);
+};
+
+export const getAllMentors = async () => {
+  return (await axios.get(`${baseUrl}get_all_mentors`)).data;
+};
+
+// Speakers
+export const createSpeaker = async () => {
+  return await axios.post(`${baseUrl}create_speaker`);
+};
+
+export const getAllSpeakers = async () => {
+  return (await axios.get(`${baseUrl}get_all_speakers`)).data;
 };

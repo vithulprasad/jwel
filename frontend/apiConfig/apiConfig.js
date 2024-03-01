@@ -65,3 +65,18 @@ export const createSpeaker = async () => {
 export const getAllSpeakers = async () => {
   return (await axios.get(`${baseUrl}get_all_speakers`)).data;
 };
+
+//event_school
+export const createEventSchool = async (eventSchoolData) => {
+  console.log(eventSchoolData, "event school data of api config");
+
+  return await axios.post(`${baseUrl}create_event_school`, eventSchoolData);
+};
+// Example of getting all event schools
+export const getAllEventSchools = async () => {
+  return (await axios.get(`${baseUrl}get_all_event_schools`)).data;
+};
+//event_mentor
+export const createEventMentor = async (eventMentorData) => {
+  return await axios.post(`${baseUrl}create_event_mentor`, eventMentorData);
+};

@@ -3,6 +3,6 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   router.post("/create_mentor", mentor.createMentors);
-  router.get("/get_all_mentor", mentor.getAllMentors);
+  router.get("/get_all_mentors", mentor.getAllMentors);
   app.use("/api", router);
 };

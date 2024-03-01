@@ -58,6 +58,7 @@
               </option>
             </select>
           </div>
+
           <!-- About this event div -->
           <div>
             <label for="about-event" class="form-label">About this event</label>
@@ -126,31 +127,30 @@
           </div>
 
           <!-- school name -->
-         
 
           <div>
             <label for="event-type" class="form-label">Schools</label>
-            <select
-              aria-placeholder="plese select School"
-              v-model="selectedSchoolId"
-              class="form-select"
-            >
-              <option disabled selected>Please select an School</option>
-              <option
-                v-for="school in schools"
-                :key="school.school_id"
-                :value="school.school_id"
+            <div v-if="!isLoading">
+              <v-select
+                v-model="selectedSchoolId"
+                :items="formattedSchools"
+                label="Select School"
+                multiple
               >
-                {{ school.school_name }}
-              </option>
-            </select>
-            <!-- <span
-          style="color: red"
-          v-for="error in v$.selectedSchoolId.$errors"
-          :key="error.$uid"
-        >
-          {{ error.$message }}</span
-        > -->
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 2">
+                    <span>{{ item.title }}</span>
+                  </v-chip>
+                  <span
+                    v-if="index === 2"
+                    class="text-grey text-caption align-self-center"
+                  >
+                    (+{{ selectedSchoolId.length - 2 }} others)
+                  </span>
+                </template>
+              </v-select>
+            </div>
+            <div v-else>Loading...</div>
           </div>
 
           <!-- orientation name -->
@@ -199,27 +199,30 @@
       <TabContent title="Event Management">
         <div v-if="currentStep === 1">
           <!-- mentors -->
+
           <div>
-            <label for=""> mentors</label>
-            <v-select
-              v-model="values.selectedMentors"
-              :items="mentors"
-              label="Select Item"
-              multiple
-              variant="outlined"
-            >
-              <template v-slot:selection="{ item, index }">
-                <v-chip v-if="index < 2">
-                  <span>{{ item.title }}</span>
-                </v-chip>
-                <span
-                  v-if="index === 2"
-                  class="text-grey text-caption align-self-center"
-                >
-                  (+{{ values.selectedMentors.length - 2 }} others)
-                </span>
-              </template>
-            </v-select>
+            <label for="event-type" class="form-label">Mentors</label>
+            <div v-if="!isLoadingMentors">
+              <v-select
+                v-model="selectedMentorId"
+                :items="formattedMentors"
+                label="Select School"
+                multiple
+              >
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 2">
+                    <span>{{ item.title }}</span>
+                  </v-chip>
+                  <span
+                    v-if="index === 2"
+                    class="text-grey text-caption align-self-center"
+                  >
+                    (+{{ selectedMentorId.length - 2 }} others)
+                  </span>
+                </template>
+              </v-select>
+            </div>
+            <div v-else>Loading...</div>
           </div>
           <!-- speakers -->
           <div>
@@ -290,28 +293,36 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+//customselet
+
 const imagePreview = ref(null);
 const fileInputRef = ref(null);
 import { FormWizard, TabContent } from "vue3-form-wizard";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { createEvent, getAllSchools } from "~/apiConfig/apiConfig";
+import {
+  createEvent,
+  getAllSchools,
+  getAllMentors,
+  createEventSchool,
+  createEventMentor,
+} from "~/apiConfig/apiConfig";
 
 const currentStep = ref(0);
 const formWizard = ref(null);
 const stepLength = 1;
 const props = defineProps(["closeDialog"]);
+//school states
 const schools = ref([]);
+const selectedSchoolId = ref([]);
+const isLoading = ref(true);
+const formattedSchools = ref([]);
+//mentors states
+const mentors = ref([]);
+const isLoadingMentors = ref(true);
+const selectedMentorId = ref([]);
+const formattedMentors = ref([]);
 
-const mentors = [
-  { title: "foo" },
-  { title: "bar" },
-  { title: "fizz" },
-  { title: "buzz" },
-  { title: "fizzbuzz" },
-  { title: "foobar" },
-];
 const speakers = [
   { title: "speaker1" },
   { title: "speaker2" },
@@ -351,9 +362,6 @@ const values = ref({
   orientationVenue: "",
   orientataionDate: null,
   ageRestriction: "",
-  selectedMentors: [],
-  selectedSpeakers: [],
-  selectedMinistries: [],
 });
 
 function nextStep() {
@@ -393,37 +401,81 @@ const removeImage = () => {
   imagePreview.value = null;
   fileInputRef.value.value = "";
 };
-
-// Fetch schools from the database
-const fetchSchoolList = async () => {
+//fetching data for schools,mentors,speaker,ministy
+const fetchInitialData = async () => {
   try {
-    const response = await getAllSchools();
-    schools.value = response.data;
+    const schoolResponse = await getAllSchools();
+    schools.value = schoolResponse.data;
+    formatSchools();
+
+    const mentorResponse = await getAllMentors();
+    console.log(mentorResponse.data, "mentors");
+    mentors.value = mentorResponse.data;
+    formatMentors();
+
+    isLoading.value = false;
+    isLoadingMentors.value = false;
   } catch (error) {
-    console.error("Error fetching schools:", error);
+    console.error("Error fetching initial data:", error);
+    isLoading.value = false;
+    isLoadingMentors.value = false;
   }
 };
 
+//formatting  data based on Vuetify multiple select input
+const formatSchools = () => {
+  formattedSchools.value = schools.value.map((school) => ({
+    title: school.school_name,
+    value: school.school_id,
+  }));
+};
+
+const formatMentors = () => {
+  formattedMentors.value = mentors.value.map((mentor) => ({
+    title: mentor.mentor_name,
+    value: mentor.mentor_id,
+  }));
+};
 const onFinish = async () => {
   try {
-    console.log(values.value, "this is fomr data");
-    // const response = await axios.post(
-    //   "http://localhost:8088/api/create_event",
-    //   values.value
-    // );
     const response = await createEvent(values.value);
+    const eventId = response.data.data.event_id;
+
+    //creation of related table event_school
+    const selectedSchools = selectedSchoolId.value;
+    console.log(selectedSchools, "selected shcools array");
+    const eventSchoolPromises = selectedSchools.map(async (schoolId) => {
+      try {
+        await createEventSchool({ event_id: eventId, school_id: schoolId });
+      } catch (error) {
+        console.error("Error creating event_school record:", error);
+        throw new Error("Failed to create event_school record");
+      }
+    });
+    // Wait for all event_school records to be created
+    await Promise.all(eventSchoolPromises);
+
+    // Event_mentor table creation
+    const selectedMentors = selectedMentorId.value;
+    console.log(selectedMentors, "selected mentors array");
+    const eventMentorPromise = selectedMentors.map(async (mentorId) => {
+      try {
+        await createEventMentor({ event_id: eventId, mentor_id: mentorId });
+      } catch (error) {
+        console.error("Error creating event_mentor record:", error);
+        throw new Error("Failed to create event_mentor record");
+      }
+    });
+    await Promise.all(eventMentorPromise);
 
     console.log("Form submitted:", response.data);
     props.closeDialog();
   } catch (error) {
     console.error("Error submitting form:", error);
-    // Handle error (e.g., show an error message to the user)
   }
 };
-onMounted(() => {
-  fetchSchoolList();
-  console.log("Mounted and fetching data... for students");
-});
+
+onMounted(fetchInitialData);
 </script>
 
 <style>

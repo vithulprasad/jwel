@@ -226,26 +226,28 @@
           </div>
           <!-- speakers -->
           <div>
-            <label for=""> Speakers</label>
-            <v-select
-              v-model="values.selectedSpeakers"
-              :items="speakers"
-              label="Select Item"
-              multiple
-              variant="outlined"
-            >
-              <template v-slot:selection="{ item, index }">
-                <v-chip v-if="index < 2">
-                  <span>{{ item.title }}</span>
-                </v-chip>
-                <span
-                  v-if="index === 2"
-                  class="text-grey text-caption align-self-center"
-                >
-                  (+{{ values.selectedSpeakers.length - 2 }} others)
-                </span>
-              </template>
-            </v-select>
+            <label for="event-speaker" class="form-label">Speakers</label>
+            <div v-if="!isLoadingSpeakers">
+              <v-select
+                v-model="selectedSpeakerId"
+                :items="formattedSpeakers"
+                label="Select Speaker"
+                multiple
+              >
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 2">
+                    <span>{{ item.title }}</span>
+                  </v-chip>
+                  <span
+                    v-if="index === 2"
+                    class="text-grey text-caption align-self-center"
+                  >
+                    (+{{ selectedSpeakerId.length - 2 }} others)
+                  </span>
+                </template>
+              </v-select>
+            </div>
+            <div v-else>Loading...</div>
           </div>
 
           <!-- minitstries -->
@@ -306,6 +308,8 @@ import {
   getAllMentors,
   createEventSchool,
   createEventMentor,
+  createEventSpeaker,
+  getAllSpeakers,
 } from "~/apiConfig/apiConfig";
 
 const currentStep = ref(0);
@@ -322,23 +326,21 @@ const mentors = ref([]);
 const isLoadingMentors = ref(true);
 const selectedMentorId = ref([]);
 const formattedMentors = ref([]);
+//speaker states
+const speakers = ref([]);
+const isLoadingSpeakers = ref(true);
+const selectedSpeakerId = ref([]);
+const formattedSpeakers = ref([]);
 
-const speakers = [
-  { title: "speaker1" },
-  { title: "speaker2" },
-  { title: "speaker3" },
-  { title: "speaker4" },
-  { title: "speaker5" },
-  { title: "speaker6" },
-];
-const minitstries = [
-  { title: "ministry1" },
-  { title: "ministry2" },
-  { title: "ministry3" },
-  { title: "ministry4" },
-  { title: "ministry5" },
-  { title: "ministry6" },
-];
+
+// const minitstries = [
+//   { title: "ministry1" },
+//   { title: "ministry2" },
+//   { title: "ministry3" },
+//   { title: "ministry4" },
+//   { title: "ministry5" },
+//   { title: "ministry6" },
+// ];
 
 const ageOptions = [
   { label: "1", value: 1 },
@@ -404,21 +406,31 @@ const removeImage = () => {
 //fetching data for schools,mentors,speaker,ministy
 const fetchInitialData = async () => {
   try {
+    //getting school list from db
     const schoolResponse = await getAllSchools();
     schools.value = schoolResponse.data;
     formatSchools();
 
+    //getting mentors list from db
     const mentorResponse = await getAllMentors();
-    console.log(mentorResponse.data, "mentors");
     mentors.value = mentorResponse.data;
     formatMentors();
 
+    //getting speakers list from db
+
+    const speakerResponse = await getAllSpeakers();
+    speakers.value = speakerResponse.data;
+    formatSpeakers();
+
+    //loading states for all selects
     isLoading.value = false;
     isLoadingMentors.value = false;
+    isLoadingSpeakers.value = false;
   } catch (error) {
     console.error("Error fetching initial data:", error);
     isLoading.value = false;
     isLoadingMentors.value = false;
+    isLoadingSpeakers.value = false;
   }
 };
 
@@ -434,6 +446,12 @@ const formatMentors = () => {
   formattedMentors.value = mentors.value.map((mentor) => ({
     title: mentor.mentor_name,
     value: mentor.mentor_id,
+  }));
+};
+const formatSpeakers = () => {
+  formattedSpeakers.value = speakers.value.map((speaker) => ({
+    title: speaker.speaker_name,
+    value: speaker.speaker_id,
   }));
 };
 const onFinish = async () => {
@@ -467,6 +485,18 @@ const onFinish = async () => {
       }
     });
     await Promise.all(eventMentorPromise);
+    // Event_speaker table creation
+    const selectedSpeakers = selectedSpeakerId.value;
+    console.log(selectedSpeakers, "selected speakers array");
+    const eventSpeakerPromise = selectedSpeakers.map(async (speakerId) => {
+      try {
+        await createEventSpeaker({ event_id: eventId, speaker_id: speakerId });
+      } catch (error) {
+        console.error("Error creating event_speaker record:", error);
+        throw new Error("Failed to create event_speaker record");
+      }
+    });
+    await Promise.all(eventSpeakerPromise);
 
     console.log("Form submitted:", response.data);
     props.closeDialog();

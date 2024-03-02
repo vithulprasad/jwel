@@ -101,3 +101,14 @@ CREATE TABLE `event_mentors` (
     FOREIGN KEY (`event_id`) REFERENCES `Events` (`event_id`),
     FOREIGN KEY (`mentor_id`) REFERENCES `Mentors` (`mentor_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `event_speakers` (
+    `event_speaker_id` INT(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `event_id` INT(30) NOT NULL,
+    `speaker_id` INT(30) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+    
+    FOREIGN KEY (`event_id`) REFERENCES `Events` (`event_id`),
+    FOREIGN KEY (`speaker_id`) REFERENCES `Speakers` (`speaker_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

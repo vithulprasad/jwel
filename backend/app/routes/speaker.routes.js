@@ -5,7 +5,7 @@ module.exports = (app) => {
 
   // create role
   router.post("/create_speaker", speaker.createSpeakers);
-  router.get("/get_all_speaker", speaker.getAllSpeakers);
+  router.get("/get_all_speakers", speaker.getAllSpeakers);
 
   app.use("/api", router);
 };

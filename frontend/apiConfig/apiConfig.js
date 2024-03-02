@@ -80,6 +80,11 @@ export const getAllEventSchools = async () => {
 export const createEventMentor = async (eventMentorData) => {
   return await axios.post(`${baseUrl}create_event_mentor`, eventMentorData);
 };
+//event_speaker
 export const createEventSpeaker = async (eventSpeakerData) => {
   return await axios.post(`${baseUrl}create_event_speakers`, eventSpeakerData);
 };
+//evetn_ministry
+export const createEventMinistry=async(eventMinistryData)=>{
+  return await axios.post(`${baseUrl}create_event_ministries`, eventMinistryData);
+}

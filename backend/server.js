@@ -55,6 +55,7 @@ require("./app/routes/speaker.routes")(app);
 require("./app/routes/event_school.routes")(app);
 require("./app/routes/event_mentor.routes")(app);
 require("./app/routes/event_speaker.routes")(app);
+require("./app/routes/event_ministry.routes")(app)
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8088;

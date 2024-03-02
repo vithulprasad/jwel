@@ -252,26 +252,28 @@
 
           <!-- minitstries -->
           <div>
-            <label for=""> Ministries</label>
-            <v-select
-              v-model="values.selectedMinistries"
-              :items="minitstries"
-              label="Select Item"
-              multiple
-              variant="outlined"
-            >
-              <template v-slot:selection="{ item, index }">
-                <v-chip v-if="index < 2">
-                  <span>{{ item.title }}</span>
-                </v-chip>
-                <span
-                  v-if="index === 2"
-                  class="text-grey text-caption align-self-center"
-                >
-                  (+{{ values.selectedMinistries.length - 2 }} others)
-                </span>
-              </template>
-            </v-select>
+            <label for="event-ministry" class="form-label">Ministries</label>
+            <div v-if="!isLoadingMinistries">
+              <v-select
+                v-model="selectedMinistryId"
+                :items="formattedMinistries"
+                label="Select Ministry"
+                multiple
+              >
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 2">
+                    <span>{{ item.title }}</span>
+                  </v-chip>
+                  <span
+                    v-if="index === 2"
+                    class="text-grey text-caption align-self-center"
+                  >
+                    (+{{ selectedMinistryId.length - 2 }} others)
+                  </span>
+                </template>
+              </v-select>
+            </div>
+            <div v-else>Loading...</div>
           </div>
         </div>
 
@@ -310,6 +312,8 @@ import {
   createEventMentor,
   createEventSpeaker,
   getAllSpeakers,
+  getAllMinstry,
+  createEventMinistry,
 } from "~/apiConfig/apiConfig";
 
 const currentStep = ref(0);
@@ -331,16 +335,11 @@ const speakers = ref([]);
 const isLoadingSpeakers = ref(true);
 const selectedSpeakerId = ref([]);
 const formattedSpeakers = ref([]);
-
-
-// const minitstries = [
-//   { title: "ministry1" },
-//   { title: "ministry2" },
-//   { title: "ministry3" },
-//   { title: "ministry4" },
-//   { title: "ministry5" },
-//   { title: "ministry6" },
-// ];
+//Ministries states
+const ministries = ref([]);
+const isLoadingMinistries = ref(true);
+const selectedMinistryId = ref([]);
+const formattedMinistries = ref([]);
 
 const ageOptions = [
   { label: "1", value: 1 },
@@ -421,16 +420,23 @@ const fetchInitialData = async () => {
     const speakerResponse = await getAllSpeakers();
     speakers.value = speakerResponse.data;
     formatSpeakers();
+    //getting ministries from db
+
+    const ministryResponse = await getAllMinstry();
+    ministries.value = ministryResponse.data;
+    formatMinistries();
 
     //loading states for all selects
     isLoading.value = false;
     isLoadingMentors.value = false;
     isLoadingSpeakers.value = false;
+    isLoadingMinistries.value = false;
   } catch (error) {
     console.error("Error fetching initial data:", error);
     isLoading.value = false;
     isLoadingMentors.value = false;
     isLoadingSpeakers.value = false;
+    isLoadingMinistries.value = false;
   }
 };
 
@@ -452,6 +458,12 @@ const formatSpeakers = () => {
   formattedSpeakers.value = speakers.value.map((speaker) => ({
     title: speaker.speaker_name,
     value: speaker.speaker_id,
+  }));
+};
+const formatMinistries = () => {
+  formattedMinistries.value = ministries.value.map((minister) => ({
+    title: minister.ministry_name,
+    value: minister.ministry_id,
   }));
 };
 const onFinish = async () => {
@@ -497,6 +509,21 @@ const onFinish = async () => {
       }
     });
     await Promise.all(eventSpeakerPromise);
+    // Event ministry table creation
+    const selectedMinistries = selectedMinistryId.value;
+    console.log(selectedMinistries, "selected ministries array");
+    const eventMinistryPromise = selectedMinistries.map(async (ministryId) => {
+      try {
+        await createEventMinistry({
+          event_id: eventId,
+          ministry_id: ministryId,
+        });
+      } catch (error) {
+        console.error("Error creating event_ministry record:", error);
+        throw new Error("Failed to create event_ministry record");
+      }
+    });
+    await Promise.all(eventMinistryPromise);
 
     console.log("Form submitted:", response.data);
     props.closeDialog();

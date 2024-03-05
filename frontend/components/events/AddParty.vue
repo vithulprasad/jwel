@@ -33,7 +33,7 @@
               prepend-icon="$vuetify"
               variant="text"
               class="text-none"
-              @click="openMemberSelectionDialog"
+              @click="openUserSelectionDialog"
             >
               Add members
             </v-btn>
@@ -46,11 +46,6 @@
           </button>
         </div>
       </form>
-      <div class="events-party-member-selection">
-
-        <EventsPartyMemberSelection v-if="showMemberSelection"/>
-      </div>
-
     </div>
   </div>
 </template>
@@ -59,29 +54,42 @@
 <!-- <button class="btn btn-danger" @click="closeDialog">Close</button> -->
 
 <script setup>
-const emit = defineEmits(["closeDialog"]);
+import { useStore } from "~/store";
+const emit = defineEmits(["closeDialog", "openUserSelectionDialog"]);
 import { createEventParty } from "~/apiConfig/apiConfig";
 import { ref, computed } from "vue";
 
 const props = defineProps(["eventDetails"]);
 console.log(props.eventDetails.event_id, "event id ");
-const showMemberSelection = ref(false);
-function openMemberSelectionDialog() {
-  showMemberSelection.value = true;
+const store = useStore();
+
+function openUserSelectionDialog() {
+  emit("openUserSelectionDialog");
+  console.log("fucnion emited on add party");
 }
 function closeDialog() {
   emit("closeDialog");
 }
 
-let partyName = ref("");
-let partyTagline = ref("");
+const partyName = computed({
+  get: () => store.partyName,
+  set: (value) => store.setPartyName(value),
+});
+
+const partyTagline = computed({
+  get: () => store.partyTagline,
+  set: (value) => store.setPartyTagline(value),
+});
+
+// let partyName = ref("");
+// let partyTagline = ref("");
 
 const submitForm = async () => {
   try {
     const eventPartyData = {
       event_id: props.eventDetails.event_id,
-      event_party_name: partyName.value,
-      event_party_tagline: partyTagline.value,
+      event_party_name: store.partyName,
+      event_party_tagline: store.partyTagline,
     };
     const response = await createEventParty(eventPartyData);
     console.log(response.data);
@@ -95,10 +103,8 @@ const submitForm = async () => {
 
 <style scoped>
 .form-container {
-  max-height: 400px; 
-  overflow-y: auto; 
+  max-height: 400px;
+  overflow-y: auto;
   padding: 15px;
 }
-
-
 </style>

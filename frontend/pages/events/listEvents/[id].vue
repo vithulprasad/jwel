@@ -130,10 +130,16 @@
       <div v-if="isDialogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
-            <EventsAddParty
-              :eventDetails="events.data"
-              @closeDialog="closeDialog"
-            />
+            <template v-if="!isUserDialogOpen">
+              <EventsAddParty
+                :eventDetails="events.data"
+                @closeDialog="closeDialog"
+                @openUserSelectionDialog="openUserSelectionDialog"
+              />
+            </template>
+            <template v-else>
+              <EventsPartyMemberSelection @backToAddParty="backToAddParty" />
+            </template>
           </div>
         </div>
       </div>
@@ -148,10 +154,20 @@ import Parties from "~/components/events/Parties.vue";
 import Committee from "~/components/events/Committee.vue";
 import { getOneEvent } from "~/apiConfig/apiConfig";
 const isDialogOpen = ref(false);
+const isUserDialogOpen = ref(false);
 
 const tab = ref(null);
 const events = ref(null);
 const { id } = useRoute().params;
+
+const openUserSelectionDialog = () => {
+  isUserDialogOpen.value = true;
+  console.log("this func from parent ");
+};
+
+const backToAddParty = () => {
+  isUserDialogOpen.value = false;
+};
 
 const addPartyDialog = () => {
   isDialogOpen.value = true;

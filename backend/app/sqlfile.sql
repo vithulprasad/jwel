@@ -134,3 +134,19 @@ CREATE TABLE `event_parties` (
     
     FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `event_participants` (
+    `id` INT(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `event_id` INT(30) NOT NULL,
+    `user_id` INT(30) NOT NULL,
+    `status` ENUM('applied', 'rejected', 'accepted') NOT NULL,
+    `party_post` ENUM('member', 'VP', 'President') DEFAULT NULL,
+    `party_id` INT(30) DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (`event_id`) REFERENCES `Events` (`event_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `Students` (`student_id`),
+    FOREIGN KEY (`party_id`) REFERENCES `event_parties` (`event_party_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+	

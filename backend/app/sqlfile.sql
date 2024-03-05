@@ -123,3 +123,14 @@ CREATE TABLE `event_ministries` (
     FOREIGN KEY (`event_id`) REFERENCES `Events` (`event_id`),
     FOREIGN KEY (`ministry_id`) REFERENCES `Ministries` (`ministry_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `event_parties` (
+    `event_party_id` INT(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `event_id` INT(30) NOT NULL,
+    `event_party_name` VARCHAR(255),
+    `event_party_tagline` VARCHAR(255),
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+    
+    FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

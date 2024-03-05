@@ -85,6 +85,13 @@ export const createEventSpeaker = async (eventSpeakerData) => {
   return await axios.post(`${baseUrl}create_event_speakers`, eventSpeakerData);
 };
 //evetn_ministry
-export const createEventMinistry=async(eventMinistryData)=>{
-  return await axios.post(`${baseUrl}create_event_ministries`, eventMinistryData);
-}
+export const createEventMinistry = async (eventMinistryData) => {
+  return await axios.post(
+    `${baseUrl}create_event_ministries`,
+    eventMinistryData
+  );
+};
+//event Party Route
+export const createEventParty = async (eventPartyData) => {
+  return await axios.post(`${baseUrl}create_event_party`, eventPartyData);
+};

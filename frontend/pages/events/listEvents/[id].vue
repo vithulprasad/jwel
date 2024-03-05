@@ -114,7 +114,7 @@
                   <EventDetails :eventDetails="events.data" />
                 </template>
                 <template v-else-if="tab === 2">
-                  <Parties @addPartyDilog="addPartyDilog" />
+                  <Parties @openDialog="addPartyDialog" />
                 </template>
                 <template v-else-if="tab === 3">
                   <Alliance />
@@ -130,8 +130,10 @@
       <div v-if="isDialogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
-            <EventsAddParty @closeDialog="closeDialog" />
-            <!-- <EventsTestStepper  @closeDialog="closeDialog"/> -->
+            <EventsAddParty
+              :eventDetails="events.data"
+              @closeDialog="closeDialog"
+            />
           </div>
         </div>
       </div>
@@ -145,13 +147,13 @@ import Alliance from "~/components/events/Alliance.vue";
 import Parties from "~/components/events/Parties.vue";
 import Committee from "~/components/events/Committee.vue";
 import { getOneEvent } from "~/apiConfig/apiConfig";
-defineProps(["isDialogOpen"]);
+const isDialogOpen = ref(false);
 
 const tab = ref(null);
 const events = ref(null);
 const { id } = useRoute().params;
 
-const addPartyDilog = () => {
+const addPartyDialog = () => {
   isDialogOpen.value = true;
 };
 

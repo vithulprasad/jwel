@@ -6,7 +6,7 @@
       color="#5865f2"
       size="small"
       variant="flat"
-      @click="addPartyDilog"
+      @click="addPartyDialog"
     >
       Create party
     </v-btn>
@@ -50,7 +50,7 @@
 
           <div class="d-flex mt-2">
             <div>
-              <v-chip pill v-bind="props" link size="small">
+              <v-chip pill link size="small">
                 <v-avatar start>
                   <v-img
                     src="https://cdn.vuetifyjs.com/images/john.png"
@@ -64,7 +64,7 @@
               </v-chip>
             </div>
             <div class="pl-4">
-              <v-chip pill v-bind="props" link size="small">
+              <v-chip pill link size="small">
                 <v-avatar start>
                   <v-img
                     src="https://cdn.vuetifyjs.com/images/john.png"
@@ -81,17 +81,23 @@
   </div>
 </template>
 
-<script>
+<script setup>
+const emit = defineEmits(["openDialog"]);
+
+function addPartyDialog() {
+  emit("openDialog");
+}
+</script>
+<!-- <script>
 export default {
   methods: {
-    addPartyDilog() {
-      //Logic for dilog box opening
+    addPartyDialog() {
       console.log("button clicked");
-      this.$emit("addPartyDilog");
+      this.$emit("openDialog");
     },
   },
 };
-</script>
+</script> -->
 
 <style scoped>
 .involved_parties {

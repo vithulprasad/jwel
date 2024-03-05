@@ -60,7 +60,7 @@
           <div class="card-body">
             <h5 class="card-title co-ordinators">Co ordinators</h5>
             <div class="d-flex">
-              <v-chip pill v-bind="props" link>
+              <v-chip pill  link>
                 <v-avatar start>
                   <v-img
                     src="https://cdn.vuetifyjs.com/images/john.png"

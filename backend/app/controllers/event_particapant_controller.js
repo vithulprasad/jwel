@@ -1,5 +1,5 @@
 const db = require("../models");
-const EventParticipant = db.eventParticipant;
+const EventParticipant = db.event_particapants;
 
 exports.createDummyEventParticipants = async (req, res) => {
   try {
@@ -9,36 +9,26 @@ exports.createDummyEventParticipants = async (req, res) => {
         event_id: 1,
         user_id: 1,
         status: "accepted",
-        party_post: "member",
-        party_id: 1,
       },
       {
         event_id: 1,
         user_id: 2,
         status: "accepted",
-        party_post: "member",
-        party_id: 2,
       },
       {
         event_id: 1,
         user_id: 3,
         status: "accepted",
-        party_post: "member",
-        party_id: 3,
       },
       {
-        event_id: 3,
+        event_id: 1,
         user_id: 3,
         status: "applied",
-        party_post: "member",
-        party_id: 3,
       },
       {
         event_id: 3,
         user_id: 3,
         status: "rejected",
-        party_post: "member",
-        party_id: 3,
       },
     ];
 

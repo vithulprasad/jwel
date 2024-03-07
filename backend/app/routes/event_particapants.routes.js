@@ -9,5 +9,9 @@ module.exports = (app) => {
     "/get_all_eventParticapants",
     eventParticipant.getAllEventParticipants
   );
+  router.get(
+    "/get_eventPartticapants_by_eventId/:id",
+    eventParticipant.getEventParticipantsByEventId
+  );
   app.use("/api", router);
 };

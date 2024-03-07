@@ -1,5 +1,6 @@
 const db = require("../models");
-const EventParticipant = db.event_particapants;
+const EventParticipant = db.event_participants;
+const Student = db.students;
 
 exports.createDummyEventParticipants = async (req, res) => {
   try {
@@ -77,9 +78,9 @@ exports.getAllEventParticipants = async (req, res) => {
 // Controller function to get a single event participant by ID
 exports.getOneEventParticipant = async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const id = req.params.id;
 
-    const eventParticipant = await EventParticipant.findByPk(eventId);
+    const eventParticipant = await EventParticipant.findByPk(id);
 
     if (!eventParticipant) {
       return res.status(404).json({ message: "Event participant not found" });
@@ -91,6 +92,44 @@ exports.getOneEventParticipant = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in fetching event participant:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      statusCode: 500,
+    });
+  }
+};
+
+// Controller function to get event participants by event ID and populate with student details
+exports.getEventParticipantsByEventId = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const eventParticipants = await EventParticipant.findAll({
+      where: { event_id: id ,status:"accepted"},
+      include: [
+        {
+          model: Student,
+          as: "participant",
+         
+        },
+      ],
+    });
+
+    if (!eventParticipants || eventParticipants.length === 0) {
+      return res.json({
+        data: [],
+        message: "No event participants found for the given event id",
+        statusCode: 200,
+      });
+    }
+
+    return res.json({
+      data: eventParticipants,
+      message: "Success",
+      statusCode: 200,
+    });
+  } catch (error) {
+    console.error("Error in fetching event participants:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       statusCode: 500,

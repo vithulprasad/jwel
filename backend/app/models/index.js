@@ -28,10 +28,26 @@ db.schools = require("./school.model.js")(sequelize, Sequelize);
 db.ministry = require("./ministry.model")(sequelize, Sequelize);
 db.mentor = require("./mentor.model.js")(sequelize, Sequelize);
 db.speaker = require("./speaker.model.js")(sequelize, Sequelize);
-db.event_schools=require("./event_school.model.js")(sequelize, Sequelize);
-db.event_mentors=require("./event_mentor.model.js")(sequelize,Sequelize)
-db.event_speakers=require("./event_speaker.model.js")(sequelize,Sequelize)
-db.event_ministries=require("./event_ministry.model.js")(sequelize,Sequelize)
-db.event_parties=require("./event_party.model.js")(sequelize,Sequelize)
-db.event_particapants=require("./event_particapant.model.js")(sequelize,Sequelize)
+db.event_schools = require("./event_school.model.js")(sequelize, Sequelize);
+db.event_mentors = require("./event_mentor.model.js")(sequelize, Sequelize);
+db.event_speakers = require("./event_speaker.model.js")(sequelize, Sequelize);
+db.event_ministries = require("./event_ministry.model.js")(
+  sequelize,
+  Sequelize
+);
+db.event_parties = require("./event_party.model.js")(sequelize, Sequelize);
+// db.event_particapants=require("./event_particapant.model.js")(sequelize,Sequelize)
+
+const EventParticipant = require("./event_particapant.model.js")(
+  sequelize,
+  Sequelize
+);
+const Student = require("./student.model.js")(sequelize, Sequelize);
+
+EventParticipant.belongsTo(Student, {
+  foreignKey: "user_id",
+  as: "participant",
+});
+
+db.event_participants = EventParticipant;
 module.exports = db;

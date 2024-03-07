@@ -102,3 +102,8 @@ export const getEventParty = async () => {
 export const getPartyByEventId = async (id) => {
   return await axios.get(`${baseUrl}get_all_party_eventsId/${id}`);
 };
+
+//Event Particapants routes
+export const getEventParticapantsByEventId = async (id) => {
+  return await axios.get(`${baseUrl}get_eventPartticapants_by_eventId/${id}`);
+};

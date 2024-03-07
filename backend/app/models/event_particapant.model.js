@@ -1,5 +1,6 @@
 const Event = require("./event.model");
 const Student = require("./student.model");
+const index = require("./index");
 const event_parties = require("./event_party.model");
 
 module.exports = (sequelize, Sequelize) => {
@@ -12,7 +13,7 @@ module.exports = (sequelize, Sequelize) => {
     event_id: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      references: {
+      references: { 
         model: Event,
         key: "event_id",
       },
@@ -43,5 +44,7 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
+
+  
   return EventParticipants;
 };

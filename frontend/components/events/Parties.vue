@@ -12,7 +12,11 @@
     </v-btn>
   </div>
   <div class="mt-2">
-    <div class="card">
+    <div
+      v-for="party in partyDetails"
+      :key="party.event_party_id"
+      class="card mb-2"
+    >
       <div class="card-body d-flex">
         <div class="p-2">
           <img src="/static/img/eventPic.png" alt="" />
@@ -21,7 +25,8 @@
           <div class="d-flex">
             <div class="">
               <h5 class="card-title party_title">
-                Citizenship Education Party
+                <!-- party name -->
+                {{ party.event_party_name }}
               </h5>
             </div>
             <div class="ms-auto">
@@ -45,7 +50,11 @@
             </div>
           </div>
           <div class="d-flex">
-            <p class="card-text pl-1 party_tag">This is party tagline</p>
+            <!-- party tagline -->
+            <p class="card-text pl-1 party_tag">
+              {{ party.event_party_tagline }}
+            </p>
+            <button @click="viewPartyDialog">00</button>
           </div>
 
           <div class="d-flex mt-2">
@@ -82,22 +91,16 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["openDialog"]);
+const emit = defineEmits(["openDialog", "openViewDilog"]);
+defineProps(["partyDetails"]);
 
 function addPartyDialog() {
   emit("openDialog");
 }
+function viewPartyDialog() {
+  emit("openViewDilog");
+}
 </script>
-<!-- <script>
-export default {
-  methods: {
-    addPartyDialog() {
-      console.log("button clicked");
-      this.$emit("openDialog");
-    },
-  },
-};
-</script> -->
 
 <style scoped>
 .involved_parties {

@@ -95,3 +95,10 @@ export const createEventMinistry = async (eventMinistryData) => {
 export const createEventParty = async (eventPartyData) => {
   return await axios.post(`${baseUrl}create_event_party`, eventPartyData);
 };
+export const getEventParty = async () => {
+  return await axios.get(`${baseUrl}get_all_party`);
+};
+
+export const getPartyByEventId = async (id) => {
+  return await axios.get(`${baseUrl}get_all_party_eventsId/${id}`);
+};

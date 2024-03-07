@@ -2,7 +2,10 @@
   <div class="">
     <div class="row">
       <div
-        :class="{ 'col-lg-6': isDialogOpen, 'col-lg-12': !isDialogOpen }"
+        :class="{
+          'col-lg-6': isDialogOpen || isViewDialog,
+          'col-lg-12': !isDialogOpen && !isViewDialog,
+        }"
         class="col-md-12 col-sm-12 pt-2"
       >
         <div class="row">
@@ -114,7 +117,11 @@
                   <EventDetails :eventDetails="events.data" />
                 </template>
                 <template v-else-if="tab === 2">
-                  <Parties @openDialog="addPartyDialog" />
+                  <Parties
+                    :partyDetails="eventParty.data"
+                    @openDialog="addPartyDialog"
+                    @openViewDilog="openViewDilog"
+                  />
                 </template>
                 <template v-else-if="tab === 3">
                   <Alliance />
@@ -127,7 +134,16 @@
           </div>
         </div>
       </div>
-      <div v-if="isDialogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
+
+      <!-- <div v-if="isViewDialog" class="col-lg-6 col-md-12 col-sm-12 pt-2">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
+            <EventsViewParty />
+          </div>
+        </div>
+      </div> -->
+
+      <!-- <div v-if="isDialogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
             <template v-if="!isUserDialogOpen">
@@ -136,6 +152,30 @@
                 @closeDialog="closeDialog"
                 @openUserSelectionDialog="openUserSelectionDialog"
               />
+            </template>
+            <template v-else>
+              <EventsPartyMemberSelection @backToAddParty="backToAddParty" />
+            </template>
+          </div>
+        </div>
+      </div> -->
+      <div
+        v-if="isDialogOpen || isViewDialog"
+        class="col-lg-6 col-md-12 col-sm-12 pt-2"
+      >
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
+            <template v-if="!isUserDialogOpen">
+              <template v-if="!isViewDialog">
+                <EventsAddParty
+                  :eventDetails="events.data"
+                  @closeDialog="closeDialog"
+                  @openUserSelectionDialog="openUserSelectionDialog"
+                />
+              </template>
+              <template v-else>
+                <EventsViewParty @closeviewDilog="closeviewDilog" />
+              </template>
             </template>
             <template v-else>
               <EventsPartyMemberSelection @backToAddParty="backToAddParty" />
@@ -152,19 +192,28 @@ import EventDetails from "~/components/events/EventDetails.vue";
 import Alliance from "~/components/events/Alliance.vue";
 import Parties from "~/components/events/Parties.vue";
 import Committee from "~/components/events/Committee.vue";
-import { getOneEvent } from "~/apiConfig/apiConfig";
+import { getOneEvent, getPartyByEventId } from "~/apiConfig/apiConfig";
 const isDialogOpen = ref(false);
 const isUserDialogOpen = ref(false);
+const isViewDialog = ref(false);
 
 const tab = ref(null);
 const events = ref(null);
+const eventParty = ref(null);
 const { id } = useRoute().params;
+console.log(eventParty, "evebt aprsfsdfsd");
 
 const openUserSelectionDialog = () => {
   isUserDialogOpen.value = true;
   console.log("this func from parent ");
 };
-
+const openViewDilog = () => {
+  isViewDialog.value = true;
+  console.log(isViewDialog.value, "button clicked on div");
+};
+const closeviewDilog = () => {
+  isViewDialog.value = false;
+};
 const backToAddParty = () => {
   isUserDialogOpen.value = false;
 };
@@ -176,18 +225,21 @@ const addPartyDialog = () => {
 const closeDialog = () => {
   isDialogOpen.value = false;
 };
-const fetchData = async () => {
+
+const fetchInitialData = async () => {
   try {
     const res = await getOneEvent(id);
     events.value = res.data;
-    console.log(events.value, "this is event name");
+
+    const partResponse = await getPartyByEventId(id);
+    eventParty.value = partResponse.data;
   } catch (error) {
-    console.error("Error fetching events:", error.message);
+    console.error("Error fetching initial data:", error);
   }
 };
 
 onMounted(() => {
-  fetchData();
+  fetchInitialData();
 });
 definePageMeta({
   layout: "main",

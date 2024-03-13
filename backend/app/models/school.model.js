@@ -18,9 +18,7 @@ module.exports = (sequelize, Sequelize) => {
     school_address: {
       type: Sequelize.STRING,
     },
-    school_phone_number: {
-      type: Sequelize.STRING,
-    },
+   
     principal_name: {
       type: Sequelize.STRING,
     },
@@ -29,6 +27,18 @@ module.exports = (sequelize, Sequelize) => {
     },
     principal_phone_number: {
       type: Sequelize.STRING,
+    },
+    vice_name:{
+      type:Sequelize.STRING
+
+    },
+    vice_email:{
+      type:Sequelize.STRING
+
+    },
+    vice_phone_number:{
+      type:Sequelize.STRING
+
     },
     created_at: {
       type: Sequelize.DATE,

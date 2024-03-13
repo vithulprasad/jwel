@@ -36,19 +36,21 @@
 
 //school creation
 
-// CREATE TABLE `Schools` (
-//     `school_id` INT(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-//     `school_name` VARCHAR(50) DEFAULT NULL,
-//     `school_type` ENUM('independent', 'group') DEFAULT NULL,
-//     `school_number` VARCHAR(20) DEFAULT NULL,
-//     `school_address` VARCHAR(50) DEFAULT NULL,
-//     `school_phone_number` VARCHAR(20) DEFAULT NULL,
-//     `principal_name` VARCHAR(50) DEFAULT NULL,
-//     `principal_email` VARCHAR(50) DEFAULT NULL,
-//     `principal_phone_number` VARCHAR(20) DEFAULT NULL,
-//     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-//     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `Schools` (
+    `school_id` INT(30) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `school_name` VARCHAR(50) DEFAULT NULL,
+    `school_type` VARCHAR(50) DEFAULT NULL,
+    `school_number` VARCHAR(20) DEFAULT NULL,
+    `school_address` VARCHAR(50) DEFAULT NULL,
+    `principal_name` VARCHAR(50) DEFAULT NULL,
+    `principal_email` VARCHAR(50) DEFAULT NULL,
+    `principal_phone_number` VARCHAR(20) DEFAULT NULL,
+    `vice_name` VARCHAR(50) DEFAULT NULL,
+     `vive_email` VARCHAR(50) DEFAULT NULL,
+    `vice_phone_number` VARCHAR(20) DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 //Minstry

@@ -36,6 +36,13 @@ export const createSchool = async (formData) => {
 export const getAllSchools = async () => {
   return (await axios.get(`${baseUrl}get_all_schools`)).data;
 };
+export const getSchoolById = async (id) => {
+  return (await axios.get(`${baseUrl}get_school_byId/${id}`)).data;
+};
+export const updateSchoolById = async (id,data) => {
+  return (await axios.put(`${baseUrl}update_school_byId/${id}`,data));
+};
+
 export const getUserBySchool = async (schoolId) => {
   console.log(schoolId, "school Id in the apiconfig");
   return await axios.get(`${baseUrl}get_users/${schoolId}`);

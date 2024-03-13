@@ -22,13 +22,20 @@
 <!-- Button with close logic -->
 <!-- <button class="btn btn-danger" @click="closeDialog">Close</button> -->
 
-<script>
+<!-- <script>
 export default {
   methods: {
     closeDialog() {
       this.$emit("closeDialog");
     },
   },
+};
+</script> -->
+<script setup>
+const emit = defineEmits(["closeDialog"]);
+
+const closeDialog = () => {
+  emit("closeDialog");
 };
 </script>
 

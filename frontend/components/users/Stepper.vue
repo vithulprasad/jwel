@@ -252,7 +252,6 @@ const resetForm = () => {
 
 onMounted(() => {
   fetchSchoolList();
-  console.log("Mounted and fetching data... for students");
 });
 </script>
 

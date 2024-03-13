@@ -1,6 +1,5 @@
 <template>
   <div
-    @click="fetchUsers(schoolValues.school_id)"
     class="d-flex align-items-center justify-content-center mainCard rounded my-2"
   >
     <div class="pl-3 pt-3">
@@ -36,6 +35,8 @@
             class="card-title"
           >
             {{ schoolValues.school_name }}
+            <!-- view shcool dilobox -->
+            <button @click="viewSchool">view</button>
           </h5>
         </div>
         <div class="d-flex">
@@ -64,7 +65,9 @@
                 </li> -->
               <li><a class="dropdown-item" href="#">School Status</a></li>
 
-              <li><a class="dropdown-item" href="#">Edit</a></li>
+              <li>
+                <a @click="editSchool" class="dropdown-item" href="#">Edit</a>
+              </li>
               <li><a class="dropdown-item" href="#">Delete</a></li>
             </ul>
           </div>
@@ -93,6 +96,13 @@
 <script setup>
 import { getUserBySchool } from "~/apiConfig/apiConfig";
 const props = defineProps(["schoolValues"]);
+const emit = defineEmits(["openViewSchool", "editSchool"]);
+const viewSchool = () => {
+  emit("openViewSchool");
+};
+const editSchool = () => {
+  emit("editSchool",props.schoolValues.school_id);
+};
 const fetchUsers = async (schoolId) => {
   try {
     console.log(schoolId, "shool id fromthe  frontend");

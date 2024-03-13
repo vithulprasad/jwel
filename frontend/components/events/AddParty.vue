@@ -25,6 +25,21 @@
             rows="3"
           ></textarea>
         </div>
+        <!-- President -->
+        <div>
+          <label for="partyPresident"> President</label>
+          <v-select :items="studentNames"></v-select>
+        </div>
+        <!-- Vice president -->
+        <div>
+          <label for="partyVicePresident">Vice President</label>
+          <v-select :items="studentNames"></v-select>
+        </div>
+        <!-- Mentor -->
+        <div>
+          <label for="Mentor">Mentor</label>
+          <v-select :items="['Mentor 1', ' Mentor 2', 'Mentor 3']"></v-select>
+        </div>
         <!-- party members -->
         <div>
           <div class="d-flex justify-content-between align-items-center">
@@ -37,6 +52,9 @@
             >
               Add members
             </v-btn>
+          </div>
+          <div>
+            <small>No members added</small>
           </div>
         </div>
         <!-- Submit button -->
@@ -56,7 +74,10 @@
 <script setup>
 import { useStore } from "~/store";
 const emit = defineEmits(["closeDialog", "openUserSelectionDialog"]);
-import { createEventParty } from "~/apiConfig/apiConfig";
+import {
+  createEventParty,
+  getEventParticapantsByEventId,
+} from "~/apiConfig/apiConfig";
 import { ref, computed } from "vue";
 
 const props = defineProps(["eventDetails"]);
@@ -65,7 +86,6 @@ const store = useStore();
 
 function openUserSelectionDialog() {
   emit("openUserSelectionDialog");
-  console.log("fucnion emited on add party");
 }
 function closeDialog() {
   emit("closeDialog");
@@ -80,10 +100,21 @@ const partyTagline = computed({
   get: () => store.partyTagline,
   set: (value) => store.setPartyTagline(value),
 });
+let participants = ref([]);
+const studentNames = computed(() =>
+  participants.value.map((participant) => participant.participant.student_name)
+);
 
-// let partyName = ref("");
-// let partyTagline = ref("");
-
+const fetchInitialData = async () => {
+  try {
+    const participantsResponse = await getEventParticapantsByEventId(
+      props.eventDetails.event_id
+    );
+    participants.value = participantsResponse.data.data;
+  } catch (error) {
+    console.error("Error fetching initial data:", error);
+  }
+};
 const submitForm = async () => {
   try {
     const eventPartyData = {
@@ -99,6 +130,7 @@ const submitForm = async () => {
     alert("Error creating event party. Please try again!");
   }
 };
+onMounted(fetchInitialData);
 </script>
 
 <style scoped>

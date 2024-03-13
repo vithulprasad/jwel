@@ -136,6 +136,56 @@
           {{ error.$message }}</span
         >
       </div>
+      <!-- Vice principle details -->
+      <div>
+        <label for="vice-name">Vice Principal Name</label>
+        <input
+          v-model="formData.viceName"
+          id="vice-principal-name"
+          placeholder="Enter Vice Principal Name"
+        />
+        <!-- <span
+          style="color: red"
+          v-for="error in v$.principalName.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        > -->
+      </div>
+
+      <div>
+        <label for="principal-email">Vice Principal Email</label>
+        <input
+          type="email"
+          v-model="formData.viceEmail"
+          id="vice-principal-email"
+          placeholder="Enter Vice Principal Email"
+        />
+        <!-- <span
+          style="color: red"
+          v-for="error in v$.principalEmail.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        > -->
+      </div>
+
+      <div>
+        <label for="principal-phone">Vice Principal Phone Number</label>
+        <input
+          type="tel"
+          v-model="formData.vicePhone"
+          id="vice-principal-phone"
+          placeholder="Enter Principal Phone Number"
+        />
+        <!-- <span
+          style="color: red"
+          v-for="error in v$.principalPhone.$errors"
+          :key="error.$uid"
+        >
+          {{ error.$message }}</span
+        > -->
+      </div>
 
       <!-- Submit Button -->
       <div class="d-grid mt-4">
@@ -158,9 +208,11 @@ const formData = reactive({
   principalName: "",
   principalEmail: "",
   principalPhone: "",
+  viceName: "",
+  viceEmail: "",
+  vicePhone: "",
 });
 const rules = computed(() => {
-  const phoneNumberPattern = /^\d*$/; // Regular expression to match only numbers
 
   return {
     schoolName: {
@@ -218,14 +270,16 @@ const submitForm = async () => {
     try {
       const response = await createSchool({
         school_name: formData.schoolName,
-        school_phone_number: formData.schoolPhone,
+        school_number: formData.schoolPhone,
         school_type: formData.schoolType,
         school_address: formData.schoolAddress,
         principal_name: formData.principalName,
         principal_email: formData.principalEmail,
         principal_phone_number: formData.principalPhone,
+        vice_name: formData.viceName,
+        vice_email: formData.viceEmail,
+        vice_phone_number: formData.vicePhone,
       });
-      console.log(response.data, "school created successfully");
       resetForm();
       alert("Form submitted successfully");
     } catch (error) {
@@ -248,49 +302,7 @@ const resetForm = () => {
 };
 </script>
 
-<!-- <script setup>
-import { ref } from "vue";
-import { required, email, numeric } from "@vuelidate/validators";
-import { useVuelidate } from "@vuelidate/core";
-import { createSchool } from "~/apiConfig/apiConfig";
 
-const schoolName = ref("");
-const schoolPhone = ref("");
-const schoolType = ref("");
-const schoolAddress = ref("");
-const principalName = ref("");
-const principalEmail = ref("");
-const principalPhone = ref("");
-
-const submitForm = async () => {
-  const formData = {
-    school_name: schoolName.value,
-    school_phone_number: schoolPhone.value,
-    school_type: schoolType.value,
-    school_address: schoolAddress.value,
-    principal_name: principalName.value,
-    principal_email: principalEmail.value,
-    principal_phone_number: principalPhone.value,
-  };
-  try {
-    const response = await createSchool(formData);
-    console.log(response.data, "school created successfully");
-    resetForm();
-  } catch (error) {
-    console.log("error in creating school", error);
-  }
-};
-
-const resetForm = () => {
-  schoolName.value = "";
-  schoolPhone.value = "";
-  schoolType.value = "";
-  schoolAddress.value = "";
-  principalName.value = "";
-  principalEmail.value = "";
-  principalPhone.value = "";
-};
-</script> -->
 
 <style>
 label {

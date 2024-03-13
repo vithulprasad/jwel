@@ -124,7 +124,7 @@
                   />
                 </template>
                 <template v-else-if="tab === 3">
-                  <Alliance />
+                  <Alliance @openAllianceDialog="addAllianceDialog" />
                 </template>
                 <template v-else-if="tab === 4">
                   <Committee />
@@ -134,37 +134,15 @@
           </div>
         </div>
       </div>
+    
 
-      <!-- <div v-if="isViewDialog" class="col-lg-6 col-md-12 col-sm-12 pt-2">
-        <div class="row">
-          <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
-            <EventsViewParty />
-          </div>
-        </div>
-      </div> -->
-
-      <!-- <div v-if="isDialogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
-        <div class="row">
-          <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
-            <template v-if="!isUserDialogOpen">
-              <EventsAddParty
-                :eventDetails="events.data"
-                @closeDialog="closeDialog"
-                @openUserSelectionDialog="openUserSelectionDialog"
-              />
-            </template>
-            <template v-else>
-              <EventsPartyMemberSelection @backToAddParty="backToAddParty" />
-            </template>
-          </div>
-        </div>
-      </div> -->
       <div
         v-if="isDialogOpen || isViewDialog"
         class="col-lg-6 col-md-12 col-sm-12 pt-2"
       >
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
+            <!-- party if else block -->
             <template v-if="!isUserDialogOpen">
               <template v-if="!isViewDialog">
                 <EventsAddParty
@@ -173,7 +151,7 @@
                   @openUserSelectionDialog="openUserSelectionDialog"
                 />
               </template>
-              <template v-else>
+              <template v-else-if="isViewDialog">
                 <EventsViewParty @closeviewDilog="closeviewDilog" />
               </template>
             </template>
@@ -196,6 +174,7 @@ import { getOneEvent, getPartyByEventId } from "~/apiConfig/apiConfig";
 const isDialogOpen = ref(false);
 const isUserDialogOpen = ref(false);
 const isViewDialog = ref(false);
+const isAllianceDilogOpen = ref(false);
 
 const tab = ref(null);
 const events = ref(null);
@@ -221,7 +200,10 @@ const backToAddParty = () => {
 const addPartyDialog = () => {
   isDialogOpen.value = true;
 };
-
+const addAllianceDialog = () => {
+  isAllianceDilogOpen.value = true;
+  alert("alliacn clicked");
+};
 const closeDialog = () => {
   isDialogOpen.value = false;
 };

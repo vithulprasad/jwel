@@ -74,7 +74,9 @@
                 </div>
               </li>
 
-              <li><a class="dropdown-item" href="#">Edit</a></li>
+              <li>
+                <a @click="editUser" class="dropdown-item" href="#">Edit</a>
+              </li>
               <li><a class="dropdown-item" href="#">Delete</a></li>
             </ul>
           </div>
@@ -104,6 +106,10 @@
 import { ref, watch } from "vue";
 import { updateUserStatus } from "../../apiConfig/apiConfig";
 const props = defineProps(["studentValues"]);
+const emit = defineEmits(["editUser"]);
+const editUser = () => {
+  emit("editUser", props.studentValues.student_id);
+};
 
 const userStatus = ref(props.studentValues.student_status);
 

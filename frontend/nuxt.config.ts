@@ -1,21 +1,23 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
   build: {
-    transpile: ["vuetify",'@vuepic/vue-datepicker'],
+    transpile: ["vuetify", "@vuepic/vue-datepicker"],
   },
   modules: [
+    "@nuxt/ui",
+
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
-        // @ts-expect-error
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
-    '@pinia/nuxt',
-    //...
+    "@pinia/nuxt",
   ],
+
   vite: {
     vue: {
       template: {
@@ -54,8 +56,8 @@ export default defineNuxtConfig({
           crossorigin: "anonymous",
         },
         {
-          src:"https://unpkg.com/vue3-form-wizard"
-        }
+          src: "https://unpkg.com/vue3-form-wizard",
+        },
       ],
     },
   },

@@ -28,7 +28,12 @@ export const updateUserStatus = async (userId, newStatus) => {
     userStatus: newStatus,
   });
 };
-
+export const getUserById = async (id) => {
+  return (await axios.get(`${baseUrl}get_student/${id}`)).data;
+};
+export const updateUserById = async (id, data) => {
+  return await axios.put(`${baseUrl}update_one_student/${id}`, data);
+};
 //Schools
 export const createSchool = async (formData) => {
   return await axios.post(`${baseUrl}create_school`, formData);
@@ -39,8 +44,11 @@ export const getAllSchools = async () => {
 export const getSchoolById = async (id) => {
   return (await axios.get(`${baseUrl}get_school_byId/${id}`)).data;
 };
-export const updateSchoolById = async (id,data) => {
-  return (await axios.put(`${baseUrl}update_school_byId/${id}`,data));
+export const updateSchoolById = async (id, data) => {
+  return await axios.put(`${baseUrl}update_school_byId/${id}`, data);
+};
+export const deleteSchoolById = async (id) => {
+  return await axios.delete(`${baseUrl}delete_school_byId/${id}`);
 };
 
 export const getUserBySchool = async (schoolId) => {

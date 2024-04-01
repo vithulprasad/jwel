@@ -28,6 +28,7 @@ exports.create = async (req, res) => {
       vice_name,
       vice_email,
       vice_phone_number,
+      school_status: "active",
     });
 
     // Respond with a success message and the created school data
@@ -112,7 +113,6 @@ exports.updateSchool = async (req, res) => {
     } = req.body;
 
     const id = req.params.id;
-    console.log(req.body,"1111")
 
     // Find the school by ID
     const school = await Schools.findByPk(id);
@@ -125,26 +125,72 @@ exports.updateSchool = async (req, res) => {
 
     // Update the school record
     await school.update({
-      school_name:schoolName,
-      school_type:schoolType,
-      school_address:schoolAddress,
-      school_number:schoolPhone,
-      principal_name:principalName,
-      principal_email:principalEmail,
-      principal_phone_number:principalPhone,
-      vice_name:viceName,
-      vice_email:viceEmail,
-      vice_phone_number:vicePhone,
+      school_name: schoolName,
+      school_type: schoolType,
+      school_address: schoolAddress,
+      school_number: schoolPhone,
+      principal_name: principalName,
+      principal_email: principalEmail,
+      principal_phone_number: principalPhone,
+      vice_name: viceName,
+      vice_email: viceEmail,
+      vice_phone_number: vicePhone,
     });
 
     // Respond with a success message and the updated school data
     res.json({ message: "School updated successfully", school });
-    console.log(school,"updated shcool from controller")
   } catch (error) {
     console.error("Error updating school:", error);
     return res.status(500).json({
       message: "Something went wrong",
       statusCode: 500,
     });
+  }
+};
+
+exports.deleteSchoolById = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const school = await Schools.findByPk(id);
+
+    if (!school) {
+      return res.status(404).json({
+        message: "School not found",
+        statusCode: 404,
+      });
+    }
+
+    await school.destroy();
+
+    res.status(200).json({
+      message: "School deleted successfully",
+      statusCode: 200,
+    });
+  } catch (error) {
+    console.error("Error deleting school:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      statusCode: 500,
+    });
+  }
+};
+
+exports.updateSchoolStatus = async (req, res) => {
+  const { id } = req.params;
+  const { schoolStatus } = req.body;
+  console.log(id, "00000000000");
+
+  try {
+    // Update user status in the database
+    await Schools.update(
+      { school_status: schoolStatus },
+      { where: { school_id: id } }
+    );
+
+    res.status(200).json({ message: "School status updated successfully" });
+  } catch (error) {
+    console.error("Error updating user status:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

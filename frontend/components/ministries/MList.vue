@@ -19,6 +19,7 @@
             class="card-title"
           >
             {{ ministryValues.ministry_name }}
+            
           </h5>
         </div>
         <div class="d-flex">

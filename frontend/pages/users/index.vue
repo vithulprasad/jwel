@@ -7,7 +7,10 @@
     <div class="container">
       <div class="row">
         <div
-          :class="{ 'col-lg-6': isDialogOpen, 'col-lg-12': !isDialogOpen }"
+          :class="{
+            'col-lg-6': isDialogOpen || isViewDilogOpen || isEditDilogOpen,
+            'col-lg-12': !(isDialogOpen || isViewDilogOpen || isEditDilogOpen),
+          }"
           class="col-md-12 col-sm-12 pt-2"
         >
           <div class="row">
@@ -25,7 +28,10 @@
               :key="studentDetails.student_id"
             >
               <!-- Render student list component with student details as props -->
-              <UsersUserList :studentValues="studentDetails" />
+              <UsersUserList
+                :studentValues="studentDetails"
+                @editUser="openEditDilog"
+              />
             </div>
           </div>
         </div>
@@ -33,6 +39,16 @@
           <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
               <UsersAddUser @closeDialog="closeDialog" />
+            </div>
+          </div>
+        </div>
+        <div v-if="isEditDilogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
+              <UsersEditUser
+                :userId="selectedUserId"
+                @closeEditDilog="closeEditDilog"
+              />
             </div>
           </div>
         </div>
@@ -49,10 +65,14 @@ definePageMeta({
   layout: "main",
 });
 
+const isEditDilogOpen = ref(false);
+const isViewDilogOpen = ref(false);
+
 const isDialogOpen = ref(false);
 const students = ref([]);
 const filteredStudents = ref([]);
 const selectedUserType = ref("All Users"); // Default selected user type
+const selectedUserId = ref(null);
 
 const openDialog = () => {
   isDialogOpen.value = true;
@@ -60,6 +80,24 @@ const openDialog = () => {
 
 const closeDialog = () => {
   isDialogOpen.value = false;
+};
+const openEditDilog = (userId) => {
+  selectedUserId.value = userId;
+  isEditDilogOpen.value = true;
+};
+const closeEditDilog = () => {
+  isEditDilogOpen.value = false;
+};
+const openViewDilog = () => {
+  isViewDilogOpen.value = true;
+};
+const closeViewDilog = () => {
+  isViewDilogOpen.value = false;
+};
+const closeAllDialogs = () => {
+  isDialogOpen.value = false;
+  isViewDilogOpen.value = false;
+  isEditDilogOpen.value = false;
 };
 const fetchData = async () => {
   try {

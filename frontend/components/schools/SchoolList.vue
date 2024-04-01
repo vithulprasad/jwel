@@ -68,7 +68,11 @@
               <li>
                 <a @click="editSchool" class="dropdown-item" href="#">Edit</a>
               </li>
-              <li><a class="dropdown-item" href="#">Delete</a></li>
+              <li>
+                <a @click="confirmDelete" class="dropdown-item" href="#"
+                  >Delete</a
+                >
+              </li>
             </ul>
           </div>
         </div>
@@ -97,11 +101,12 @@
 import { getUserBySchool } from "~/apiConfig/apiConfig";
 const props = defineProps(["schoolValues"]);
 const emit = defineEmits(["openViewSchool", "editSchool"]);
+
 const viewSchool = () => {
-  emit("openViewSchool");
+  emit("openViewSchool", props.schoolValues.school_id);
 };
 const editSchool = () => {
-  emit("editSchool",props.schoolValues.school_id);
+  emit("editSchool", props.schoolValues.school_id);
 };
 const fetchUsers = async (schoolId) => {
   try {

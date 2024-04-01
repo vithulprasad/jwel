@@ -59,14 +59,63 @@ exports.getAllStudent = async (req, res) => {
     });
   }
 };
-exports.findOne = async (req, res) => {
+exports.getUserById = async (req, res) => {
   try {
+    const id = req.params.id;
+
+    // Find the school by ID
+    const user = await Students.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "School not found",
+        statusCode: 404,
+      });
+    }
+    res.status(200).json({
+      data: user,
+      message: "Success",
+      statusCode: 200,
+    });
   } catch (error) {
     console.log("Error in creating Studern", error);
     return res.status(500).json({
       message: "Something went wrong",
       statusCode: 500,
     });
+  }
+};
+exports.updateOneStudent = async (req, res) => {
+  try {
+    const {
+      userType,
+      userName,
+      userPhone,
+      userEmail,
+      parentsPhone,
+      schoolAddress,
+    } = req.body;
+    const id = req.params.id;
+    const student = await Students.findByPk(id);
+
+    if (!student) {
+      return res
+        .status(404)
+        .json({ message: "Student not found", statusCode: 404 });
+    }
+    //update student details
+    await student.update({
+      student_type: userType,
+      student_name: userName,
+      email_address: userEmail,
+      phone_number: userPhone,
+      parents_phone_number: parentsPhone,
+      school_address: schoolAddress,
+    });
+    res.json({ message: "student updated successfully", student });
+  } catch (error) {
+    console.error("Error updating user status:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

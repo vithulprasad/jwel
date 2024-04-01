@@ -24,12 +24,13 @@
     </nav>
 
     <div class="container chips d-flex">
-      <div class="flex-grow-1">
+      <div class="flex-grow-1 ">
         <button
+
           v-for="(chip, index) in chips"
           :key="index"
           :class="[
-            'btn btn-sm chip',
+            'btn btn-sm chip ',
             chip.label === selectedUserType ? 'btn-primary' : 'btn-secondary',
           ]"
           @click="filterStudents(chip.label)"
@@ -44,34 +45,31 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      searchQuery: "",
-      selectedUserType: "All Users", // Default selected user type
+<script setup>
+import { ref, defineEmits } from "vue";
 
-      chips: [
-        { label: "All Users" },
-        { label: "Students" },
-        { label: "Admins" },
-      ],
-    };
-  },
-  methods: {
-    openDialog() {
-      // Logic for dialog box opening
-      this.$emit("openDialog");
-    },
-    filterStudents(label) {
-      //logic for button style based click
-      this.selectedUserType = label;
+const emits = defineEmits(["openDialog", "filterStudents"]);
 
-      console.log("Clicked label:", label);
+const searchQuery = ref("");
+const selectedUserType = ref("All Users");
 
-      this.$emit("filterStudents", label);
-    },
-  },
+const chips = ref([
+  { label: "All Users" },
+  { label: "Students" },
+  { label: "Admins" },
+]);
+
+const openDialog = () => {
+  // Logic for dialog box opening
+  emits("openDialog");
+};
+
+const filterStudents = (label) => {
+  selectedUserType.value = label;
+
+  console.log("Clicked label:", label);
+
+  emits("filterStudents", label);
 };
 </script>
 
@@ -96,6 +94,7 @@ export default {
 .chips {
   margin-top: 1rem;
   margin-bottom: 1rem;
+  
 }
 .custom-search {
   width: 320px;

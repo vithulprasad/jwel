@@ -123,7 +123,10 @@
 
 <script setup>
 import { reactive } from "vue";
-import { getSchoolById, updateSchoolById } from "~/apiConfig/apiConfig";
+import {
+  getSchoolById,
+  updateSchoolById,
+} from "~/apiConfig/apiConfig";
 
 const props = defineProps(["schoolId"]);
 const emit = defineEmits(["closeEditSchool"]);
@@ -158,15 +161,15 @@ const fetchData = async () => {
       viceEmail: schoolData.vice_email,
       vicePhone: schoolData.vice_phone_number,
     });
-    console.log(schoolData, "School data fetched");
   } catch (error) {
     console.error("Error fetching initial data:", error);
   }
+
 };
 const submitForm = async () => {
   try {
     const response = await updateSchoolById(props.schoolId, formData);
-    console.log(formData,"formdata given to backend")
+    console.log(formData, "formdata given to backend");
     console.log("School updated successfully:", response);
     alert("School updated successfully");
   } catch (error) {

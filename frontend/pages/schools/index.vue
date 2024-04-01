@@ -44,7 +44,10 @@
         <div v-if="isViewDilogOpen" class="col-lg-6 col-md-12 col-sm-12 pt-2">
           <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 mx-auto">
-              <SchoolsViewSchool @closeViewSchool="closeViewDilog" />
+              <SchoolsViewSchool
+                :schoolId="selectedSchoolIdEdit"
+                @closeViewSchool="closeViewDilog"
+              />
             </div>
           </div>
         </div>
@@ -85,7 +88,11 @@ const openDialog = () => {
 const closeDialog = () => {
   isDialogOpen.value = false;
 };
-const openViewDilog = () => {
+const openViewDilog = (schoolId) => {
+  closeAllDialogs();
+
+  selectedSchoolIdEdit.value = schoolId;
+
   closeAllDialogs();
   isViewDilogOpen.value = true;
 };

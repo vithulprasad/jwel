@@ -40,44 +40,43 @@
   </nav>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      pages: [
-        {
-          name: "Events",
-          activeIcon: "/icons/Active_Events.svg",
-          inactiveIcon: "/icons/Inactive_Events.svg",
-          path: "events",
-        },
-        {
-          name: "Users",
-          activeIcon: "/icons/Active_Users.svg",
-          inactiveIcon: "/icons/Inactive_Users.svg",
-          path: "users",
-        },
-        {
-          name: "Schools",
-          activeIcon: "/icons/Active_Schools.svg",
-          inactiveIcon: "/icons/Inactive_Schools.svg",
-          path: "schools",
-        },
-        {
-          name: "Ministries",
-          activeIcon: "/icons/Active_Ministries.svg",
-          inactiveIcon: "/icons/Inactive_Ministries.svg",
-          path: "ministries",
-        },
-      ],
-      currentRouteName: "",
-    };
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+
+const pages = ref([
+  {
+    name: "Event info",
+    activeIcon: "/icons/Active_Events.svg",
+    inactiveIcon: "/icons/Inactive_Events.svg",
+    path: "events_info",
   },
-  mounted() {
-    this.currentRouteName = this.$route.name;
+  {
+    name: "Party",
+    activeIcon: "/icons/Active_Users.svg",
+    inactiveIcon: "/icons/Inactive_Users.svg",
+    path: "party_info",
   },
-  methods: {},
-};
+  {
+    name: "Bills",
+    activeIcon: "/icons/Active_Schools.svg",
+    inactiveIcon: "/icons/Inactive_Schools.svg",
+    path: "bills",
+  },
+  {
+    name: "Ministries",
+    activeIcon: "/icons/Active_Ministries.svg",
+    inactiveIcon: "/icons/Inactive_Ministries.svg",
+    path: "ministries",
+  },
+]);
+
+const currentRouteName = ref("");
+const route = useRoute();
+
+onMounted(() => {
+  currentRouteName.value = route.name;
+});
 </script>
 
 <style scoped>

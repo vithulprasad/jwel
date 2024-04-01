@@ -72,6 +72,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.contain {
-}
+
 </style>

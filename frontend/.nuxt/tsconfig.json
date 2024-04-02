@@ -65,6 +65,9 @@
       "vue-demi": [
         "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
+      "#primevue-style": [
+        "./primevue-style.mjs"
+      ],
       "pinia": [
         "../node_modules/pinia/dist/pinia"
       ],
@@ -88,6 +91,7 @@
   "include": [
     "./nuxt.d.ts",
     "../**/*",
+    "../node_modules/nuxt-primevue/runtime",
     "../node_modules/@nuxt/ui/runtime",
     "../node_modules/@pinia/nuxt/runtime",
     "../node_modules/@nuxt/devtools/runtime",
@@ -98,6 +102,7 @@
     "../node_modules",
     "../../node_modules",
     "../node_modules/nuxt/node_modules",
+    "../node_modules/nuxt-primevue/runtime/server",
     "../node_modules/@nuxt/ui/runtime/server",
     "../node_modules/@pinia/nuxt/runtime/server",
     "../node_modules/@nuxt/devtools/runtime/server",

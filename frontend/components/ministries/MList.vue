@@ -19,8 +19,9 @@
             class="card-title"
           >
             {{ ministryValues.ministry_name }}
-            
           </h5>
+
+          <Button label="Check" icon="pi pi-check" />
         </div>
         <div class="d-flex">
           <div class="pt-1">

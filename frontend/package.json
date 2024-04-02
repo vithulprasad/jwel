@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "nuxt": "^3.9.0",
+    "nuxt-primevue": "^0.3.1",
     "vite-plugin-vuetify": "^2.0.1",
     "vue": "^3.4.3",
     "vue-router": "^4.2.5",
@@ -26,6 +27,7 @@
     "axios": "^1.6.7",
     "bootstrap": "^5.3.2",
     "pinia": "^2.1.7",
+    "primevue": "^3.50.0",
     "vue-sweetalert2": "^5.0.5",
     "vue3-form-wizard": "^0.2.3"
   }

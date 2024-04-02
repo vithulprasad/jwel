@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     transpile: ["vuetify", "@vuepic/vue-datepicker"],
   },
   modules: [
+    'nuxt-primevue',
     "@nuxt/ui",
 
     (_options, nuxt) => {

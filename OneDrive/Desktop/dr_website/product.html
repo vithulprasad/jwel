@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+  .contact_us_container {
+    width: 100%;
+
+  }
+
+  .icon_text {
+    margin-top: 20px;
+  }
+
+  h3 {
+    font-weight: 600;
+    margin-top: 50px;
+    font-family: Sans-Serif;
+  }
+
+  .contact_us_container img {
+    width: 100%;
+    height: 500px;
+  }
+
+  .contact_method {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0px 20px 0px;
+  }
+
+  .contact_method_box {
+    width: 10%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact_method_box img {
+    width: 100%;
+
+  }
+
+  .contact_form_container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+  }
+
+  .contact_form_container h3 {
+    text-align: center;
+  }
+
+
+
+  form {
+    width: 90%;
+    margin: auto;
+    padding-top: 30px;
+  }
+
+  .Phone_email_box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .Phone_email_single_box_1,
+  .Phone_email_single_box_2 {
+    flex: 1;
+  }
+
+  /* Input field styling */
+  .input-2 {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Select box styling */
+  .select_div {
+    margin-bottom: 15px;
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Textarea styling */
+  .input-3 {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+
+  /* Button styling */
+  .form_buttom {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .form_buttom {
+    padding: 8px 20px 8px 20px;
+    margin-left: 15px;
+    margin-top: 10px;
+    font-weight: 600;
+    background: yellow;
+    border: 0;
+    border-radius: 5px;
+    color: black;
+  }
+
+  ifram {
+    width: 100%;
+  }
+
+  .contact_map {
+    width: 100%;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+  }
+
+
+  @media(max-width:1000px) {
+    .contact_us_container img {
+      width: 97%;
+      height: 100%;
+    }
+
+    .contact_method_box span {
+      font-size: 7px;
+
+    }
+
+
+  }
+
+  .submission_query {
+    padding-left: 30px;
+    color: red;
+    padding-top: 10px;
+    text-align: center;
+
+  }
+
+  .heading_of_form {
+    color: black;
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+  }
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+
+<body>
+  <section>
+    <div class="contact_us_container">
+      <img src="https://api.doctorbrand.in/template_uploads/assets/imgs/Banner.png" alt="">
+    </div>
+  </section>
+  <section>
+    <div class="contact_method">
+      <div class="contact_method_box">
+        <img src="https://api.doctorbrand.in/template_uploads/assets/imgs/Icon 1.png" alt="" />
+        <span class="icon_text"> +917311124574</span>
+      </div>
+      <div class="contact_method_box">
+        <img src="https://api.doctorbrand.in/template_uploads/assets/imgs/Icon 2.png" alt="" />
+        <span class="icon_text">info@vikrantgroup.com</span>
+      </div>
+      <div class="contact_method_box">
+        <img src="https://api.doctorbrand.in/template_uploads/assets/imgs/Icon 3.png" alt="" />
+        <span class="icon_text">49,Govt.IndustrialEstate, KalpiRoad,Kanpur208022</span>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="contact_form_container">
+      <p class="heading_of_form">We are here for you. Reach out to us:</p>
+      <form action="javascript:void(0);" id="contactForm">
+        <div class="Phone_email_box">
+          <div class="Phone_email_single_box_1">
+            <input class="input-2" type="text" placeholder="Name" id="name" name="name" />
+          </div>
+          <div class="Phone_email_single_box_2">
+            <input class="input-2" type="text" placeholder="Email" id="email" name="email" />
+          </div>
+        </div>
+        <div class="Phone_email_box">
+          <div class="Phone_email_single_box_1">
+            <input class="input-2" type="text" placeholder="Phone Number" id="Phone" name="Phone" />
+          </div>
+          <div class="Phone_email_single_box_2">
+            <input class="input-2" type="text" placeholder="City" id="city" name="city" />
+          </div>
+        </div>
+
+        <div class="select_div">
+          <select id="query" name="query">
+            <option selected disabled>Select Query</option>
+            <option>Product Query</option>
+            <option>Distribution Enquiry</option>
+            <option>Others</option>
+          </select>
+        </div>
+
+        <textarea class="input-3" id="message" name="message" placeholder="Message" rows="8" cols="40"></textarea>
+        <p class="submission_query">*Please give us few days to respond to your query.</p>
+        <div class="form_button_box">
+          <button class="form_buttom" type="submit">Submit</button>
+        </div>
+
+      </form>
+    </div>
+
+  </section>
+  <section>
+    <div class="contact_map">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d14287.112612110688!2d80.29001258676483!3d26.462879086088982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e6!4m3!3m2!1d26.462245199999998!2d80.3002264!4m5!1s0x399c478b3dc9e7e1%3A0x975d0b35cca33c13!2sDistrict%20Industries%20Centre%20%2C%20Kanpur%2C%20Kalpi%20Road%2C%20Industrial%20Estate%2C%20Fazalganj%20Industrial%20Estate%2C%20Fazalganj%2C%20Shastri%20Nagar%2C%20Kanpur%2C%20Uttar%20Pradesh!3m2!1d26.462289499999997!2d80.3002705!5e0!3m2!1sen!2sin!4v1729664850028!5m2!1sen!2sin"
+        style="border:0;width:100%;height:400px" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+    </div>
+  </section>
+  <script src="template_uploads/assets/js/script.js"></script>
+</body>
+
+</html>

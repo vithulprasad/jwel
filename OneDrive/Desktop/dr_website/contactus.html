@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .contact_us_container {
+        width: 100%;
+
+    }
+
+    h3 {
+        font-weight: 600;
+        margin-top: 50px;
+        font-family: Sans-Serif;
+    }
+
+    .contact_us_container img {
+        width: 100%;
+        height:500px;
+    }
+
+    .contact_method {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0px 20px 0px;
+    }
+
+    .contact_method_box {
+        width: 10%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contact_method_box img {
+        width: 100%;
+
+    }
+
+    .contact_form_container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+    }
+
+    .contact_form_container h3 {
+        text-align: center;
+    }
+
+
+
+    form {
+        max-width:800px;
+        margin: auto;
+    }
+
+    .input-1 {
+        margin: 20px 0px 0px 15px;
+        width: 91%;
+
+    }
+
+    .box_input_2 {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+
+    .input-2 {
+        width: 45%;
+        margin: 5px;
+    }
+
+    .input-3 {
+        width: 92%;
+        margin-left: 15px;
+    }
+
+    input {
+        padding: 5px;
+    }
+
+    textarea {
+        padding: 5px;
+    }
+
+    .form_buttom {
+        padding: 4px 10px 4px 10px;
+        margin-left: 15px;
+        margin-top: 10px;
+        font-weight: 600;
+        background: yellow;
+        border: 0;
+        border-radius: 5px;
+    }
+
+    ifram{
+    width:100%;
+    }
+
+    .contact_map {
+        width:100%;
+        margin-bottom:40px;
+        display:flex;
+        justify-content:center;
+    }
+
+
+    @media(max-width:600px) {
+      .contact_us_container img {
+        width: 100%;
+        height:100%;
+    }
+
+        .contact_method_box span {
+            font-size: 7px;
+
+        }
+
+        form {
+            margin: auto;
+        }
+
+        .box_input_2 {
+            display: block;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .input-2 {
+            width: 98%;
+            margin: 5px;
+        }
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<body>
+    <section>
+        <div class="contact_us_container">
+            <img src="http://localhost:8088/template_uploads/assets/imgs/Banner.PNG" alt="">
+        </div>
+    </section>
+    <section>
+        <div class="contact_method">
+            <div class="contact_method_box">
+                <img src="http://localhost:8088/template_uploads/assets/imgs/Icon 1.PNG" alt="" />
+                <span>+917311124574</span>
+            </div>
+            <div class="contact_method_box">
+                <img src="http://localhost:8088/template_uploads/assets/imgs/Icon 2.PNG" alt="" />
+                <span>info@vikrantgroup.com</span>
+            </div>
+            <div class="contact_method_box">
+                <img src="http://localhost:8088/template_uploads/assets/imgs/Icon 3.PNG" alt="" />
+                <span>49,Govt.IndustrialEstate, KalpiRoad,Kanpur208022</span>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="contact_form_container">
+            <h3>Weare here for you.Reach out to us</h3>
+            <form action="#">
+                <div>
+                    <input class="input-1" type="text" placeholder="Name" name="" id="" value="" />
+                </div>
+                <div class="box_input_2">
+                    <input class="input-2" type="text" placeholder="Email" name="" id="" value="" />
+                    <input class="input-2" type="text" placeholder="Phone Number" name="" id="" value="" />
+                    <input class="input-2" type="text" placeholder="Customer Query" name="" id="" value="" />
+                    <input class="input-2" type="text" placeholder="Distribution Query" name="" id="" value="" />
+                    <input class="input-2" type="text" placeholder="Other Query" name="" id="" value="" />
+
+                </div>
+                <div>
+                    <textarea class="input-3" name="" placeholder="Message" id=rows="8" cols="40"></textarea>
+                </div>
+                <div class="form_button_box">
+                    <button class="form_buttom" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </section>
+    <section>
+        <div class="contact_map">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d14287.112612110688!2d80.29001258676483!3d26.462879086088982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e6!4m3!3m2!1d26.462245199999998!2d80.3002264!4m5!1s0x399c478b3dc9e7e1%3A0x975d0b35cca33c13!2sDistrict%20Industries%20Centre%20%2C%20Kanpur%2C%20Kalpi%20Road%2C%20Industrial%20Estate%2C%20Fazalganj%20Industrial%20Estate%2C%20Fazalganj%2C%20Shastri%20Nagar%2C%20Kanpur%2C%20Uttar%20Pradesh!3m2!1d26.462289499999997!2d80.3002705!5e0!3m2!1sen!2sin!4v1729664850028!5m2!1sen!2sin"
+                 style="border:0;width:100%;height:400px" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+        </div>
+    </section>
+</body>
+
+</html>

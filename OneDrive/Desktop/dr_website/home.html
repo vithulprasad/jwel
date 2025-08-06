@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+  }
+
+  .sub_heading {
+    font-family: Arial Narrow, sans-serif;
+    font-size: 25px;
+    font-weight: 100;
+  }
+.main_hading-about h2{
+      font-size: 45px;
+    padding-top: 20px;
+     font-family: fantasy;
+}
+  .sub_heading-2 {
+    font-family: Arial Narrow, sans-serif;
+    font-size: 24px;
+    font-weight: 100;
+    text-align: center;
+  }
+
+  .first_choice_message {
+    color: gray;
+    font-weight: 600;
+    font-size: 16px;
+  }
+.sub_heading_steps{
+	margin-top:20px;
+	margin-bottom:15px;
+	}
+.sub_heading_steps span{
+  font-size:30px;
+}
+    
+  #page_main_header-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2-2-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_header-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2-2 {
+    pointer-events: none;
+  }
+
+  #page_main_footer-2-2 {
+    pointer-events: none;
+  }
+
+  #i06ph-2-2 {
+    display: none;
+  }
+
+  #page_main_footer-2 {
+    pointer-events: none;
+  }
+
+  .grid-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    /* 8px */
+    border-radius: 0.5rem;
+    padding-block-end: 2.5rem;
+    text-align: center;
+    display: grid;
+    justify-content: center;
+    padding-top: 2rem;
+    position: relative;
+  }
+
+  .main_hading {
+    font-family: fantasy;
+    text-align: center;
+  }
+
+  .main_hading h2 {
+    font-size: 45px;
+    padding-top: 20px;
+     font-family: fantasy;
+     margin-top:10px;
+     margin-bottom:10px;
+  }
+
+  .span_text {
+    font-weight: 700;
+    margin: auto;
+  }
+
+  .carousel-section {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    place-items: center;
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+    opacity: 1;
+    mask-image: linear-gradient(to right,
+        rgba(0, 0, 0, 0) 0%,
+        rgb(0, 0, 0) 12.5%,
+        rgb(0, 0, 0) 87.5%,
+        rgba(0, 0, 0, 0) 100%);
+    overflow: hidden;
+  }
+
+  @media(max-width:600px) {
+    .sub_heading {
+      font-family: Arial Narrow, sans-serif;
+      font-size: 20px;
+      text-align: center;
+
+    }
+
+    .main_hading h2 {
+      font-size: 25px;
+    }
+
+    .carousel-item {
+      min-width: 60px;
+      height: 100px;
+      margin-right: 5px;
+      margin-left: 5px;
+    }
+
+    .span_text {
+      font-weight: 700;
+      margin: auto;
+      font-size: 10px;
+    }
+
+  }
+
+  .usage_benifit_container {
+    display: flex;
+  }
+
+  .usage_benifit_box {
+    margin: 10px;
+    cursor: pointer;
+    width: 50%;
+  }
+
+  .usage_benifit_box img {
+    width: 100%;
+
+  }
+
+  .usage_benifit_box_right_side {
+    height: 500px;
+    overflow-y: scroll;
+    margin: 10px;
+    width: 50%;
+    margin-top:20px;
+  }
+
+  .usage_benifit_box_right_side img {
+    width: 100%;
+  }
+
+  .about {
+    display: flex;
+	justify-content: center;
+    padding: 10px
+  }
+
+  .about_left {
+    width: 45%;
+    padding-left:20px
+  }
+
+  .about_left h3 {
+    font-family: fantasy;
+    font-size: 45px;
+  }
+
+  .about_right {
+    width: 50%;
+  }
+
+  .our_vision {
+    display: flex;
+    align-items: center;
+    color: #4079eb;
+  }
+
+  .our_vision h2 {
+    color: #5b8beb;
+    font-size: 20px;
+  }
+
+  .our_vision_p {
+    font-family: system-ui;
+    font-size: 13px;
+    width:70%;
+  }
+
+  .main_about_box {
+    padding: 10px;
+  }
+
+  .clean_state_h2 {
+    display: flex;
+    justify-content: center;
+    padding-left:40px;
+    padding-right:40px;
+  }
+
+  .clean_state_h2 h2 {
+    font-family: fantasy;
+    font-size: 45px;
+  }
+
+  .clean_state_box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+    position: relative;
+    overflow: visible;
+  }
+
+  .top_handling_box {
+    width: 100%;
+    height: 160px;
+    background: gold;
+    position: absolute;
+  }
+
+  .clean_state_card {
+    width: 300px;
+    background: #332fa6;
+    margin: 20px;
+    border-radius: 3px 20px 3px 20px;
+    padding: 20px;
+    position: relative;
+
+  }
+
+  .clean_state_card img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .clean_state_card h1 {
+    padding: 0px;
+    color: gold;
+    font-size: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .clean_state_card p {
+    color: white;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  @media(max-width:700px) {
+
+    .about {
+      display: block;
+      padding: 10px
+    }
+
+    .about_left {
+      width: 100%;
+    }
+
+    .about_right {
+      width: 100%;
+    }
+
+    .about_right img {
+      width: 100%;
+    }
+  }
+
+  .clean_state_p {
+    text-align: center
+  }
+
+  .first_choice {
+    background: #f0efef;
+    padding: 50px 10px 10px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    font-family: system-ui;
+    margin: auto;
+    justify-content: center;
+  }
+
+  .first_choice_card {
+    background: white;
+    border-radius: 3px 20px 3px 20px;
+    width: 300px;
+    padding: 30px 20px 20px 20px;
+    margin: 10px;
+    position: relative;
+    margin-top: 40px;
+  }
+
+  .first_choice_steps {
+    color: #332fa6;
+    ;
+  }
+
+  .first_choice_heading {
+    color: blue;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+
+
+  .first_choice_card_img {
+    position: absolute;
+    top: -40px;
+  }
+
+  .first_choice_message {
+    margin-top: 10px;
+  }
+
+  .first_choice_heading_main {
+    text-align: center;
+    font-size: 40px;
+    font-family: fantasy;
+  }
+
+  .faq-accordion {
+    margin-top: 20px;
+  }
+
+  .carousel-content {
+    overflow-x: auto;
+    display: flex;
+    padding: 10px
+  }
+
+  .carousel-item {
+    min-width: 200px;
+    margin-right: 5px;
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .carousel-item img {
+    border: solid 2px yellow;
+    margin-right: 5px;
+    margin-left: 5px;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
+
+  .heading_h3 {
+    text-align: center
+  }
+
+  @media(max-width:700px) {
+    .usage_benifit_container {
+      display: block;
+    }
+
+    .usage_benifit_box {
+      margin: 10px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .usage_benifit_box img {
+      width: 95%;
+    }
+
+    .usage_benifit_box_right_side {
+      display: flex;
+      overflow-x: scroll;
+      margin: 10px;
+      width: 100%;
+      height: 200px;
+      gap: 5px;
+    }
+
+    .usage_benifit_box_right_side img {
+      width: 100%;
+
+    }
+
+    .carousel-item {
+      width: 50px;
+      margin-right: 5px;
+      margin-left: 5px;
+      background: red;
+    }
+
+    .carousel-item img {
+      border: solid 2px yellow;
+      margin-right: 5px;
+      margin-left: 5px;
+      border-radius: 8px;
+    }
+
+    .heading_h3 {
+      text-align: center
+    }
+  }
+
+  .usage_benifit_container_2 {
+    overflow: hidden;
+    /* Hide the scrollbar */
+  }
+
+  .usage_benifit_wrapper_2 {
+    display: flex;
+    width: max-content;
+    animation: scroll 20s linear infinite;
+  }
+
+  .usage_benifit_box_2 {
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .usage_benifit_box_2 img {
+    margin: 10px;
+    height: 250px;
+    width: 200px;
+    border: solid 2px yellow;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .usage_benifit_box_2 img {
+      margin: 10px;
+      height: 150px;
+      width: 120px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .usage_benifit_box_2 img {
+      margin: 10px;
+      height: 150px;
+      width: 100px;
+    }
+  }
+
+
+
+  .main-image {
+    width: 60%;
+    /* Reduce image width by 40% */
+    height: auto;
+    /* Maintain aspect ratio */
+    padding: 0px;
+  }
+
+  .first_choice_card {
+    padding-top: 70px;
+  }
+
+  .text-content-right {
+    font-size: 60%;
+    /* Reduce font size by 40% */
+  }
+
+  .yellow-box-left-bottom {
+    transform: scale(0.6);
+    /* Scale yellow box to 60% */
+  }
+
+  .main-container-1 .text-content-right {
+    left: -90px;
+    top: 127px;
+  }
+
+  .container-swapped {
+    display: flex;
+    justify-content: space-between;
+    /* Adds space between text and image */
+    align-items: center;
+    /* Vertically centers the content */
+    position: relative;
+  }
+
+  .image-swapped {
+    order: 2;
+    /* This ensures the image comes after the text */
+    margin-left: 20px;
+    /* Optional: Add some space between the text and image */
+  }
+
+  .text-swapped {
+    order: 1;
+    /* This ensures the text comes before the image */
+    margin-right: -60px;
+    /* Optional: Add some space between the text and image */
+    padding: 20px;
+    background: rgb(255, 255, 255);
+    background: linear-gradient(79deg, rgba(255, 255, 255, 1) 22%, rgba(255, 202, 79, 1) 100%);
+  }
+
+  .main-image-swapped {
+    max-width: 100%;
+    /* Ensures the image scales within its container */
+    height: auto;
+  }
+
+  .main-container-1 {
+    border: solid 1px black;
+  }
+
+  .container-alternate {
+    display: flex;
+    justify-content: space-between;
+    /* Adds space between text and image */
+    align-items: center;
+    /* Vertically centers the content */
+    position: relative;
+  }
+
+  .image-alternate {
+    order: 1;
+    /* This ensures the image comes before the text */
+    margin-right: 20px;
+    /* Optional: Add some space between the text and image */
+  }
+
+  .text-alternate {
+    order: 2;
+    /* This ensures the text comes after the image */
+    margin-left: -40px;
+    /* Optional: Add some space between the text and image */
+    padding: 20px;
+    background: rgb(255, 202, 79);
+    background: linear-gradient(79deg, rgba(255, 202, 79, 1) 22%, rgba(255, 255, 255, 1) 100%);
+  }
+
+  .main-image-alternate {
+    max-width: 100%;
+    /* Ensures the image scales within its container */
+    height: auto;
+  }
+
+  .main-container-2 {
+    border: solid 1px black;
+  }
+
+  .yellow-box-left-bottom {
+    position: absolute;
+    left: 0;
+    /* Adjust the position as needed */
+    bottom: 0;
+    width: 50px;
+    height: 50px;
+    background-color: yellow;
+  }
+
+  .benifit_border_set {
+    border: solid 1px black;
+    padding: 10px;
+    margin-bottom: 5px;
+  }
+
+  .side-border-creater {
+
+    padding: 5px;
+  }
+
+  .div-container {
+    width: 50px;
+  }
+
+  .new-box-current {
+    margin: 10px;
+    width: 150px;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .new-box {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media(max-width:600px) {
+    .new-box-current {
+      margin: 10px;
+      width: 80px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .h5,
+    h5 {
+      font-size: .5rem;
+    }
+  }
+  .icon_box_banner{
+    position:relative;
+  }
+  .icon_box {
+   position: fixed;
+  bottom: 40%; 
+  left: 5px; 
+  background:#000080;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+   z-index: 1000;
+
+}
+.icon_box img{
+    width: 30px;
+    height: 30px;
+    border: solid 2px white;
+    border-radius: 50%;
+}
+@media(max-width:600px){
+  .icon_box {
+  background:#000080;
+  display: flex;
+  position: fixed;
+  bottom: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  flex-direction: column;
+  padding: 5px;
+  gap: 5px;
+
+  left: 0;
+    z-index: 1000;
+  bottom: 0;
+}
+.icon_box img{
+    width: 20px;
+    height: 20px;
+    border: solid 2px white;
+    border-radius: 50%;
+}
+}
+
+
+.accordions {
+  width: 90%;
+
+  margin: 0 auto;
+}
+
+.accordion {
+    border: 1px solid #ccc;
+  margin-bottom: 1rem;
+    overflow: hidden;
+  transition: border-color .5s ease;
+    background-color:#f7eacd;
+
+}
+
+.accordion:hover {
+  border-color: white;
+}
+
+.accordion__header {
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 1rem;
+  color: #666;
+
+}
+.accordion__header:after,
+.accordion__header:before {
+  content: "";
+  position: absolute;
+  right: 1.5em;
+  width: 2px;
+  height: 0.75em;
+  background-color: #666;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.accordion__header:after {
+  transform: rotate(90deg);
+}
+
+
+.accordion:has(input:checked) .accordion__header {
+  color: #000;
+}
+
+.accordion__content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  * {
+        padding: 0 1em 1em;
+  }
+}
+
+.accordion input {
+  display: none;
+}
+
+.accordion:has(input:checked) {
+  border-color: #000;
+  background-color: #fff;
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+}
+
+.accordion input:checked ~ .accordion__header:before {
+    transform: rotate(270deg) !important;
+  background-color: #000;
+ }
+
+.accordion input:checked ~ .accordion__header:after {
+    transform: rotate(270deg) !important;
+  background-color: #000;
+ }
+
+.accordion input:checked ~ .accordion__content {
+    max-height: 1000px; /* Adjust based on content length */
+}
+
+
+</style>
+
+<body>
+  <section id="page_main_header-2-2-2-2-2-2">
+    <main id="i3g4ck-2-2-2-2-2-2-2-2-2-2-2-2"></main>
+  </section>
+  <section id="hero-2-2-2-2-2-2-2-2-2-2-2">
+    <div class="icon_box_banner" id="ivj9lh-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2">
+      <img src="template_uploads/assets/imgs/Banner 1.png" alt="img"
+        id="iav3w7-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="w-100">
+               <div class="icon_box">
+				   <img src="template_uploads/assets/imgs/call.png" alt="" />
+				   <img src="template_uploads/assets/imgs/insta.png" alt="" />
+				   <img src="template_uploads/assets/imgs/whatsapp.jpg" alt="" />
+				   <img src="template_uploads/assets/imgs/facebook.jpg" alt="" />
+			   </div>
+    </div>
+    <section id="products">
+      <div class="main_hading">
+        <h2>Home Care Products</h2>
+      </div>
+      <div class="usage_benifit_container_2">
+        <div class="usage_benifit_wrapper_2">
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_GlassCleaner.png" alt="" />
+            </div>
+            <div>
+              <span>Glass Cleaner</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_Handwash.png" alt="" />
+            </div>
+            <div>
+              <span>Handwash</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_phenyle.png" alt="" />
+            </div>
+            <div>
+              <span>Black Phenyle</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_Vicrandh.png" alt="" />
+            </div>
+            <div>
+              <span>White Phenyle</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_Germtoll.png" alt="" />
+            </div>
+            <div>
+              <span>Germ Troll</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_Dishwash.png" alt="" />
+            </div>
+            <div>
+              <span>Fighter Brand</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_Cleaner.png" alt="" />
+            </div>
+            <div>
+              <span>Multipurpose Cleaner</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_bathroom cleaner.png" alt="" />
+            </div>
+            <div>
+              <span>Toilet Cleaner</span>
+            </div>
+          </div>
+          <div class="usage_benifit_box_2">
+            <div>
+              <img class="usage_benifit_image_2"
+                src="template_uploads/assets/imgs/Doctor_Balles.png" alt="" />
+            </div>
+            <div>
+              <span>Naphthalene Balls</span>
+            </div>
+
+          </div>
+          <!-- Duplicate the same content for smooth looping -->
+          <div class="usage_benifit_box_2">
+            <img class="usage_benifit_image_2"
+              src="template_uploads/assets/imgs/Doctor_GlassCleaner.png" alt="" />
+            <div>
+              <span>Glass Cleaner</span>
+            </div>
+
+          </div>
+          <div class="usage_benifit_box_2">
+            <img class="usage_benifit_image_2"
+              src="template_uploads/assets/imgs/Doctor_Handwash.png" alt="" />
+            <div>
+              <span>Handwash</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    </div>
+    <div id="i7u6pu-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"><img
+        src="template_uploads/assets/imgs/home_banner_2.png" alt="img"
+        id="i0rs9l-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="w-100"></div>
+  </section>
+
+
+
+
+
+  <section class="container_benifit_usege">
+    <div class="div_center">
+      <div class="usage_benifit_container">
+        <div class="usage_benifit_box">
+
+
+          <section id="imcjue-2-2-2-2-2-2-2-2-2-2-2" class="side-border-creater">
+          
+            <div id="iy2jfc-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="container">
+				       <img src="template_uploads/assets/imgs/Black Phenyle Usage.png" alt="Main Image"
+                    >
+
+              </div>
+          </section>
+          
+        </div>
+        <div class="usage_benifit_box_right_side">
+          <section id="ilpgar-2-2-2-2-2-2-2-2-2-2-2" class="">
+            <div class="benifit_border_set">
+              <div id="iq4b8i-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="d-flex justify-content-center my-4">
+                <h3 id="ifbgxi-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                  class="text-center trapezium-heading bg-warning">Benefits</h3>
+              </div>
+              <div id="container1" class="container-swapped">
+                <div id="image1" class="image-swapped">
+                  <img src="template_uploads/assets/imgs/1_new.png" alt="Main Image"
+                    id="main-image1" class="main-image-swapped">
+                  <div id="yellow-box1" class="yellow-box-right-bottom"></div>
+                </div>
+                <div id="text1" class="text-swapped">
+                  <p id="text-content">
+                    Penetrates deep in the bottom of drains and kills insects/germs
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="benifit_border_set">
+              <div id="iq4b8i-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="d-flex justify-content-center my-4">
+                <h3 id="ifbgxi-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                  class="text-center trapezium-heading bg-warning">Benefits</h3>
+              </div>
+              <div id="container2" class="container-alternate">
+                <div id="text2" class="text-alternate">
+                  <p id="text-content2">
+                    Eliminates 99.9% insects/germs for a spotless &amp; safe home
+                  </p>
+                </div>
+                <div id="image1" class="image-alternate">
+                  <img src="template_uploads/assets/imgs/2_new.png"" alt=" Alternate Image"
+                    id="main-image2" class="main-image-alternate">
+                  <div id="yellow-box2" class="yellow-box-left-bottom"></div>
+                </div>
+              </div>
+            </div>
+            <div class="benifit_border_set">
+              <div id="iq4b8i-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="d-flex justify-content-center my-4">
+                <h3 id="ifbgxi-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                  class="text-center trapezium-heading bg-warning">Benefits</h3>
+              </div>
+              <div id="container1" class="container-swapped">
+                <div id="image1" class="image-swapped">
+                  <img src="template_uploads/assets/imgs/3_new.png" alt="Main Image"
+                    id="main-image1" class="main-image-swapped">
+                  <div id="yellow-box1" class="yellow-box-right-bottom"></div>
+                </div>
+                <div id="text1" class="text-swapped">
+                  <p id="text-content">
+                    Keeps crop damaging insects away from crops for a healthy, plentiful harvest
+                  </p>
+                </div>
+              </div>
+
+            </div>
+            <div class="benifit_border_set">
+              <div id="iq4b8i-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="d-flex justify-content-center my-4">
+                <h3 id="ifbgxi-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                  class="text-center trapezium-heading bg-warning">Benefits</h3>
+              </div>
+              <div id="container2" class="container-alternate">
+                <div id="text2" class="text-alternate">
+                  <p id="text-content2">
+                    Protects outdoor and gardens from disease causing insects/germs
+                  </p>
+                </div>
+                <div id="image1" class="image-alternate">
+                  <img src="template_uploads/assets/imgs/4_new.png" alt="Alternate Image"
+                    id="main-image2" class="main-image-alternate">
+                  <div id="yellow-box2" class="yellow-box-left-bottom"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="about">
+
+    <div class="about">
+      <div class="about_left">
+        <div class="main_hading-about">
+          <h2>About Us</h2>
+        </div>
+        <p class="sub_heading">Vikrant Chemico Industries Limited stand stall as apioneer in
+          the real mofchemical solutions, committed toexcellence,
+          innovation , and sustainable practices . With a legacy of trust
+          spanning since 1972,we have consistently delivered
+          high-quality products that catertodi verse consumer needs.
+        </p>
+        <div class="main_about_box">
+          <div class="our_vision">
+            <img src="template_uploads/assets/imgs/Doctor_target_icon.png" alt="" />
+            <h2>
+              Our Vision</h3>
+          </div>
+          <div>
+            <p class="our_vision_p">Our mission is simple yet profound: to empower
+              individuals and communities with superior cleaning
+              solutions that enhances well-being and inspires confidence.
+              With a steadfast commitment to quality, innovation, and customer
+              satisfaction, we strive to make Doctor Brand products
+              indispensable allies in every cleaning endeavor.
+              We pledge to continuously refine and expand our product range,
+              ensuring that each offering exceeds expectations and contributes
+              to
+              a cleaner, healthier world.
+            </p>
+          </div>
+        </div>
+        <div class="main_about_box">
+          <div class="our_vision">
+            <img src="template_uploads/assets/imgs/Doctor_scop_lense.png" alt="" />
+            <h2>
+              Our Mission
+            </h2>
+          </div>
+          <div>
+            <p class="our_vision_p">At Vikrant Chemico Industries Ltd., our vision
+              is to revolutionize the way people perceive cleanliness
+              and hygiene. Through Doctor Brand, we aim to become
+              synonymous with purity, reliability, and effectiveness,
+              setting new benchmarks in the industry. We envision a
+              future where every home and institution embraces our
+              products as essential companions
+              in their pursuit of a healthier, safer environment.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="about_right">
+        <img class="usage_benifit_image" src="template_uploads/assets/imgs/about_rightSide.png"
+          alt="" />
+      </div>
+    </div>
+    <section>
+
+      <div class="main_hading">
+        <h2>Our “CleanSlate” Guarantee</h2>
+      </div>
+            <div class="clean_state">
+
+        <div class="clean_state_h2">
+          <p class="sub_heading-2">Withthe "CleanSlate "Guarantee,youcan confidently embracea sparkling
+            clean environment,knowing that DoctorBrand
+            has your back every step of the way.Because when it comes to clean liness,we believe every
+            one deserve safresh start.
+          </p>
+        </div>
+      </div>
+      <div class="clean_state_box">
+        <div class="top_handling_box">
+        </div>
+        <div class="clean_state_card">
+          <img src="template_uploads/assets/imgs/Doctor_hand_icon.png" alt="" />
+          <h1>Primium </br> Quality</h1>
+          <p>We prioritize quality above all else, ensuring that our products meet the highest standards of
+            efficacy and
+            safety, backed by rigorous testing and research.</p>
+        </div>
+        <div class="clean_state_card">
+          <img src="template_uploads/assets/imgs/Doctor_lady_icon.png" alt="" />
+          <h1>Expert </br> Formulation</h1>
+          <p>Our products are carefully crafted to promote a healthy environment, free from harmful chemicals
+            or toxins,
+            making them safe for families, pets, and etc</p>
+        </div>
+        <div class="clean_state_card">
+          <img src="template_uploads/assets/imgs/Doctor_customer_icon.png" alt="" />
+          <h1>Customer </br> Satisfaction</h1>
+          <p>We prioritize customer satisfaction, offering exceptional customer service and standing behind
+            our products
+            with a satisfaction guarantee.</p>
+        </div>
+        <div class="clean_state_card">
+          <img src="template_uploads/assets/imgs/Doctor_rating_icon.png" alt="" />
+          <h1>Trusted </br> Expertise</h1>
+          <p>Founded by a team of experts, our cleaning product company brings a unique blend of medical
+            knowledge and
+            scientific rigor to every formulation.</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="main_hading">
+        <h2>What Makes Doctor Brand
+         </br>
+          Your First Choice</h2>
+      </div>
+      <div class="first_choice">
+        <div class="first_choice_card">
+          <img class="first_choice_card_img"
+            src="template_uploads/assets/imgs/doctor_basket_icon.png" alt="" />
+          <div>
+            <span class="first_choice_steps">step one</span>
+          </div>
+          <div class="sub_heading_steps">
+            <span class="first_choice_heading">powerfull cleaning</span>
+          </div>
+          <div>
+            <p class="first_choice_message">Our phenyle delivers potent cleaning action, tackling even the
+              toughest
+              stains and germs.</p>
+          </div>
+        </div>
+        <div class="first_choice_card">
+          <img class="first_choice_card_img" src="template_uploads/assets/imgs/doctor_basket2.png"
+            alt="" />
+          <div>
+            <span class="first_choice_steps">step two</span>
+          </div>
+          <div class="sub_heading_steps">
+            <span class="first_choice_heading">Versatile Usage</span>
+          </div>
+          <div>
+            <p class="first_choice_message">Ideal for floors, bathrooms, and kitchens, our phenyle is
+              versatile and
+              effective in various settings.</p>
+          </div>
+        </div>
+        <div class="first_choice_card">
+          <img class="first_choice_card_img" src="template_uploads/assets/imgs/doctor_basket3.png"
+            alt="" />
+          <div>
+            <span class="first_choice_steps">step three</span>
+          </div>
+          <div class="sub_heading_steps">
+            <span class="first_choice_heading">Eco-Friendly</span>
+          </div>
+          <div>
+            <p class="first_choice_message">Committed to sustainability, our phenyle is eco-friendly,
+              minimizing
+              environmental impact...</p>
+          </div>
+        </div>
+        <div class="first_choice_card">
+          <img class="first_choice_card_img" src="template_uploads/assets/imgs/doctor_basket4.png"
+            alt="" />
+          <div>
+            <span class="first_choice_steps">step one</span>
+          </div>
+          <div class="sub_heading_steps">
+            <span class="first_choice_heading">Easy Application</span>
+          </div>
+          <div>
+            <p class="first_choice_message">Convenient to use, our phenyle comes with easy- to-follow
+              instructions for
+              hassle-free cleaning...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- FAQ -->
+    <div id="irxnbi-2-2-2-2-2-2-2-2-2-2-2" class="faq-accordion">
+      <div id="irgx52-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="text-center mb-4">
+        <h1 id="iqvq6l-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="display-6 fw-semibold">
+          FAQs</h1>
+      </div>
+      <div class="container">
+  
+	  <div class="accordions">
+		<div class="accordion">
+			<input type="checkbox" id="question-1">
+			<label for="question-1" class="accordion__header" id="question-1"> How to use DoctorBrand BlackPhenyle</label>
+			<div class="accordion__content">
+				<p>It is
+				  shown by default, until the collapse plugin adds the appropriate
+				  classes that we use to style each element. These classes control
+				  the overall appearance, as well as the showing and hiding via CSS
+				  transitions. You can modify any of this with custom CSS or
+				  overriding our default variables. Its also worth noting that just
+				  about any HTML can go within the</p>
+			</div>
+		</div>
+
+		<div class="accordion">
+			<input type="checkbox" id="question-2">
+			<label for="question-2" class="accordion__header">How much DoctorBrand Phenyle is enough for cleaning floors?</label>
+			<div class="accordion__content">
+			  <p>It is
+				  hidden by default, until the collapse plugin adds the appropriate
+				  classes that we use to style each element. These classes control
+				  the overall appearance, as well as the showing and hiding via CSS
+				  transitions. You can modify any of this with custom CSS or
+				  overriding our default variables. Its also worth noting that just
+				  about any HTML can go within the </p>
+			</div>
+		</div>
+	</div>
+  
+</div>
+    </div>
+    <br id="ijcqb6-2-2-2-2-2-2-2-2-2-2-2"><br id="i1qa2q-2-2-2-2-2-2-2-2-2-2-2">
+    <section id="izt3p6-2-2-2-2-2-2-2-2-2-2-2" class="bg-warning">
+      <div id="ikcn33-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="container py-1 px-1">
+        <div id="ij8yg4-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+          class="d-flex flex-column flex-md-row justify-content-between my-4">
+          <div id="iw4zt4-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+            class="d-flex flex-column flex-md-row gap-2 align-items-center text-center">
+            <img src="template_uploads/assets/imgs/vacuum-cleaner-.png" alt=""
+              id="ifeml1-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+              class="contact-icon">
+            <p id="ipy4ym-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+              class="my-2">+91 7311124574</p>
+          </div>
+          <div id="iusy7q-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+            class="d-flex flex-column flex-md-row gap-2 align-items-center text-center">
+            <img src="template_uploads/assets/imgs/floor.png" alt=""
+              id="io5rgp-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+              class="contact-icon">
+            <p id="i9z18x-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+              class="my-2">info@vikrantgroup.com</p>
+          </div>
+          <div id="i9caeb-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+            class="d-flex flex-column flex-md-row gap-2 align-items-center text-center">
+            <img src="template_uploads/assets/imgs/floor-mop.png" alt=""
+              id="iamdm7-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+              class="contact-icon">
+            <p id="ipv43i-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+              class="my-2">
+              49, Govt. Industrial Estate, Kalpi Road, Kanpur 208022
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="ilb4gg-2-2-2-2-2-2-2-2-2-2-2" class="container py-4">
+      <div id="i1tu21-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="row align-items-center">
+        <div id="i8fh0j-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+          class="col-12 col-md-1 text-center"><img src="template_uploads/assets/imgs/logo.png"
+            alt="Logo"
+            id="i209df-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+            class="img-fluid"></div>
+        <div id="idcol2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="ccol-12 col-md-11">
+          <p id="isto38-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2">
+            Vikrant Chemico Industries limited stands tall as a pioneer in the
+            realm of chemical solutions, committed to excellence, innovation and
+            sustainable practices. WIth a legacy of trust spanning since 1972,
+            we have consistently delivered high-quality.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section id="register-2-2-2-2-2-2-2-2-2-2-2" style="background-image: url("template_uploads/assets/imgs/blog1.jpg")">
+      <div id="i2kz4k-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2" class="container padding-medium">
+        <div id="ialoph-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+          class="row align-items-center justify-content-center">
+          <div id="ihfgkd-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+            class="col-md-10">
+            <form
+            id="contactform" @submit.prevent="submitForm"
+              class="row g-3 align-items-center">
+              <div
+                id="i5gnjy-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="col-12 col-lg-auto">
+                <h5
+                  id="igyjch-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                  class="text-black mb-0 text-center text-lg-start">
+                  Subscribe to newsletter
+                </h5>
+              </div>
+              <div
+                id="iyoz6g-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="col-12 col-md"><input type="email" name="email" placeholder="Enter Your Email Address*"
+                  id="irghzl-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                  class="form-control bg-white border-0 shadow p-3 bg-body rounded-4 text-center">
+              </div>
+              <div
+                id="ijrdjk-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"
+                class="col-8 col-md-auto d-flex m-auto mt-4"><button
+                  id="subscrib_id_button"
+                  class="btn btn-white p-3 text-black shadow bg-body rounded-4 w-100">
+                  Subscribe now
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page_main_footer-2-2-2-2-2-2-2-2-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"
+        id="iab6rx-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="i8zu6v-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+        id="i1apez-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js"
+        id="iy1lec-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js"
+        id="ieucui-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2-2-2-2-2-2-2-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"
+        id="ivzdzl-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="iwo6oi-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+        id="iat077-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js"
+        id="ihmdkt-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js"
+        id="i6zzaj-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2-2-2-2-2-2-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"
+        id="ipzxjn-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="i3qi0y-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+        id="idkjxc-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js"
+        id="i8hs2v-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js"
+        id="iv4obf-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script id="i0ijm5-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2">console.log("hello");</script>
+    </section>
+    <section id="page_main_footer-2-2-2-2-2-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"
+        id="ip6sfk-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="ikifuc-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+        id="i5lx9j-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js"
+        id="ij6nnw-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js"
+        id="iph11y-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2-2-2-2-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"
+        id="imu38j-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="ikusss-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+        id="iubhr3-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js"
+        id="iugymf-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js"
+        id="ik3om9-2-2-2-2-2-2-2-2-2-2-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2-2-2-2-2-2"></section>
+    <section id="page_main_footer-2-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" id="i0v557-2-2-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="ihcb5p-2-2-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+        id="ig5ubw-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js" id="iw9kzy-2-2-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js" id="i35evi-2-2-2-2-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" id="igeo3m-2-2-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="il0ewk-2-2-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" id="ip6hoj-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js" id="iuxcsn-2-2-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js" id="i37g0y-2-2-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" id="i732gh-2-2-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="iddimc-2-2-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" id="ids1ss-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js" id="insdkc-2-2-2-2"></script>
+      <script src="template_uploads/assets/js/script.js" id="ioz3et-2-2-2-2"></script>
+    </section>
+    <section id="page_main_footer-2">
+      <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js" id="i9dtps-2-2"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"
+        id="irv8ak-2-2"></script>
+      <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" id="igsqol-2-2"></script>
+      <script src="template_uploads/assets/js/plugins.js" id="ian8xl-2-2"></script>
+      <script src="template_uploads/assets/js/script.js" id="iwscj7-2-2"></script>
+    </section>
+</body>
+
+</html>

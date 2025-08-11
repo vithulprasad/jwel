@@ -22,8 +22,14 @@ router.post('/api/edit_category', PC_controller.category_edit);
 
 router.post('/api/create_product',PC_controller.product_create)
 router.post('/api/edit_product',PC_controller.product_update)
-router.post('/api/single_product',PC_controller.product_single_view)
+router.get('/api/get_product_by_id',PC_controller.get_product_by_id)
 router.get('/api/product_list',PC_controller.product_list) // pagination
+router.get('/api/product_delete',PC_controller.product_delete) 
+router.get('/api/product_recover',PC_controller.product_recover) 
+router.get('/api/search_product',PC_controller.search_product)
+
+
+router.get('/product_dummy_inserter',PC_controller.product_dummy_insert)
 
 
 

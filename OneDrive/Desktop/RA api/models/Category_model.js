@@ -29,23 +29,7 @@ const categorySchema = new mongoose.Schema({
   }
 });
 
-categorySchema.pre('save', async function (next) {
-  if (!this.isModified('name') && !this.isModified('parent')) {
-    return next();
-  }
 
-  if (this.type === 'main') {
-    this.path = this.name;
-  } else if (this.parent) {
-    const parentCategory = await mongoose.model('Category').findById(this.parent);
-    if (!parentCategory) {
-      return next(new Error('Parent category not found'));
-    }
-    this.path = `${parentCategory.path} > ${this.name}`;
-  }
-
-  next();
-});
 
 const Category = mongoose.model('Category', categorySchema);
 

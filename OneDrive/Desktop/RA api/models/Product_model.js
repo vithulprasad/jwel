@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: String,
 
-  // model: { type: mongoose.Schema.Types.ObjectId, ref: 'Model' },
+  brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' ,default: null},
   category: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
 
   price: { type: Number }, // used only if no variants

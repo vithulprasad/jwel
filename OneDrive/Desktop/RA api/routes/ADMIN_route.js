@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/USER_controller')
 const PC_controller = require('../controllers/PC_controller')
+const Brand_controller = require('../controllers/BRAND_controller')
+const bannerController = require('../controllers/BANNER_controller')
 const { authenticate } = require('../config/auth');
 
 router.post('/api/log_in', UserController.admin_login); 
@@ -33,9 +35,24 @@ router.get('/product_dummy_inserter',PC_controller.product_dummy_insert)
 
 
 
+//brand routes
+router.post('/api/create_brand',Brand_controller.create_brand)
+router.post('/api/edit_brand',Brand_controller.edit_brand)
+router.get('/api/single_brand',Brand_controller.single_brand)
+router.get('/api/list_brands',Brand_controller.list_brand)
+router.delete('/api/delete_brand',Brand_controller.delete_brand)
+router.get('/api/brand_products',Brand_controller.brand_products)
 
 
-//product routes
+
+
+
+//banner routes
+router.post("/api/create_banner", bannerController.createBanner);
+router.put("/api/edit_banner/:id", bannerController.updateBanner);
+router.get("/api/single_banner/:id", bannerController.getBannerById);
+router.get("/api/all_banners", bannerController.getBanners);
+router.delete("/api/delete_banner/:id", bannerController.deleteBanner);
 
 
 module.exports = router;

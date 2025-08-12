@@ -8,7 +8,7 @@ exports.product_create = async (req, res) => {
     const {
       name,
       description,
-      model,
+      brand,
       category,
       price,
       discount_price,
@@ -78,6 +78,7 @@ exports.product_create = async (req, res) => {
       hasVariants,
       variants: hasVariants ? variants : [],
       status,
+      brand:brand ||null
     });
 
     // ✅ Save to DB
@@ -180,7 +181,7 @@ exports.product_update = async (req, res) => {
       id,
       name,
       description,
-      model,
+      brand,
       category,
       price,
       discount_price,
@@ -201,7 +202,7 @@ exports.product_update = async (req, res) => {
     // ✅ Update basic fields
     if (name && name.trim() !== "") product.name = name.trim();
     if (description) product.description = description;
-    if (model) product.model = model;
+  
     if (category) product.category = category;
     product.hasVariants = hasVariants;
     product.status = status || product.status;
@@ -273,14 +274,15 @@ exports.product_update = async (req, res) => {
     } else {
       product.variants = [];
     }
-   let image_collector = [
+    let image_collector = [
       req.body.image_url_1,
       req.body.image_url_2,
       req.body.image_url_3,
       req.body.image_url_4,
       req.body.image_url_5,
     ];
-  product.images = image_collector
+    product.images = image_collector;
+    product.brand = brand
     const updatedProduct = await product.save();
 
     res.status(200).json({
@@ -334,22 +336,72 @@ exports.create_category = async (req, res) => {
   try {
     const { name, status, type, parent_id, image } = req.body;
 
+    let path = "";
+
+    if (!parent_id) {
+      // No parent → path is just the name
+      path = name;
+    } else {
+      const parentObjectId = new mongoose.Types.ObjectId(parent_id);
+
+      const result = await category_model.aggregate([
+        {
+          $match: { _id: parentObjectId }
+        },
+        // 🔼 Find all parents (upward)
+        {
+          $graphLookup: {
+            from: "categories",
+            startWith: "$parent",
+            connectFromField: "parent",
+            connectToField: "_id",
+            as: "parents"
+          }
+        }
+      ]);
+
+      if (!result.length) {
+        return res.status(404).json({ message: "Parent category not found" });
+      }
+
+      const parentCategory = result[0];
+      const allParents = [...parentCategory.parents, parentCategory];
+
+      // Sort from root → closest parent
+      const sortedParents = [];
+      let current = allParents.find(c => !c.parent);
+      while (current) {
+        sortedParents.push(current);
+        current = allParents.find(c => c.parent?.toString() === current._id.toString());
+      }
+
+      // Build path string
+      path = sortedParents.map(p => p.name).join(" > ") + ` > ${name}`;
+    }
+
     const create_category = new category_model({
-      name: name,
+      name,
       slug: name,
-      parent: parent_id,
-      type: type,
-      flag: status == "active" ? true : false,
-      image: image,
+      parent: parent_id || null,
+      type,
+      flag: status === "active",
+      image,
+      path
     });
-    const result = await create_category.save();
-    res
-      .status(200)
-      .json({ data: result, message: "category created successfully" });
+
+    const newCategory = await create_category.save();
+
+    res.status(200).json({
+      data: newCategory,
+      message: "Category created successfully"
+    });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.list_category = async (req, res) => {
   try {
@@ -383,40 +435,154 @@ exports.category_delete = async (req, res) => {
 
 exports.category_edit = async (req, res) => {
   try {
-    console.log("category edit request body:", req.body);
-
     const { name, status, type, parent_id, image, _id } = req.body;
+    const categoryId = new mongoose.Types.ObjectId(_id);
 
-    // Update the category
+    // Step 1: Build the new path for this category
+    let newPath;
+    if (!parent_id) {
+      newPath = name;
+    } else {
+      const parentObjectId = new mongoose.Types.ObjectId(parent_id);
+      const parentData = await category_model.aggregate([
+        { $match: { _id: parentObjectId } },
+        {
+          $graphLookup: {
+            from: "categories",
+            startWith: "$parent",
+            connectFromField: "parent",
+            connectToField: "_id",
+            as: "parents"
+          }
+        }
+      ]);
+
+      if (!parentData.length) {
+        return res.status(404).json({ message: "Parent category not found" });
+      }
+
+      const parentCategory = parentData[0];
+      const allParents = [...parentCategory.parents, parentCategory];
+
+      // Sort hierarchy root → closest parent
+      const sortedParents = [];
+      let current = allParents.find(c => !c.parent);
+      while (current) {
+        sortedParents.push(current);
+        current = allParents.find(c => c.parent?.toString() === current._id.toString());
+      }
+
+      newPath = sortedParents.map(p => p.name).join(" > ") + ` > ${name}`;
+    }
+
+    // Step 2: Update the main category
     const updatedCategory = await category_model.findByIdAndUpdate(
-      _id,
+      categoryId,
       {
         name,
         slug: name,
-        parent: parent_id,
+        parent: parent_id || null,
         type,
         flag: status === "active",
         image,
+        path: newPath
       },
-      { new: true } // return the updated document
+      { new: true }
     );
 
     if (!updatedCategory) {
       return res.status(404).json({ message: "Category not found" });
     }
 
-    res.status(200).json(updatedCategory);
+    // Step 3: Find all descendants and update their paths
+    const descendants = await category_model.aggregate([
+      { $match: { _id: categoryId } },
+      {
+        $graphLookup: {
+          from: "categories",
+          startWith: "$_id",
+          connectFromField: "_id",
+          connectToField: "parent",
+          as: "children"
+        }
+      }
+    ]);
+
+    if (descendants.length && descendants[0].children.length) {
+      for (let child of descendants[0].children) {
+        // Get new parent's path
+        const parentCategory = await category_model.findById(child.parent).lean();
+        const newChildPath = `${parentCategory.path} > ${child.name}`;
+        await category_model.findByIdAndUpdate(child._id, { path: newChildPath });
+      }
+    }
+
+    res.status(200).json({ message: "Category updated successfully", updatedCategory });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
 
+
 exports.category_single = async (req, res) => {
   try {
-    console.log("product delete");
-    const find_category = await category_model.findOne({ _id: req.query.id });
-    res.status(200).json({ message: "fetched", data: find_category });
+    const categoryId = new mongoose.Types.ObjectId(req.query.id);
+
+    // Find category + all its descendants
+    const result = await category_model.aggregate([
+      {
+        $match: { _id: categoryId }, // Start with the selected category
+      },
+      {
+        $graphLookup: {
+          from: "categories", // collection name in MongoDB
+          startWith: "$_id", // field from the current document
+          connectFromField: "_id", // id of the current category
+          connectToField: "parent", // field in other documents that references parent
+          as: "children", // output array
+        },
+      },
+    ]);
+
+    if (!result.length) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    const categoryIds = [...result[0].children.map((c) => c._id), req.query.id];
+
+    const productIds = await product_model.distinct("_id", {
+      category: { $in: categoryIds },
+      status: "active",
+    });
+
+    const products = await product_model.find({ _id: { $in: productIds } });
+//     const categoryIds = [...result[0].children.map(c => c._id), req.query.id];
+
+// const products = await product_model.aggregate([
+//   {
+//     $match: {
+//       category: { $in: categoryIds }
+//     }
+//   },
+//   {
+//     $group: {
+//       _id: "$_id",
+//       doc: { $first: "$$ROOT" } // Keep the first matching document
+//     }
+//   },
+//   {
+//     $replaceRoot: { newRoot: "$doc" }
+//   }
+// ]);
+
+    res.status(200).json({
+      message: "fetched",
+      data: result[0],
+      products: products,
+    });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };

@@ -1,10 +1,10 @@
 const OTP_model = require("../models/OTP_model");
 const Admin_model = require("../models/Admin_model");
-const nodemailer = require("../config/mailer")
+const { sendEmail } = require("../config/mailer");
 const bcrypt = require("bcrypt");
-const jwt = require('../config/jwt')
-
-
+const jwt = require("../config/jwt");
+const validator = require("validator");
+const user_model = require("../models/User_model");
 const RANDOM_OTP = () => {
   return Math.floor(1000 + Math.random() * 9000);
 };
@@ -19,21 +19,23 @@ exports.admin_login = async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, find_admin.password);
 
     if (!passwordMatch) {
-      return  res.status(400).json({ message: "password is incorrect", data: [] });
+      return res
+        .status(400)
+        .json({ message: "password is incorrect", data: [] });
     }
 
-    await OTP_model.deleteMany({FROM:Email})
-    const create_otp =await new OTP_model({
-      OTP:RANDOM_OTP(),
-      FROM:Email
-    }).save()
-    const response =  nodemailer.sendEmail(
-        Email,
-        'otp for real admin',
-        `Your OTP is ${create_otp.OTP}`
-      );
+    await OTP_model.deleteMany({ FROM: Email });
+    const create_otp = await new OTP_model({
+      OTP: RANDOM_OTP(),
+      FROM: Email,
+    }).save();
+    const response = sendEmail(
+      Email,
+      "otp for real admin",
+      `Your OTP is ${create_otp.OTP}`
+    );
 
-    res.status(200).json({ message: "Otp sent to your email",data:response});
+    res.status(200).json({ message: "Otp sent to your email", data: response });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -77,47 +79,621 @@ exports.admin_sign_up = async (req, res) => {
 
 exports.admin_sign_in_otp = async (req, res) => {
   try {
-    const {Email,OTP} =req.body
+    const { Email, OTP } = req.body;
 
-    const find_otp = await OTP_model.findOne({FROM:Email})
+    const find_otp = await OTP_model.findOne({ FROM: Email });
 
-    const find_email = await Admin_model.findOne({Email:Email})
+    const find_email = await Admin_model.findOne({ Email: Email });
 
-    if(!find_email){
-      return res.status(400).json({message:'email not exists'})
+    if (!find_email) {
+      return res.status(400).json({ message: "email not exists" });
     }
 
-    if(!find_otp){
-      return res.status(400).json({message:'otp not registered to email please try again'})
-    }
-    
-    if(find_otp.OTP != OTP){
-          return res.status(400).json({message:'otp not matching'})
+    if (!find_otp) {
+      return res
+        .status(400)
+        .json({ message: "otp not registered to email please try again" });
     }
 
-    await OTP_model.deleteMany({FROM:Email})
-  
-       const token = jwt.generateToken({user_id:find_email._id})
+    if (find_otp.OTP != OTP) {
+      return res.status(400).json({ message: "otp not matching" });
+    }
 
+    await OTP_model.deleteMany({ FROM: Email });
 
-    res.status(200).json({message:'otp verified',token:token});
+    const token = jwt.generateToken({ user_id: find_email._id });
+
+    res.status(200).json({ message: "otp verified", token: token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-
-exports.verify=async(req,res)=>{
+exports.verify = async (req, res) => {
   try {
-     const find_verified = jwt.verifyTokenCheck(req.query?.token)
-       console.log(find_verified)
-       if(find_verified.user_id){
-          res.status(200).json({message:'ok'})
-       }else{
-         res.status(400).json({message:'token expired'})
-       }
-           
+    const find_verified = jwt.verifyTokenCheck(req.query?.token);
+    console.log(find_verified);
+    if (find_verified.user_id) {
+      res.status(200).json({ message: "ok" });
+    } else {
+      res.status(400).json({ message: "token expired" });
+    }
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
-}
+};
+
+exports.user_login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(req.body);
+    const find_email = await user_model.findOne({ email: email });
+    if (!find_email) {
+      return res.status(400).json({ message: "email is incorrect" });
+    }
+
+    if (find_email.flag == false) {
+      return res.status(400).json({ message: "user access removed" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, find_email.password);
+    if (!passwordMatch) {
+      return res.status(400).json({ message: "password is incorrect" });
+    }
+
+    const token = jwt.generateToken({ user_id: find_email._id });
+
+    res.status(200).json({
+      message: `welcome back ${find_email.name}`,
+      data: { name: find_email.name, token: token, email: find_email.email },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.user_sign_up = async (req, res) => {
+  try {
+    console.log("user sign up", req.body);
+
+    const { fullName, email, password, confirmPassword } = req.body;
+
+    const find_email = await user_model.findOne({ email: email });
+    if (find_email) {
+      return res.status(400).json({ message: "Email already taken" });
+    }
+    // Email validation
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: "Email is not valid" });
+    }
+
+    // Password length & complexity check
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters long and contain both letters and numbers",
+      });
+    }
+
+    if (password.split("").some((val) => val == " ")) {
+      return res
+        .status(400)
+        .json({ message: "please don't use space in password" });
+    }
+
+    // Confirm password match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    await OTP_model.deleteMany({ FROM: email });
+    const create_otp = await new OTP_model({
+      OTP: RANDOM_OTP(),
+      FROM: email,
+    }).save();
+
+    const htmlContent = `
+  <div style="background-color:#f5f8fa; padding:20px; font-family:Arial, sans-serif; text-align:center;">
+
+    <div style="background-color:white; padding:20px; display:inline-block; text-align:left;">
+      <img src="https://www.logoai.com/api/proxy?url=https:%2F%2Ftempfile.aiquickdraw.com%2Fs%2F6f99adf9130fd9222ec7fcfb3605d75c_0_1754416431_8402.png" 
+           alt="Real Accessories" width="150" style="display:block; margin-bottom:10px;" />
+      <p><strong>Verify Email by OTP</strong></p>
+      <p>Thank you for Using Real accessories </p>
+      <p><strong>Your OTP:</strong> ${create_otp.OTP}</p>
+    </div>
+
+  </div>
+  `;
+    const response = await sendEmail(
+      email,
+      "Real Accessories OTP for User Registration",
+      htmlContent
+    );
+    console.log(response, "dfdfd");
+    res.status(200).json({ message: "Otp sent to your email" });
+    // Continue your logic (e.g., save user to DB)
+  } catch (error) {
+    console.log(error.message);
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.verify_otp = async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const { fullName, email, password, confirmPassword, otp } = req.body;
+    const find_otp = await OTP_model.findOne({ FROM: email });
+
+    if (!find_otp) {
+      return res
+        .status(400)
+        .json({ message: "otp not registered to email please try again" });
+    }
+
+    if (find_otp.OTP != otp) {
+      return res.status(400).json({ message: "otp not matching" });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: "Email is not valid" });
+    }
+
+    // Password length & complexity check
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters long and contain both letters and numbers",
+      });
+    }
+
+    if (password.split("").some((val) => val == " ")) {
+      return res
+        .status(400)
+        .json({ message: "please don't use space in password" });
+    }
+
+    // Confirm password match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+    const find_email = await user_model.findOne({ email: email });
+    if (find_email) {
+      return res.status(400).json({ message: "Email already taken" });
+    }
+
+    await OTP_model.deleteMany({ FROM: email });
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const create_user = new user_model({
+      name: fullName,
+      email: email,
+      password: passwordHash,
+    });
+    const new_user = await create_user.save();
+    const token = jwt.generateToken({ user_id: new_user._id });
+    res.status(200).json({
+      message: `welcome ${fullName}`,
+      data: { name: fullName, token: token, email: email },
+    });
+  } catch (error) {
+    console.log(error.message);
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.get_profile = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const find_user = await user_model.findOne({ _id: user.user_id });
+    console.log(user);
+    return res.status(200).json({ message: "dfadf", data: find_user });
+  } catch (error) {
+    console.log(error.message);
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.create_address = async (req, res) => {
+  try {
+    const {
+      phone,
+      pin_code,
+      locality,
+      address,
+      town,
+      state,
+      landmark,
+      alternate_phone,
+      flag,
+    } = req.body;
+
+    // 1️⃣ VALIDATIONS
+    if (!phone || phone.toString().length !== 10) {
+      return res
+        .status(400)
+        .json({ message: "Phone is required and must be 10 digits" });
+    }
+
+    if (!pin_code) {
+      return res.status(400).json({ message: "Pincode is required" });
+    }
+
+    if (!address || address.trim() === "") {
+      return res.status(400).json({ message: "Address is required" });
+    }
+
+    if (alternate_phone && alternate_phone.toString().length !== 10) {
+      return res
+        .status(400)
+        .json({ message: "Alternate phone must be 10 digits" });
+    }
+
+    const find_address = await user_model.findOne({ _id: req.user.user_id });
+
+    if (!find_address) {
+      return res.status(400).json({ message: "user not found" });
+    }
+
+    if (find_address.address.length > 4) {
+      return res
+        .status(400)
+        .json({ message: "address creation limit reached" });
+    }
+    // 2️⃣ FIND USER AND UPDATE
+    const updatedUser = await user_model.findByIdAndUpdate(
+      req.user.user_id,
+      {
+        $push: {
+          address: {
+            phone,
+            pin_code,
+            locality,
+            address,
+            town,
+            state,
+            landmark,
+            alternate_phone,
+            flag: flag ?? false,
+          },
+        },
+      },
+      { new: true } // return updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Address added successfully",
+      data: updatedUser.address,
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+exports.delete_address = async (req, res) => {
+  try {
+    const user = req.user;
+    const find_user = await user_model.findOne({ _id: user.user_id });
+
+    if (!find_user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the address list by removing the given ID
+    const data = find_user.address.filter(
+      (val) => val._id.toString() !== req.query.id
+    );
+
+    find_user.address = data;
+    await find_user.save();
+
+    res.status(200).json({
+      message: "Address deleted successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.edit_address = async (req, res) => {
+  try {
+    const user = req.user;
+    const {
+      _id,
+      phone,
+      pin_code,
+      locality,
+      address,
+      town,
+      state,
+      landmark,
+      alternate_phone,
+    } = req.body;
+
+    const find_user = await user_model.findOne({ _id: user.user_id });
+
+    if (!find_user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the address object
+    const addressObj = find_user.address.find(
+      (val) => val._id.toString() === _id
+    );
+
+    if (!addressObj) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    // Update fields
+    addressObj.phone = phone;
+    addressObj.pin_code = pin_code;
+    addressObj.locality = locality;
+    addressObj.address = address;
+    addressObj.town = town;
+    addressObj.state = state;
+    addressObj.landmark = landmark;
+    addressObj.alternate_phone = alternate_phone;
+
+    await find_user.save();
+
+    res.status(200).json({
+      message: "Address updated successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.profile_name_edit = async (req, res) => {
+  try {
+    const find_user = await user_model.findOne({ _id: req.user.user_id });
+    if (!find_user) {
+      return res.status(400).json({ message: "user not found" });
+    }
+
+    console.log(req.body.name);
+    if (req.body.name == "") {
+      return res.status(400).json({ message: "please add something" });
+    }
+
+    find_user.name = req.body.name;
+
+    await find_user.save();
+
+    res.status(200).json({
+      message: "user name updated successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.profile_password_edit = async (req, res) => {
+  try {
+    const { current_password, new_password, confirm_new_password } = req.body;
+    const find_user = await user_model.findOne({ _id: req.user.user_id });
+
+    const passwordMatch = await bcrypt.compare(
+      current_password,
+      find_user.password
+    );
+    if (!passwordMatch) {
+      return res.status(400).json({ message: "password is incorrect" });
+    }
+    console.log(new_password, "dfd", confirm_new_password);
+    if (new_password != confirm_new_password) {
+      return res.status(400).json({ message: "confirm password not matching" });
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    if (!passwordRegex.test(new_password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters long and contain both letters and numbers",
+      });
+    }
+
+    if (new_password.split("").some((val) => val == " ")) {
+      return res
+        .status(400)
+        .json({ message: "please don't use space in password" });
+    }
+    const passwordHash = await bcrypt.hash(new_password, 10);
+
+    find_user.password = passwordHash;
+    await find_user.save();
+
+    res.status(200).json({
+      message: "password updated successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.forgot_password_email_verify = async (req, res) => {
+  try {
+    console.log(req.body);
+    const email = req.body.email;
+    const find_email = await user_model.findOne({ email: req.body.email });
+    if (!find_email) {
+      return res
+        .status(400)
+        .json({ message: "email not exist please sign up" });
+    }
+
+    await OTP_model.deleteMany({ FROM: email });
+    const create_otp = await new OTP_model({
+      OTP: RANDOM_OTP(),
+      FROM: email,
+    }).save();
+
+    const htmlContent = `
+  <div style="background-color:#f5f8fa; padding:20px; font-family:Arial, sans-serif; text-align:center;">
+
+    <div style="background-color:white; padding:20px; display:inline-block; text-align:left;">
+      <img src="https://www.logoai.com/api/proxy?url=https:%2F%2Ftempfile.aiquickdraw.com%2Fs%2F6f99adf9130fd9222ec7fcfb3605d75c_0_1754416431_8402.png" 
+           alt="Real Accessories" width="150" style="display:block; margin-bottom:10px;" />
+      <p><strong>Verify Email by OTP</strong></p>
+      <p>Thank you for Using Real accessories </p>
+       <p>happy to sent you forgot password otp </p>
+      <p><strong>Your OTP:</strong> ${create_otp.OTP}</p>
+    </div>
+
+  </div>
+  `;
+    const response = await sendEmail(
+      email,
+      "Real Accessories OTP for Forgot Password",
+      htmlContent
+    );
+
+    res.status(200).json({ message: "Otp sent to your email" });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+exports.forgot_password = async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const { email, password, confirm_password, otp } = req.body;
+    const find_otp = await OTP_model.findOne({ FROM: email });
+    if (!find_otp) {
+      return res
+        .status(400)
+        .json({ message: "otp not registered to email please try again" });
+    }
+
+    if (find_otp.OTP != otp) {
+      return res.status(400).json({ message: "otp not matching" });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: "Email is not valid" });
+    }
+
+    // Password length & complexity check
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters long and contain both letters and numbers",
+      });
+    }
+
+    if (password.split("").some((val) => val == " ")) {
+      return res
+        .status(400)
+        .json({ message: "please don't use space in password" });
+    }
+
+    // Confirm password match
+    if (password !== confirm_password) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+    const find_email = await user_model.findOne({ email: email });
+    if (!find_email) {
+      return res.status(400).json({ message: "email not exist" });
+    }
+
+    await OTP_model.deleteMany({ FROM: email });
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    find_email.password = passwordHash;
+    await find_email.save();
+    res.status(200).json({ message: "New password was set Happy shopping" });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.resend_otp = async (req, res) => {
+  try {
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};

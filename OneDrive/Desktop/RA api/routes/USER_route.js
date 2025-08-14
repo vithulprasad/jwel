@@ -15,5 +15,17 @@ router.post('/api/profile_name_edit',authenticate,USER_controller.profile_name_e
 router.post('/api/profile_password_edit',authenticate,USER_controller.profile_password_edit)
 router.post('/api/forgot_password',USER_controller.forgot_password)
 router.post('/api/forgot_password_email_verify',USER_controller.forgot_password_email_verify)
+router.post('/api/google_sign_in_login',USER_controller.google_sign_in_login)
+
+
+router.get('/api/fetch_all_collections',USER_controller.fetch_all_collections)
+
+router.get('/api/fetch_collections_by_id',USER_controller.fetch_collections_by_main_id)
+
+router.get('/api/fetch_products_by_collection',USER_controller.fetch_products_by_collection_id)
+router.get('/api/fetch_filter_category_by_id',USER_controller.fetch_filter_category_by_id)
+
+
+
 
 module.exports = router;

@@ -1,5 +1,11 @@
 const OTP_model = require("../models/OTP_model");
 const Admin_model = require("../models/Admin_model");
+const product_model = require("../models/Product_model");
+const category_model = require("../models/Category_model");
+const banner_model = require("../models/Banner_model");
+const brand_model = require("../models/Brand_model");
+const mongoose = require("mongoose");
+
 const { sendEmail } = require("../config/mailer");
 const bcrypt = require("bcrypt");
 const jwt = require("../config/jwt");
@@ -661,6 +667,7 @@ exports.forgot_password = async (req, res) => {
     if (password !== confirm_password) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
+
     const find_email = await user_model.findOne({ email: email });
     if (!find_email) {
       return res.status(400).json({ message: "email not exist" });
@@ -668,10 +675,288 @@ exports.forgot_password = async (req, res) => {
 
     await OTP_model.deleteMany({ FROM: email });
     const passwordHash = await bcrypt.hash(password, 10);
-
+    if (find_email.password == "google") {
+      return res.status(400).json({ message: "account is google login only" });
+    }
     find_email.password = passwordHash;
     await find_email.save();
     res.status(200).json({ message: "New password was set Happy shopping" });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.google_sign_in_login = async (req, res) => {
+  try {
+    const credential = req.body.credential;
+
+    if (!credential) {
+      return res.status(400).json({ message: "Missing Google credential" });
+    }
+
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+    } catch (verifyError) {
+      return res
+        .status(401)
+        .json({ message: "Google token verification failed" });
+    }
+
+    const payload = ticket.getPayload();
+    if (!payload) {
+      return res.status(401).json({ message: "Invalid Google token payload" });
+    }
+
+    if (!payload.email_verified) {
+      return res.status(401).json({ message: "Google email not verified" });
+    }
+
+    const { sub, email, name, picture } = payload;
+
+    const find_user = await user_model.findOne({ email: email });
+
+    if (find_user) {
+      if (find_user.flag == false) {
+        return res.status(401).json({ message: "user access removed" });
+      }
+
+      if (find_user.password == "google") {
+        const token = jwt.generateToken({ user_id: find_user._id });
+        return res.status(200).json({
+          message: `welcome back ${find_user.name}`,
+          data: { name: find_user.name, token: token, email: email },
+        });
+      } else {
+        find_user.password = "google";
+        await find_user.save();
+        const token = jwt.generateToken({ user_id: find_user._id });
+        return res.status(200).json({
+          message: `welcome back ${find_user.name}`,
+          data: { name: find_user.name, token: token, email: email },
+        });
+      }
+    } else {
+      const create_user = new user_model({
+        name: name,
+        email: email,
+        password: "google",
+      });
+      const new_user = await create_user.save();
+      const token = jwt.generateToken({ user_id: new_user._id });
+      return res.status(200).json({
+        message: `welcome ${name}`,
+        data: { name: name, token: token, email: email },
+      });
+    }
+  } catch (error) {
+    console.error("Google sign-in error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong during Google sign-in" });
+  }
+};
+
+exports.fetch_all_collections = async (req, res) => {
+  try {
+    const find_main_collection = await category_model.find({ type: "main" });
+    res
+      .status(200)
+      .json({ message: "data fetched", data: find_main_collection });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.fetch_collections_by_main_id = async (req, res) => {
+  try {
+    const id = req.query.id;
+
+    const categories = await category_model.aggregate([
+      {
+        $match: { parent: new mongoose.Types.ObjectId(id) }, // Find categories under main ID
+      },
+      {
+        $lookup: {
+          from: "categories", // collection name in MongoDB
+          localField: "_id",
+          foreignField: "parent",
+          as: "items", // subcategories
+        },
+      },
+    ]);
+    console.log(categories);
+    res.status(200).json({ message: "fetched", data: categories });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.fetch_products_by_collection_id = async (req, res) => {
+  try {
+    const parentId = new mongoose.Types.ObjectId(req.query.id);
+
+    // Step 1: Get all children IDs using $graphLookup
+    const result = await category_model.aggregate([
+      {
+        $match: { _id: parentId },
+      },
+      {
+        $graphLookup: {
+          from: "categories",
+          startWith: "$_id",
+          connectFromField: "_id",
+          connectToField: "parent",
+          as: "allChildren",
+          depthField: "level",
+        },
+      },
+      {
+        $project: {
+          children_ids: {
+            $map: {
+              input: "$allChildren",
+              as: "child",
+              in: "$$child._id",
+            },
+          },
+          _id: 0,
+        },
+      },
+    ]);
+
+    if (!result.length) {
+      return res.status(404).json({ message: "No categories found" });
+    }
+
+    // Step 2: Add parent ID to children IDs
+    const childrenIds = [parentId, ...result[0].children_ids];
+
+    // Step 3: Fetch products by category
+    const products = await product_model
+      .find({
+        category: { $in: childrenIds },
+      })
+      .select("name _id front_image price discount_price brand quantity") // product fields
+      .populate({
+        path: "brand",
+        select: "name _id", // brand fields
+      })
+      .populate({
+        path: "category",
+        select: "name _id", // brand fields
+      });
+
+    const find_brand = products.map((val) => val.brand);
+    const unique = [
+      ...new Map(find_brand.map((item) => [item._id, item])).values(),
+    ];
+
+    res.status(200).json({
+      message: "fetched",
+      data: products,
+      brands: unique,
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.fetch_filter_category_by_id = async (req, res) => {
+  try {
+    const parentId = new mongoose.Types.ObjectId(req.query.id);
+
+    const result = await category_model.aggregate([
+      {
+        $match: { _id: parentId },
+      },
+      {
+        $graphLookup: {
+          from: "categories",
+          startWith: "$_id",
+          connectFromField: "_id",
+          connectToField: "parent",
+          as: "allChildren",
+          depthField: "level",
+        },
+      },
+      {
+        $unwind: "$allChildren",
+      },
+      {
+        $match: {
+          "allChildren.type": "part",
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "allChildren._id",
+          foreignField: "parent",
+          as: "childCheck",
+        },
+      },
+      {
+        $match: {
+          childCheck: { $size: 0 },
+        },
+      },
+      {
+        $project: {
+          _id: "$allChildren._id",
+          name: "$allChildren.name",
+        },
+      },
+      // ✅ Group by name to ensure uniqueness
+      {
+        $group: {
+          _id: "$name", // unique name
+        },
+      },
+      {
+        $project: {
+          _id: "$id",
+          name: "$_id",
+        },
+      },
+    ]);
+
+    console.log(result);
+    res.status(200).json({ message: "fetched", data: result });
   } catch (error) {
     console.error(error.message);
 

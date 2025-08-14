@@ -557,24 +557,7 @@ exports.category_single = async (req, res) => {
     });
 
     const products = await product_model.find({ _id: { $in: productIds } });
-//     const categoryIds = [...result[0].children.map(c => c._id), req.query.id];
 
-// const products = await product_model.aggregate([
-//   {
-//     $match: {
-//       category: { $in: categoryIds }
-//     }
-//   },
-//   {
-//     $group: {
-//       _id: "$_id",
-//       doc: { $first: "$$ROOT" } // Keep the first matching document
-//     }
-//   },
-//   {
-//     $replaceRoot: { newRoot: "$doc" }
-//   }
-// ]);
 
     res.status(200).json({
       message: "fetched",

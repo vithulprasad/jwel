@@ -7,7 +7,8 @@ const cartSchema = new mongoose.Schema({
       product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
       quantity: { type: Number, required: true, default: 1 },
       price: { type: Number, required: true } ,// store at time of adding
-      discount_price: { type: Number, required: true } 
+      discount_price: { type: Number, required: true } ,
+      variant:{type:String,default:null}
     }
   ],
   total: { type: Number, default: 0 },

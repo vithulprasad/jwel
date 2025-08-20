@@ -282,7 +282,10 @@ exports.product_update = async (req, res) => {
       req.body.image_url_5,
     ];
     product.images = image_collector;
-    product.brand = brand
+    if(brand != ""){
+  product.brand = brand
+    }
+  
     const updatedProduct = await product.save();
 
     res.status(200).json({

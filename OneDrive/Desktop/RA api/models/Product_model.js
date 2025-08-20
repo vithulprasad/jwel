@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Variant schema for products with sizes or other variations
 const variantSchema = new mongoose.Schema({
@@ -6,15 +6,15 @@ const variantSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   discount_price: { type: Number }, // discount price per variant
   quantity: { type: Number, required: true },
-  flag:{type:Boolean,default:true}
+  flag: { type: Boolean, default: true },
 });
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: String,
 
-  brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' ,default: null},
-  category: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+  brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", default: null },
+  category: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
 
   price: { type: Number }, // used only if no variants
   discount_price: { type: Number }, // used only if no variants
@@ -27,8 +27,11 @@ const productSchema = new mongoose.Schema({
 
   variants: [variantSchema], // only used if hasVariants = true
 
-  status: { type: String, enum: ['active', 'inactive'], default: 'active' },
-  createdAt: { type: Date, default: Date.now }
+  status: { type: String, enum: ["active", "inactive"], default: "active" },
+  features: { type: Array },
+  rating: { type: Number, default: 0 },
+  reviewCount: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model("Product", productSchema);

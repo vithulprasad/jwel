@@ -4,6 +4,7 @@ const product_model = require("../models/Product_model");
 const category_model = require("../models/Category_model");
 const banner_model = require("../models/Banner_model");
 const brand_model = require("../models/Brand_model");
+const cart_model = require("../models/Cart_model");
 const mongoose = require("mongoose");
 
 const { sendEmail } = require("../config/mailer");
@@ -149,9 +150,11 @@ exports.user_login = async (req, res) => {
 
     const token = jwt.generateToken({ user_id: find_email._id });
 
+
+    const find_cart = await cart_model.findOne({user:find_email._id })
     res.status(200).json({
       message: `welcome back ${find_email.name}`,
-      data: { name: find_email.name, token: token, email: find_email.email },
+      data: { name: find_email.name, token: token, email: find_email.email,cart_count:find_cart ? find_cart.items.length:0 },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -736,9 +739,12 @@ exports.google_sign_in_login = async (req, res) => {
 
       if (find_user.password == "google") {
         const token = jwt.generateToken({ user_id: find_user._id });
+        
+            const find_cart = await cart_model.findOne({user:find_user._id})
+
         return res.status(200).json({
           message: `welcome back ${find_user.name}`,
-          data: { name: find_user.name, token: token, email: email },
+          data: { name: find_user.name, token: token, email: email,cart_count:find_cart ? find_cart.items.length:0  },
         });
       } else {
         find_user.password = "google";
@@ -852,13 +858,15 @@ exports.fetch_products_by_collection_id = async (req, res) => {
       },
     ]);
 
+    console.log("checking");
+
     if (!result.length) {
       return res.status(404).json({ message: "No categories found" });
     }
 
     // Step 2: Add parent ID to children IDs
     const childrenIds = [parentId, ...result[0].children_ids];
-
+    console.log("checking", childrenIds);
     // Step 3: Fetch products by category
     const products = await product_model
       .find({
@@ -873,8 +881,12 @@ exports.fetch_products_by_collection_id = async (req, res) => {
         path: "category",
         select: "name _id", // brand fields
       });
+    console.log(products);
 
-    const find_brand = products.map((val) => val.brand);
+    const find_brand = products
+      .map((val) => val.brand)
+      .filter((brand) => brand && brand._id); // ✅ take only if brand exists
+
     const unique = [
       ...new Map(find_brand.map((item) => [item._id, item])).values(),
     ];
@@ -885,7 +897,7 @@ exports.fetch_products_by_collection_id = async (req, res) => {
       brands: unique,
     });
   } catch (error) {
-    console.error(error.message);
+    console.error(error.message, "dkdkdkdkdkd");
 
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((err) => err.message);
@@ -969,6 +981,260 @@ exports.fetch_filter_category_by_id = async (req, res) => {
   }
 };
 
+exports.fetch_product = async (req, res) => {
+  try {
+    const find_product = await product_model
+      .findOne({ _id: req.query.id })
+      .populate("category")
+      .populate("brand");
+    if (find_product) {
+      res.status(200).json({ message: "product fetched", data: find_product });
+    } else {
+      res.status(400).json({ message: "product not fount" });
+    }
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.add_to_cart = async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const userId = req.user.user_id;
+
+    // 1. Find product
+    const product = await product_model.findById(product_id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // 2. Find or create cart
+    let cart = await cart_model.findOne({ user: userId });
+
+    if (!cart) {
+      // create new cart
+      cart = new cart_model({
+        user: userId,
+        items: [],
+        total: 0,
+        grand_total: 0,
+      });
+    }
+
+    // 3. Check if product already in cart
+    const existingItem = cart.items.find(
+      (item) => item.product.toString() === product_id
+    );
+
+    if (existingItem) {
+      // Check stock
+      if (existingItem.quantity + 1 > product.stock) {
+        return res
+          .status(400)
+          .json({ message: "Requested quantity exceeds available stock" });
+      }
+
+      existingItem.quantity += 1;
+    } else {
+      // Add new product to cart
+      if (product.stock < 1) {
+        return res.status(400).json({ message: "Product is out of stock" });
+      }
+
+      cart.items.push({
+        product: product._id,
+        quantity: 1,
+        price: product.price,
+        discount_price: product.discount_price,
+      });
+    }
+
+    // 4. Recalculate totals
+    let total = 0;
+    let grand_total = 0;
+
+    cart.items.forEach((item) => {
+      total += item.price * item.quantity;
+      grand_total += item.discount_price * item.quantity;
+    });
+
+    cart.total = total;
+    cart.grand_total = grand_total;
+
+    // 5. Save
+    await cart.save();
+
+    res.status(200).json({
+      message: "cart updated",
+      cart_count:cart.items.length,
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.remove_cart_product_by_id = async (req, res) => {
+  try {
+    const { product_id } = req.body; // or req.params.product_id
+    const userId = req.user.user_id;
+
+    // 1. Find cart
+    const cart = await cart_model.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    // 2. Find product index in items
+    const itemIndex = cart.items.findIndex(
+      (item) => item.product.toString() === product_id
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: "Product not found in cart" });
+    }
+
+    // 3. Remove product from cart
+    cart.items.splice(itemIndex, 1);
+
+    // 4. Recalculate totals
+    let total = 0;
+    let grand_total = 0;
+
+    cart.items.forEach((item) => {
+      total += item.price * item.quantity;
+      grand_total += item.discount_price * item.quantity;
+    });
+
+    cart.total = total;
+    cart.grand_total = grand_total;
+
+    // 5. Save
+    await cart.save();
+
+    res.status(200).json({
+      message: "Product removed from cart",
+      cart_count:cart.items.length,
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.find_user_cart = async (req, res) => {
+  try {
+    const user_id = req.user.user_id;
+    const find_cart = await cart_model.findOne({ user: user_id }).populate('items.product')
+    if (find_cart) {
+      return res.status(200).json({ message: "cart finded", data: find_cart });
+    } else {
+      return res.status(200).json({ message: "cart not fond", data: null});
+    }
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.update_cart_quantity = async (req, res) => {
+  try {
+    
+    const { product_id, action } = req.body; // action: 'increment' or 'decrement'
+    const userId = req.user.user_id;
+
+    // Validate input
+    if (!product_id || !action) {
+      return res
+        .status(400)
+        .json({ message: "Product ID and action are required" });
+    }
+
+    if (!["increment", "decrement"].includes(action)) {
+      return res
+        .status(400)
+        .json({ message: "Action must be either 'increment' or 'decrement'" });
+    }
+
+    // 1. Find cart
+    const cart = await cart_model.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    // 2. Find product in cart items
+    const itemIndex = cart.items.findIndex(
+      (item) => item.product.toString() === product_id
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: "Product not found in cart" });
+    }
+
+    const item = cart.items[itemIndex];
+
+    // 3. Update quantity based on action
+    if (action === "increment") {
+      item.quantity += 1;
+    } else if (action === "decrement") {
+      item.quantity = Math.max(1, item.quantity - 1); // Prevent quantity below 1
+    }
+
+    // 4. Recalculate totals
+    let total = 0;
+    let grand_total = 0;
+
+    cart.items.forEach((item) => {
+      total += item.price * item.quantity;
+      grand_total += item.discount_price * item.quantity;
+    });
+
+    cart.total = total;
+    cart.grand_total = grand_total;
+
+    // 5. Save updated cart
+    await cart.save();
+
+    res.status(200).json({
+      message: `One Quantity ${action =="increment" ?"added":"removed"} `,
+      cart,
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
 exports.resend_otp = async (req, res) => {
   try {
   } catch (error) {

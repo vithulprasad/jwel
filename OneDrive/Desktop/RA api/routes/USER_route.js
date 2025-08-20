@@ -24,6 +24,16 @@ router.get('/api/fetch_collections_by_id',USER_controller.fetch_collections_by_m
 
 router.get('/api/fetch_products_by_collection',USER_controller.fetch_products_by_collection_id)
 router.get('/api/fetch_filter_category_by_id',USER_controller.fetch_filter_category_by_id)
+router.get('/api/fetch_product',USER_controller.fetch_product)
+
+
+router.post('/api/add_to_cart',authenticate,USER_controller.add_to_cart)
+router.post('/api/remove_cart_product',authenticate,USER_controller.remove_cart_product_by_id)
+router.post('/api/update_cart_quantity',authenticate,USER_controller.update_cart_quantity)
+router.get('/api/find_cart',authenticate,USER_controller.find_user_cart)
+
+
+
 
 
 

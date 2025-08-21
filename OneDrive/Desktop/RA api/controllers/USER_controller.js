@@ -150,11 +150,17 @@ exports.user_login = async (req, res) => {
 
     const token = jwt.generateToken({ user_id: find_email._id });
 
-
-    const find_cart = await cart_model.findOne({user:find_email._id })
+    const find_cart = await cart_model.findOne({ user: find_email._id });
     res.status(200).json({
       message: `welcome back ${find_email.name}`,
-      data: { name: find_email.name, token: token, email: find_email.email,cart_count:find_cart ? find_cart.items.length:0 },
+      data: {
+        name: find_email.name,
+        token: token,
+        email: find_email.email,
+        cart_count: find_cart ? find_cart.items.length : 0,
+        like_count: find_email.liked_products.length,
+        liked_product: find_email.liked_products,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -739,12 +745,19 @@ exports.google_sign_in_login = async (req, res) => {
 
       if (find_user.password == "google") {
         const token = jwt.generateToken({ user_id: find_user._id });
-        
-            const find_cart = await cart_model.findOne({user:find_user._id})
+
+        const find_cart = await cart_model.findOne({ user: find_user._id });
 
         return res.status(200).json({
           message: `welcome back ${find_user.name}`,
-          data: { name: find_user.name, token: token, email: email,cart_count:find_cart ? find_cart.items.length:0  },
+          data: {
+            name: find_user.name,
+            token: token,
+            email: email,
+            cart_count: find_cart ? find_cart.items.length : 0,
+            like_count:find_user.liked_products.length,
+            liked_products:find_user.liked_products
+          },
         });
       } else {
         find_user.password = "google";
@@ -1073,7 +1086,7 @@ exports.add_to_cart = async (req, res) => {
 
     res.status(200).json({
       message: "cart updated",
-      cart_count:cart.items.length,
+      cart_count: cart.items.length,
     });
   } catch (error) {
     console.error(error.message);
@@ -1127,7 +1140,7 @@ exports.remove_cart_product_by_id = async (req, res) => {
 
     res.status(200).json({
       message: "Product removed from cart",
-      cart_count:cart.items.length,
+      cart_count: cart.items.length,
     });
   } catch (error) {
     console.error(error.message);
@@ -1144,11 +1157,13 @@ exports.remove_cart_product_by_id = async (req, res) => {
 exports.find_user_cart = async (req, res) => {
   try {
     const user_id = req.user.user_id;
-    const find_cart = await cart_model.findOne({ user: user_id }).populate('items.product')
+    const find_cart = await cart_model
+      .findOne({ user: user_id })
+      .populate("items.product");
     if (find_cart) {
       return res.status(200).json({ message: "cart finded", data: find_cart });
     } else {
-      return res.status(200).json({ message: "cart not fond", data: null});
+      return res.status(200).json({ message: "cart not fond", data: null });
     }
   } catch (error) {
     console.error(error.message);
@@ -1164,7 +1179,6 @@ exports.find_user_cart = async (req, res) => {
 
 exports.update_cart_quantity = async (req, res) => {
   try {
-    
     const { product_id, action } = req.body; // action: 'increment' or 'decrement'
     const userId = req.user.user_id;
 
@@ -1221,7 +1235,7 @@ exports.update_cart_quantity = async (req, res) => {
     await cart.save();
 
     res.status(200).json({
-      message: `One Quantity ${action =="increment" ?"added":"removed"} `,
+      message: `One Quantity ${action == "increment" ? "added" : "removed"} `,
       cart,
     });
   } catch (error) {
@@ -1235,8 +1249,93 @@ exports.update_cart_quantity = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+exports.liked_product = async (req, res) => {
+  try {
+    const id = req.body.id;
+    const find_user = await user_model.findOne({ _id: req.user.user_id });
+
+    if (!find_user) {
+      return res.status(400).json({ message: "user not found" });
+    }
+    
+   const find_product_exist = await product_model.findOne({_id:id})
+   if(!find_product_exist){
+    return res.status(400).json({message:'product not exist'})
+   }
+    let mess = "";
+    const find_liked_product = find_user.liked_products.some(
+      (val) => val.toString() === id.toString()
+    );
+
+    if (find_liked_product) {
+      find_user.liked_products = find_user.liked_products.filter(
+        (val) => val.toString() !== id.toString()
+      );
+      mess = "like removed";
+    } else {
+      find_user.liked_products.push(id);
+      mess = "like added";
+    }
+
+    await find_user.save();
+
+    res.status(200).json({
+      message: mess,
+      liked_products: find_user.liked_products,
+      liked_count: find_user.liked_products.length,
+    });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.find_liked_products = async (req, res) => {
+  try {
+
+    const find_user = await user_model.findOne({_id:req.user.user_id}).populate("liked_products")
+    
+    res.status(200).json({message:'products fond',data:find_user.liked_products.map((val)=>val)})
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
 exports.resend_otp = async (req, res) => {
   try {
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.collection_list = async (req, res) => {
+  try {
+    const find_all_collection = await category_model.find({parent:"689ebf79374137762522f193"})
+
+    res.status(200).json({message:'collection find',data:find_all_collection})
+
   } catch (error) {
     console.error(error.message);
 

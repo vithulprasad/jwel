@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const USER_controller = require('../controllers/USER_controller')
+const Order_controller = require("../controllers/Order_controller")
 const { authenticate } = require('../config/auth');
 
 router.post('/api/log_in', USER_controller.user_login); 
@@ -37,6 +38,14 @@ router.post('/api/liked_product',authenticate,USER_controller.liked_product)
 router.get('/api/find_liked_products',authenticate,USER_controller.find_liked_products)
 router.get('/api/collection_list',authenticate,USER_controller.collection_list)
 
+
+router.post('/api/create_order',authenticate,Order_controller.createOrder)
+router.post('/api/verify_order',authenticate,Order_controller.verifyPayment)
+router.post('/api/update_status',authenticate,Order_controller.updateOrderStatus)
+router.post('/api/webhook',Order_controller.razorpayWebhook)
+router.get('/api/get_user_order',authenticate,Order_controller.getUserOrders)
+router.get('/api/get_order_cart',authenticate,Order_controller.cart_find)
+router.get('/api/get_order_product',authenticate,Order_controller.single_product)
 
 
 

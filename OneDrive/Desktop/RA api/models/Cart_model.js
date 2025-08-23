@@ -8,7 +8,7 @@ const cartSchema = new mongoose.Schema({
       quantity: { type: Number, required: true, default: 1 },
       price: { type: Number, required: true } ,// store at time of adding
       discount_price: { type: Number, required: true } ,
-      variant:{type:String,default:null}
+      variant:{type:String,default:""}
     }
   ],
   total: { type: Number, default: 0 },

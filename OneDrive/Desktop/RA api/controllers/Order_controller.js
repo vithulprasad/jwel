@@ -3,10 +3,21 @@ const crypto = require("crypto");
 const Order = require("../models/Order_mode");
 const Product = require("../models/Product_model"); // for stock deduction
 const cart_model = require("../models/Cart_model");
+const user_model = require("../models/User_model");
+
+exports.get_address = async (req, res) => {
+  const user = req.user.user_id;
+
+  const find_user = await user_model.findOne({ _id: user });
+
+  return res
+    .status(200)
+    .json({ message: "address fetched", data: find_user.address.reverse() });
+};
 
 exports.single_product = async (req, res) => {
   const id = req.query.id;
-  const qty = req.query.qty
+  const qty = req.query.qty;
   const find_product = await Product.findOne({ _id: id });
   if (!find_product) {
     return res.status(400).json({ message: "product not fond" });
@@ -20,16 +31,18 @@ exports.single_product = async (req, res) => {
     return res.status(400).json({ message: "product is out of stock" });
   }
 
-if(find_product.quantity < qty){
-  return res.status(400).json({ message: "sorry quantity is limited" });
-}
+  if (find_product.quantity < qty) {
+    return res.status(400).json({ message: "sorry quantity is limited" });
+  }
 
   return res.status(200).json({ message: "finded", data: find_product });
 };
 
 exports.cart_find = async (req, res) => {
   const id = req.query.id;
-  const find_cart = await cart_model.findOne({ _id: id }).populate("items.product")
+  const find_cart = await cart_model
+    .findOne({ _id: id })
+    .populate("items.product");
 
   if (!find_cart) {
     return res.status(400).json({ message: "cart not found" });
@@ -38,22 +51,29 @@ exports.cart_find = async (req, res) => {
   if (!find_cart.items.length) {
     return res.status(400).json({ message: "cart is empty" });
   }
-  
-  const find_product_is_valid  = find_cart.items.some((val)=>val.product.status == 'inactive')
 
-  if(find_product_is_valid){
-     return res.status(400).json({ message: "The cart containing inactive product" });
+  const find_product_is_valid = find_cart.items.some(
+    (val) => val.product.status == "inactive"
+  );
+
+  if (find_product_is_valid) {
+    return res
+      .status(400)
+      .json({ message: "The cart containing inactive product" });
   }
 
+  const filter_stock = find_cart.items.filter(
+    (val) => val.product.quantity <= 0
+  );
+  console.log(filter_stock);
 
-  const filter_stock = find_cart.items.filter((val)=>val.product.quantity <=0)
-  console.log(filter_stock)
-
-  if(!filter_stock.length == false){
-         return res.status(400).json({ message: `${filter_stock.map((val)=>val.product.name)} this product are out of stock` });
+  if (!filter_stock.length == false) {
+    return res.status(400).json({
+      message: `${filter_stock.map(
+        (val) => val.product.name
+      )} this product are out of stock`,
+    });
   }
-
-
 
   return res.status(200).json({ message: "finded", data: find_cart.items });
 };
@@ -61,40 +81,85 @@ exports.cart_find = async (req, res) => {
 // ✅ 1. Create Razorpay order + MongoDB order (pending)
 exports.createOrder = async (req, res) => {
   try {
-    const { products, totalAmount, address } = req.body;
+    const { products, address, type } = req.body;
 
-    // create Razorpay order
+    // ✅ Validate address fields
+    const requiredFields = ["phone", "town", "landMark", "pinCode", "state"];
+    for (const field of requiredFields) {
+      if (
+        !address ||
+        !address[field] ||
+        address[field].toString().trim() === ""
+      ) {
+        return res.status(400).json({
+          message: `Address field '${field}' is required.`,
+        });
+      }
+    }
+
+    // ✅ Calculate totalAmount from DB
+    let totalAmount = 0;
+
+    for (const p of products) {
+      const productDoc = await Product.findById(p.product);
+      if (!productDoc) {
+        return res
+          .status(404)
+          .json({ message: `Product not found: ${p.product}` });
+      }
+      totalAmount += productDoc.discount_price * p.quantity;
+    }
+
+    console.log("request is started razorpay", totalAmount);
+
+    // ✅ Initialize Razorpay instance
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
-    // create order in DB
+    // ✅ Create Razorpay order first
+    const options = {
+      amount: totalAmount * 100, // paise
+      currency: "INR",
+      receipt: Date.now().toString(),
+    };
+
+    const razorpayOrder = await razorpay.orders.create(options);
+    console.log("Razorpay Order:", address);
+    if (!razorpayOrder.id) {
+      return res.status(400).json({ message: "error creating razorpay " });
+    }
+
+    // ✅ Create order in DB
     const newOrder = await Order.create({
-      user: req.user._id,
-      products: products.map((p) => ({
-        product: p.productId,
-        quantity: p.quantity,
-        price: p.price,
-      })),
+      user: req.user.user_id,
+      products: await Promise.all(
+        products.map(async (p) => {
+          const productDoc = await Product.findById(p.product);
+          return {
+            product: p.product,
+            quantity: p.quantity,
+            total_price: productDoc
+              ? productDoc.discount_price * p.quantity
+              : 0,
+          };
+        })
+      ),
       totalAmount,
       razorpay_order_id: razorpayOrder.id,
       address,
       paymentStatus: "pending",
-      orderStatus: "created",
+      orderStatus: "pending",
     });
 
-    const options = {
-      amount: totalAmount * 100, // convert to paise
-      currency: "INR",
-      receipt: newOrder._id,
-    };
-
-    const razorpayOrder = await razorpay.orders.create(options);
-
-    res.json({ success: true, order: newOrder, razorpayOrder });
+    res.json({
+      message: "Order created and pending payment",
+      order: newOrder,
+      raz:razorpayOrder,
+    });
   } catch (err) {
-    console.error("createOrder error:", err.message);
+    console.error("createOrder error:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 };

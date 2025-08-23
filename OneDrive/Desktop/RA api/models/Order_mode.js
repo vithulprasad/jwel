@@ -17,9 +17,9 @@ const orderSchema = new mongoose.Schema(
           required: true,
         },
         quantity: { type: Number, required: true, default: 1 },
-        price: { type: Number, required: true }, // snapshot price at time of order
-        variant:{type:String,default:""}
-    },
+        total_price: { type: Number, required: true }, // snapshot price at time of order
+        variant: { type: String, default: "" },
+      },
     ],
 
     totalAmount: { type: Number, required: true },
@@ -36,23 +36,36 @@ const orderSchema = new mongoose.Schema(
 
     orderStatus: {
       type: String,
-      enum: ["created", "confirmed", "shipped", "delivered", "cancelled"],
-      default: "created",
+      enum: [
+        "pending",
+        "created",
+        "confirmed",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
+      default: "pending",
     },
 
     address: {
-      fullName: { type: String, required: true },
-      phone: { type: String, required: true },
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      pincode: { type: String, required: true },
+        name: { type: String, required: true },
+        phone: { type: Number }, // e.g., "Small", "Large", "XL"
+        pinCode: { type: Number, required: true },
+        locality: { type: String }, // discount price per variant
+        address: { type: String },
+        town: { type: String },
+        state: { type: String }, // discount price per variant
+        landMark: { type: String },
       country: { type: String, required: true, default: "India" },
     },
 
     // audit logs
     paidAt: { type: Date },
     deliveredAt: { type: Date },
+    order_from: {
+      type: String,
+      enum: ["cart", "single"],
+    },
   },
   { timestamps: true }
 );

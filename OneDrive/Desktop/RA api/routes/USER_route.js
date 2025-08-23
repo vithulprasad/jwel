@@ -46,6 +46,8 @@ router.post('/api/webhook',Order_controller.razorpayWebhook)
 router.get('/api/get_user_order',authenticate,Order_controller.getUserOrders)
 router.get('/api/get_order_cart',authenticate,Order_controller.cart_find)
 router.get('/api/get_order_product',authenticate,Order_controller.single_product)
+router.get('/api/get_order_address',authenticate,Order_controller.get_address)
+
 
 
 

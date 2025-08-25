@@ -4,7 +4,8 @@ const Order = require("../models/Order_mode");
 const Product = require("../models/Product_model"); // for stock deduction
 const cart_model = require("../models/Cart_model");
 const user_model = require("../models/User_model");
-
+const { sendEmail } = require("../config/mailer");
+const { buildOrderEmail } = require("../config/builder");
 exports.get_address = async (req, res) => {
   const user = req.user.user_id;
 
@@ -65,7 +66,7 @@ exports.cart_find = async (req, res) => {
   const filter_stock = find_cart.items.filter(
     (val) => val.product.quantity <= 0
   );
-  console.log(filter_stock);
+  console.log(filter_stock,'this is out of stock');
 
   if (!filter_stock.length == false) {
     return res.status(400).json({
@@ -74,6 +75,19 @@ exports.cart_find = async (req, res) => {
       )} this product are out of stock`,
     });
   }
+
+const filter_stock_quantity = find_cart.items.filter(
+  (val) => val.product.quantity < val.quantity
+);
+
+if (filter_stock_quantity.length > 0) {
+  return res.status(400).json({
+    message: `${filter_stock_quantity.map(
+      (val) => val.product.name
+    )} - requested quantity is more than available stock`,
+  });
+}
+
 
   return res.status(200).json({ message: "finded", data: find_cart.items });
 };
@@ -151,6 +165,7 @@ exports.createOrder = async (req, res) => {
       address,
       paymentStatus: "pending",
       orderStatus: "pending",
+      order_from:type
     });
 
     res.json({
@@ -164,11 +179,17 @@ exports.createOrder = async (req, res) => {
   }
 };
 
+
+
+
+
 // ✅ 2. Verify Razorpay payment (frontend -> backend)
 exports.verifyPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
+
+      const find_user = await user_model.findOne({_id:req.user.user_id})
 
     // generate expected signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -191,17 +212,31 @@ exports.verifyPayment = async (req, res) => {
           },
         },
         { new: true }
-      );
+      ).populate('products.product')
 
       // reduce stock safely
       for (const item of order.products) {
         await Product.updateOne(
           { _id: item.product },
-          { $inc: { stock: -item.quantity } }
+          { $inc: { quantity: -item.quantity } }
         );
       }
+      
+     if(order.order_from == 'cart'){
+      await cart_model.findOneAndUpdate({user:req.user.user_id},{$set:{items:[]}})
+     }
 
-      return res.json({ success: true, message: "Payment verified", order });
+     const htmlContent = buildOrderEmail({ user: find_user, order: order });
+
+     await sendEmail(
+      find_user.email,
+      "Real Accessories Product purchase details",
+      htmlContent
+    );
+
+    
+
+      return res.json({ success: true, message: "Payment verified", data:order._id ,type:order.order_from});
     } else {
       return res
         .status(400)
@@ -298,3 +333,37 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+
+
+exports.get_order_single_by_id = async (req, res) => {
+  try {
+    const id = req.query.id;
+
+    const order = await Order.findOne({ _id: id })
+      .populate("products.product", "name") // ✅ only get product name
+      .lean(); // ✅ return plain JS object, easier to reshape
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    // Reshape response
+    const response = {
+      _id: order._id,
+      totalAmount: order.totalAmount,
+      razorpay_order_id: order.razorpay_order_id,
+      paidAt:order.paidAt,
+      products: order.products.map((p) => ({
+        name: p.product?.name,
+        quantity: p.quantity,
+        total_price: p.total_price,
+      })),
+    };
+
+    res.status(200).json({ success: true, data: response });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+

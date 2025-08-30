@@ -66,7 +66,7 @@ exports.cart_find = async (req, res) => {
   const filter_stock = find_cart.items.filter(
     (val) => val.product.quantity <= 0
   );
-  console.log(filter_stock,'this is out of stock');
+  console.log(filter_stock, "this is out of stock");
 
   if (!filter_stock.length == false) {
     return res.status(400).json({
@@ -76,18 +76,17 @@ exports.cart_find = async (req, res) => {
     });
   }
 
-const filter_stock_quantity = find_cart.items.filter(
-  (val) => val.product.quantity < val.quantity
-);
+  const filter_stock_quantity = find_cart.items.filter(
+    (val) => val.product.quantity < val.quantity
+  );
 
-if (filter_stock_quantity.length > 0) {
-  return res.status(400).json({
-    message: `${filter_stock_quantity.map(
-      (val) => val.product.name
-    )} - requested quantity is more than available stock`,
-  });
-}
-
+  if (filter_stock_quantity.length > 0) {
+    return res.status(400).json({
+      message: `${filter_stock_quantity.map(
+        (val) => val.product.name
+      )} - requested quantity is more than available stock`,
+    });
+  }
 
   return res.status(200).json({ message: "finded", data: find_cart.items });
 };
@@ -165,13 +164,13 @@ exports.createOrder = async (req, res) => {
       address,
       paymentStatus: "pending",
       orderStatus: "pending",
-      order_from:type
+      order_from: type,
     });
 
     res.json({
       message: "Order created and pending payment",
       order: newOrder,
-      raz:razorpayOrder,
+      raz: razorpayOrder,
     });
   } catch (err) {
     console.error("createOrder error:", err);
@@ -179,17 +178,13 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-
-
-
-
 // ✅ 2. Verify Razorpay payment (frontend -> backend)
 exports.verifyPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
 
-      const find_user = await user_model.findOne({_id:req.user.user_id})
+    const find_user = await user_model.findOne({ _id: req.user.user_id });
 
     // generate expected signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -207,12 +202,12 @@ exports.verifyPayment = async (req, res) => {
             razorpay_payment_id,
             razorpay_signature,
             paymentStatus: "paid",
-            orderStatus: "confirmed",
+            orderStatus: "processing",
             paidAt: new Date(),
           },
         },
         { new: true }
-      ).populate('products.product')
+      ).populate("products.product");
 
       // reduce stock safely
       for (const item of order.products) {
@@ -221,22 +216,29 @@ exports.verifyPayment = async (req, res) => {
           { $inc: { quantity: -item.quantity } }
         );
       }
-      
-     if(order.order_from == 'cart'){
-      await cart_model.findOneAndUpdate({user:req.user.user_id},{$set:{items:[]}})
-     }
 
-     const htmlContent = buildOrderEmail({ user: find_user, order: order });
+      if (order.order_from == "cart") {
+        await cart_model.findOneAndUpdate(
+          { user: req.user.user_id },
+          { $set: { items: [] } }
+        );
+      }
 
-     await sendEmail(
-      find_user.email,
-      "Real Accessories Product purchase details",
-      htmlContent
-    );
+      const htmlContent = buildOrderEmail({ user: find_user, order: order });
 
-    
+      const data_mew = await sendEmail(
+        find_user.email,
+        "Real Accessories Product purchase details",
+        htmlContent
+      );
+      console.log(data_mew, "added");
 
-      return res.json({ success: true, message: "Payment verified", data:order._id ,type:order.order_from});
+      return res.json({
+        success: true,
+        message: "Payment verified",
+        data: order._id,
+        type: order.order_from,
+      });
     } else {
       return res
         .status(400)
@@ -296,7 +298,7 @@ exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("user", "name email")
-      .populate("products.product", "name price image");
+      .populate("products.product", "name discount_price front_image");
     res.json({ success: true, orders });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -306,10 +308,13 @@ exports.getAllOrders = async (req, res) => {
 // ✅ 5. Get user’s own orders
 exports.getUserOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id }).populate(
-      "products.product",
-      "name price image"
-    );
+    const allowedStatuses = ["processing", "shipped", "delivered", "cancelled"];
+
+    const orders = await Order.find({
+      user: req.user.user_id,
+      status: { $in: allowedStatuses }, // ✅ only allowed statuses
+    }).populate("products.product", "name discount_price front_image");
+
     res.json({ success: true, orders });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -334,8 +339,6 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
-
-
 exports.get_order_single_by_id = async (req, res) => {
   try {
     const id = req.query.id;
@@ -345,7 +348,9 @@ exports.get_order_single_by_id = async (req, res) => {
       .lean(); // ✅ return plain JS object, easier to reshape
 
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
     // Reshape response
@@ -353,15 +358,284 @@ exports.get_order_single_by_id = async (req, res) => {
       _id: order._id,
       totalAmount: order.totalAmount,
       razorpay_order_id: order.razorpay_order_id,
-      paidAt:order.paidAt,
+      paidAt: order.paidAt,
       products: order.products.map((p) => ({
         name: p.product?.name,
         quantity: p.quantity,
         total_price: p.total_price,
       })),
+      address: order.address,
     };
 
     res.status(200).json({ success: true, data: response });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.getAllOrders_admin = async (req, res) => {
+  try {
+    const { limit = 10, count = 0, type = "all" } = req.query;
+    console.log(req.query);
+
+    // Allowed statuses
+    const allowedStatuses = [
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "completed",
+    ];
+
+    // Base filter (✅ always exclude "pending")
+    let filter = { orderStatus: { $nin: ["pending"] } };
+
+    // Apply specific type filter if given
+    if (type !== "all" && allowedStatuses.includes(type.toLowerCase())) {
+      filter.orderStatus = type.toLowerCase();
+    }
+  console.log(filter)
+    // Fetch orders with pagination
+    const orders = await Order.find(filter)
+      .populate("user", "name email")
+      .populate("products.product", "name")
+      .sort({ createdAt: -1 }) // latest first
+      .skip(parseInt(count))
+      .limit(parseInt(limit))
+      .lean();
+
+    // Reshape into required format
+    const formatted = orders.map((order) => ({
+      id: order.razorpay_order_id,
+      customer: order.user?.name || "Unknown",
+      email: order.user?.email || "",
+      amount: order.totalAmount,
+      status: order.orderStatus,
+      date: new Date(order.createdAt).toISOString().split("T")[0],
+      items: order.products?.length || 0,
+    }));
+
+    // ✅ Counts for dashboard
+    const totalOrders = await Order.countDocuments({
+      orderStatus: { $nin: ["pending"] },
+    });
+    const processingOrders = await Order.countDocuments({
+      orderStatus: "processing",
+    });
+    const shippedOrders = await Order.countDocuments({
+      orderStatus: "shipped",
+    });
+    const deliveredOrders = await Order.countDocuments({
+      orderStatus: "delivered",
+    });
+    const cancelledOrders = await Order.countDocuments({
+      orderStatus: "cancelled",
+    });
+    const completed = await Order.countDocuments({ orderStatus: "completed" });
+    console.log(orders.length)
+    res.json({
+      success: true,
+      orders: formatted,
+      counts: {
+        total: totalOrders,
+        processing: processingOrders,
+        shipped: shippedOrders,
+        delivered: deliveredOrders,
+        cancelled: cancelledOrders,
+        completed: completed,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.search_orders = async (req, res) => {
+  try {
+    const { limit = 10, page = 1, search = "", type = "all" } = req.query;
+    console.log(req.query);
+
+    // Allowed statuses
+    const allowedStatuses = [
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "delivered",
+    ];
+
+    // Base filter (✅ always exclude "pending")
+    let filter = { orderStatus: { $nin: ["pending"] } };
+
+    // Apply type filter
+    if (type !== "all" && allowedStatuses.includes(type.toLowerCase())) {
+      filter.orderStatus = type.toLowerCase();
+    }
+
+    // ✅ Search by razorpay_order_id OR user email
+    let userIds = [];
+    if (search && search.trim() !== "") {
+      const users = await user_model.find(
+        { email: { $regex: search, $options: "i" } },
+        "_id"
+      );
+      userIds = users.map((u) => u._id);
+
+      filter.$or = [
+        { razorpay_order_id: { $regex: search, $options: "i" } },
+        { user: { $in: userIds } },
+      ];
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const orders = await Order.find(filter)
+      .populate("user", "name email")
+      .populate("products.product", "name")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .lean();
+
+    const formatted = orders.map((order) => ({
+      id: order.razorpay_order_id,
+      customer: order.user?.name || "Unknown",
+      email: order.user?.email || "",
+      amount: order.totalAmount,
+      status: order.orderStatus,
+      date: new Date(order.createdAt).toISOString().split("T")[0],
+      items: order.products?.length || 0,
+    }));
+
+    res.json({
+      success: true,
+      orders: formatted,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.get_order_admin_single = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+    // 1️⃣ Find order by ID and populate product & user
+    const order = await Order.findOne({razorpay_order_id:id})
+      .populate("products.product", "name discount_price front_image")
+      .populate("user", "name email phone");
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    // 2️⃣ User details from user model
+    const user = await user_model
+      .findById(order.user._id)
+      .select("name email phone");
+
+    // 3️⃣ Payment details from Razorpay API
+    let razorpayPaymentDetails = null;
+    if (order.razorpay_payment_id) {
+      try {
+        razorpayPaymentDetails = await razorpay.payments.fetch(
+          order.razorpay_payment_id
+        );
+      } catch (err) {
+        console.error("Error fetching Razorpay payment details:", err.message);
+      }
+    }
+
+    // 4️⃣ Structure response
+    const response = {
+      orderId: order._id,
+      orderStatus: order.orderStatus,
+      paymentStatus: order.paymentStatus,
+      totalAmount: order.totalAmount,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+      paidAt: order.paidAt,
+      deliveredAt: order.deliveredAt,
+      order_from: order.order_from,
+
+      products: order.products.map((p) => ({
+        product: p.product,
+        quantity: p.quantity,
+        total_price: p.total_price,
+        variant: p.variant,
+        
+      })),
+
+      address: order.address,
+
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      },
+
+      razorpay: {
+        orderId: order.razorpay_order_id,
+        paymentId: order.razorpay_payment_id,
+        signature: order.razorpay_signature,
+        paymentDetails: razorpayPaymentDetails,
+      },
+    };
+
+    res.status(200).json({ success: true, data: response });
+  } catch (err) {
+    console.error("get_order_admin_single Error:", err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+exports.order_action = async (req, res) => {
+  try {
+    const { action, id } = req.body;
+
+    // Find the order
+    const order = await Order.findOne({ razorpay_order_id: id }); // or use _id if that's your identifier
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    // Allowed transitions
+    const validTransitions = {
+      processing: "shipped",
+      shipped: "delivered",
+      delivered: "delivered",
+      cancelled: "cancelled", // stays cancelled if already cancelled
+    };
+
+    const currentStatus = order.orderStatus;
+    const nextStatus = validTransitions[currentStatus];
+
+    if (!nextStatus) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `No valid transition from status "${currentStatus}"` 
+      });
+    }
+
+    if (nextStatus !== action) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Invalid action. Next valid status after "${currentStatus}" is "${nextStatus}"` 
+      });
+    }
+
+    // Update order
+    order.orderStatus = nextStatus;
+    await order.save();
+
+    res.status(200).json({ success: true, data: order });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

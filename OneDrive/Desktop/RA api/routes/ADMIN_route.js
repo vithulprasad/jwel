@@ -4,6 +4,7 @@ const UserController = require('../controllers/USER_controller')
 const PC_controller = require('../controllers/PC_controller')
 const Brand_controller = require('../controllers/BRAND_controller')
 const bannerController = require('../controllers/BANNER_controller')
+const orderController = require('../controllers/Order_controller')
 const { authenticate } = require('../config/auth');
 
 router.post('/api/log_in', UserController.admin_login); 
@@ -54,5 +55,12 @@ router.get("/api/single_banner/:id", bannerController.getBannerById);
 router.get("/api/all_banners", bannerController.getBanners);
 router.delete("/api/delete_banner/:id", bannerController.deleteBanner);
 
+
+//orders
+
+router.get("/api/orders", orderController.getAllOrders_admin);
+router.get("/api/search_orders", orderController.search_orders);
+router.get("/api/get_order_admin_single", orderController.get_order_admin_single);
+router.post("/api/order_action", orderController.order_action);
 
 module.exports = router;

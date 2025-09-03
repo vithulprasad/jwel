@@ -6,7 +6,7 @@ const banner_model = require("../models/Banner_model");
 const brand_model = require("../models/Brand_model");
 const cart_model = require("../models/Cart_model");
 const mongoose = require("mongoose");
-
+const review_model = require("../models/Review_rating_model");
 const { sendEmail } = require("../config/mailer");
 const bcrypt = require("bcrypt");
 const jwt = require("../config/jwt");
@@ -885,7 +885,9 @@ exports.fetch_products_by_collection_id = async (req, res) => {
       .find({
         category: { $in: childrenIds },
       })
-      .select("name _id front_image price discount_price brand quantity") // product fields
+      .select(
+        "name _id front_image price discount_price brand quantity rating reviewCount"
+      ) // product fields
       .populate({
         path: "brand",
         select: "name _id", // brand fields
@@ -1214,7 +1216,6 @@ exports.update_cart_quantity = async (req, res) => {
 
     const item = cart.items[itemIndex];
 
-
     // 3. Update quantity based on action
     if (action === "increment") {
       item.quantity += 1;
@@ -1314,12 +1315,10 @@ exports.find_liked_products = async (req, res) => {
       .findOne({ _id: req.user.user_id })
       .populate("liked_products");
 
-    res
-      .status(200)
-      .json({
-        message: "products fond",
-        data: find_user.liked_products.map((val) => val),
-      });
+    res.status(200).json({
+      message: "products fond",
+      data: find_user.liked_products.map((val) => val),
+    });
   } catch (error) {
     console.error(error.message);
 
@@ -1362,6 +1361,181 @@ exports.collection_list = async (req, res) => {
       return res.status(400).json({ message: messages.join(", ") });
     }
 
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.create_review_rating = async (req, res) => {
+  try {
+    const { rating, text, images, product } = req.body;
+
+    if (rating == 0) {
+      return res
+        .status(400)
+        .json({ message: "Please add at least one star rating" });
+    }
+
+    // ✅ Check if user already reviewed this product
+    const existingReview = await review_model.findOne({
+      $and: [{ user: req.user.user_id }, { product_id: product }],
+    });
+
+    if (existingReview) {
+      return res.status(400).json({
+        message: "Sorry, you already added a review for this product",
+      });
+    }
+
+    // ✅ Create new review
+    const newReview = new review_model({
+      user: req.user.user_id,
+      product_id: product,
+      rating,
+      description: text,
+      images,
+    });
+    await newReview.save();
+
+    // ✅ Get all active reviews for this product
+    const activeReviews = await review_model.find({
+      product_id: product,
+      status: "active",
+    });
+
+    // ✅ Calculate average rating
+    const totalRating = activeReviews.reduce(
+      (acc, curr) => acc + curr.rating,
+      0
+    );
+    const averageRating = totalRating / activeReviews.length;
+
+    // ✅ Update product stats
+    const productDoc = await product_model.findById(product);
+    if (!productDoc) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    productDoc.reviewCount = (productDoc.reviewCount || 0) + 1;
+    productDoc.rating = averageRating;
+    await productDoc.save();
+
+    res
+      .status(200)
+      .json({ message: "Review added to the product. Thank you!" });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.find_product_review = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const find = await review_model
+      .find({ product_id: id, status: "active" })
+      .populate("user")
+      .limit(20);
+
+    res.status(200).json({ message: "collection find", data: find });
+  } catch (error) {
+    console.error(error.message);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.search = async (req, res) => {
+  try {
+    const search = req.query.search;
+    let limit = 1
+    
+
+    if (!search) {
+      return res.status(200).json({
+        data: [],
+        products: [],
+      });
+    }
+
+    if(search.length ==1){
+      limit = 2
+    }else if(search.length ==2){
+      limit = 4
+    }else if(search.length ==3){
+      limit = 5
+    }else{
+       limit = 6
+    }
+
+    const regexSearch = search.trim().split(/\s+/).join(".*");
+
+    const categories = await category_model
+      .find({
+        path: { $regex: regexSearch, $options: "i" },
+      })
+      .select("_id path")
+      .limit(limit);
+
+    const products = await product_model
+      .find({ name: { $regex: regexSearch, $options: "i" } })
+      .select("_id name front_image")
+      .limit(limit);
+
+    // Clean up path
+    const formattedCategories = categories.map((cat) => {
+      let parts = cat.path.split(" > "); // split by >
+
+      if (parts.length >= 2) {
+        parts.shift(); // remove the first element
+      }
+
+      let formattedPath = parts.join(" ").toLowerCase(); // join rest with space + lowercase
+
+      return {
+        _id: cat._id,
+        path: formattedPath,
+      };
+    });
+
+    let find_products_watch = [];
+
+    if (formattedCategories.length === 0) {
+      // No categories → fallback to direct product search
+      find_products_watch = products;
+    } else {
+      if (products.length === 0) {
+        // Categories found but no direct product match → find by category
+        const categoryIds = categories.map((cat) => cat._id);
+        if (categoryIds.length > 0) {
+          find_products_watch = await product_model
+            .find({
+              category: { $in: categoryIds },
+            })
+            .select("_id name front_image")
+            .limit(limit);
+        }
+      } else {
+        
+        find_products_watch = products;
+      }
+    }
+
+    res.status(200).json({
+      data: formattedCategories,
+      products: find_products_watch,
+    });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };

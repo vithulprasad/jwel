@@ -6,6 +6,7 @@ const cart_model = require("../models/Cart_model");
 const user_model = require("../models/User_model");
 const { sendEmail } = require("../config/mailer");
 const { buildOrderEmail } = require("../config/builder");
+
 exports.get_address = async (req, res) => {
   const user = req.user.user_id;
 
@@ -312,7 +313,7 @@ exports.getUserOrders = async (req, res) => {
 
     const orders = await Order.find({
       user: req.user.user_id,
-      status: { $in: allowedStatuses }, // ✅ only allowed statuses
+      orderStatus: { $in: allowedStatuses }, // ✅ only allowed statuses
     }).populate("products.product", "name discount_price front_image");
 
     res.json({ success: true, orders });
@@ -359,6 +360,7 @@ exports.get_order_single_by_id = async (req, res) => {
       totalAmount: order.totalAmount,
       razorpay_order_id: order.razorpay_order_id,
       paidAt: order.paidAt,
+      paymentStatus:order.paymentStatus,
       products: order.products.map((p) => ({
         name: p.product?.name,
         quantity: p.quantity,
@@ -641,3 +643,148 @@ exports.order_action = async (req, res) => {
   }
 };
 
+
+exports.get_customers = async (req, res) => {
+  try {
+    const { limit = 10, skip = 0 } = req.query;
+
+    // ✅ Total user count
+    const userCount = await user_model.countDocuments();
+
+    // ✅ Total revenue (only delivered orders)
+    const revenueAgg = await Order.aggregate([
+      { $match: { orderStatus: "delivered" } },
+      { $group: { _id: null, total: { $sum: "$totalAmount" } } },
+    ]);
+    const totalRevenue = revenueAgg.length > 0 ? revenueAgg[0].total : 0;
+
+    // ✅ Customers with spent amount
+    const customers = await user_model.aggregate([
+      {
+        $lookup: {
+          from: "orders", // collection name in MongoDB
+          localField: "_id",
+          foreignField: "user",
+          as: "orders",
+        },
+      },
+      {
+        $addFields: {
+          completedOrders: {
+            $filter: {
+              input: "$orders",
+              as: "order",
+              cond: { $eq: ["$$order.orderStatus", "delivered"] },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          totalSpent: { $sum: "$completedOrders.totalAmount" },
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          email: 1,
+          phone: 1,
+          totalSpent: 1,
+          flag:1,
+          orders: { $size: "$completedOrders" },
+        },
+      },
+      { $skip: Number(skip) },
+      { $limit: Number(limit) },
+    ]);
+
+    res.json({
+      success: true,
+      counts: userCount,
+      totalRevenue,
+      customers,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
+exports.get_customer_profile = async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      return res.status(400).json({ success: false, error: "User ID is required" });
+    }
+
+    // ✅ Get user details
+    const user = await user_model.findById(id).select("-password"); // exclude password if stored
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    // ✅ Get orders of this user + populate product details
+    const orders = await Order.find({ user: id })
+      .populate("products.product", "name price image") // adjust fields of Product model
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      user,
+      orders,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
+exports.send_customer_email = async (req, res) => {
+  try {
+    const { subject, message, id } = req.body;
+
+    if (!id || !subject || !message) {
+      return res
+        .status(400)
+        .json({ success: false, error: "id, subject, and message are required" });
+    }
+
+    // ✅ Find user by ID
+    const user = await user_model.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    const email = user.email;
+
+    // ✅ Prepare HTML content
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; line-height:1.6;">
+        <h2 style="color:#333;">${subject}</h2>
+        <p style="white-space:pre-line; color:#555;">
+          ${message}
+        </p>
+        <br/>
+        <p style="font-size:12px; color:#999;">This email was sent by Real Accessories</p>
+      </div>
+    `;
+
+    // ✅ Send email
+     sendEmail(email, subject, htmlContent);
+
+  
+
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully",
+      to: email,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};

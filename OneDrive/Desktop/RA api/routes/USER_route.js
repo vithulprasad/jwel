@@ -3,6 +3,7 @@ const router = express.Router();
 const USER_controller = require('../controllers/USER_controller')
 const Order_controller = require("../controllers/Order_controller")
 const { authenticate } = require('../config/auth');
+const image = require('../controllers/image_con.js')
 
 router.post('/api/log_in', USER_controller.user_login); 
 router.post('/api/sign_up', USER_controller.user_sign_up); 
@@ -22,7 +23,7 @@ router.post('/api/forgot_password_email_verify',USER_controller.forgot_password_
 
 
 router.get('/api/fetch_all_collections',USER_controller.fetch_all_collections)
-
+router.get('/api/search',USER_controller.search)
 router.get('/api/fetch_collections_by_id',USER_controller.fetch_collections_by_main_id)
 
 router.get('/api/fetch_products_by_collection',USER_controller.fetch_products_by_collection_id)
@@ -37,7 +38,8 @@ router.get('/api/find_cart',authenticate,USER_controller.find_user_cart)
 router.post('/api/liked_product',authenticate,USER_controller.liked_product)
 router.get('/api/find_liked_products',authenticate,USER_controller.find_liked_products)
 router.get('/api/collection_list',authenticate,USER_controller.collection_list)
-
+router.post('/api/create_review_rating',authenticate,USER_controller.create_review_rating)
+router.get('/api/find_product_review',USER_controller.find_product_review)
 
 router.post('/api/create_order',authenticate,Order_controller.createOrder)
 router.post('/api/verify_order',authenticate,Order_controller.verifyPayment)
@@ -49,8 +51,24 @@ router.get('/api/get_order_product',authenticate,Order_controller.single_product
 router.get('/api/get_order_address',authenticate,Order_controller.get_address)
 router.get('/api/get_order_single_by_id',authenticate,Order_controller.get_order_single_by_id)
 
+const multer = require("multer");
+const path = require("path");
+
+// Configure Multer to store files locally
+const storage = multer.diskStorage({
+  destination: "./uploadss",
+  filename: (req, file, cb) => {
+    const suffix = Date.now() + "-" + `${Math.random()}`.substring(2);
+    const name = path.parse(file.originalname).name;
+    return cb(null, suffix + "-" + name + ".webp");
+  },
+});
+
+// Create the Multer instance with the storage configuration
+const upload = multer({ storage: storage });
 
 
+router.post('/api/image_upload',upload.single('file'),image.create_media)
 
 
 module.exports = router;

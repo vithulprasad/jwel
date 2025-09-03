@@ -1,4 +1,5 @@
 const Banner = require("../models/Banner_model");
+const home_page_model = require("../models/HomePage_model")
 
 // Create Banner
 exports.createBanner = async (req, res) => {
@@ -64,6 +65,68 @@ exports.deleteBanner = async (req, res) => {
     const deletedBanner = await Banner.findByIdAndDelete(req.params.id);
     if (!deletedBanner) return res.status(404).json({ message: "Banner not found" });
     res.status(200).json({ message: "Banner deleted successfully", data: deletedBanner });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+
+exports.getHomePage = async (req, res) => {
+  try {
+    const homeData = await home_page_model.findOne()
+      .populate("featuredCategories.categoryId")
+      .populate("trendingProducts.productId")
+      .populate("newArrivals.productId")
+      .populate("flashDeals.products.productId");
+
+    res.json(homeData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.createHomePage = async (req, res) => {
+  try {
+    // check if homepage already exists (only one allowed)
+    const exists = await HomePage.findOne();
+    if (exists) {
+      return res
+        .status(400)
+        .json({ message: "HomePage already exists, use update instead." });
+    }
+
+    const homePage = new HomePage(req.body);
+    const saved = await homePage.save();
+
+    res.status(201).json(saved);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ✅ Update HomePage
+exports.updateHomePage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updated = await HomePage.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("featuredCategories.categoryId")
+      .populate("trendingProducts.productId")
+      .populate("newArrivals.productId")
+      .populate("flashDeals.products.productId");
+
+    if (!updated) {
+      return res.status(404).json({ message: "HomePage not found" });
+    }
+
+    res.json(updated);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -7,12 +7,12 @@ const homePageSchema = new mongoose.Schema(
         BannerId: { type: mongoose.Schema.Types.ObjectId, ref: "Banner" },
       },
     ],
-    featuredCategories: 
+    featuredCategories: [
       {
-        categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-        image: { type: String }, // optional override
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
       },
-    
+    ],
+
     trendingProducts: [
       {
         productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

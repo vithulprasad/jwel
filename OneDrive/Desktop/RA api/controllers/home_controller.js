@@ -3,6 +3,9 @@ const product_model = require("../models/Product_model");
 const banner_model = require("../models/Banner_model.js");
 const home_page_model = require("../models/HomePage_model.js");
 const products_list_model = require("../models/products_list_model.js");
+const review_model = require("../models/Review_rating_model.js");
+const order_model = require("../models/Order_mode.js");
+const brand_model = require("../models/Brand_model.js");
 
 // ====================== SEARCH BANNER ======================
 exports.search_banner = async (req, res) => {
@@ -90,22 +93,25 @@ exports.create_home_settings = async (req, res) => {
       end_time,
     } = req.body;
 
+    console.log(req.body)
+
+    // return res.status(200).json({message:"success"})
+
     // ✅ transform incoming data to match schema
     const payload = {
-      banners: banners?.map((b) => ({ BannerId: b._id })),
-      featuredCategories: featuredCategories?.map((c) => ({
-        categoryId: c._id,
-        image: c.image || null,
+      banners: (banners??[]).map((b) => ({ BannerId: b._id })),
+      featuredCategories: (featuredCategories??[]).map((c) => ({
+         productId: c._id,
       })),
-      trendingProducts: trendingProducts?.map((p) => ({
+      trendingProducts: (trendingProducts??[]).map((p) => ({
         productId: p._id,
       })),
-      newArrivals: newArrivals?.map((p) => ({
+      newArrivals: (newArrivals??[]).map((p) => ({
         productId: p._id,
       })),
       flashDeals: {
         end_time,
-        products: flashDeals?.map((p) => ({
+        products: (flashDeals??[]).map((p) => ({
           productId: p._id,
           discount: p.discount || 0,
         })),
@@ -160,6 +166,9 @@ exports.create_collection_section = async (req, res) => {
 
 exports.get_collection_section = async (req, res) => {
   try {
+    const find = await products_list_model.find().populate("category_id");
+
+    res.status(200).json({ message: "find", data: find });
   } catch (error) {
     console.error("Error creating product:", error);
     res.status(500).json({ message: error.message });
@@ -167,14 +176,15 @@ exports.get_collection_section = async (req, res) => {
 };
 exports.get_home_section = async (req, res) => {
   try {
-    const find_all = await home_page_model.find()
-    .populate({
+    const find_all = await home_page_model
+      .find()
+      .populate({
         path: "banners.BannerId",
         select: "_id heading image", // keep only required fields
       })
       .populate({
-        path: "featuredCategories.categoryId",
-        select: "_id name path image", // category details
+        path: "featuredCategories.productId",
+        select: "_id name front_image", // category details
       })
       .populate({
         path: "trendingProducts.productId",
@@ -192,13 +202,166 @@ exports.get_home_section = async (req, res) => {
     if (!find_all) {
       return res.status(404).json({ message: "Home section not found" });
     }
-    console.log(find_all)
+    console.log(find_all);
     res.status(200).json({
       success: true,
       data: find_all[0],
     });
   } catch (error) {
     console.error("Error creating product:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.delete_product_collection = async (req, res) => {
+  try {
+    const id = req.query.id;
+    await products_list_model.findOneAndDelete({ _id: id });
+
+    res.status(200).json({ message: "deleted" });
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.get_home_section_user_side = async (req, res) => {
+  try {
+    const find_all = await home_page_model
+      .find()
+      .populate("banners.BannerId")
+      .populate({
+        path: "featuredCategories.productId",
+        select:
+          "_id name front_image price discount_price quantity rating reviewCount brand category",
+      })
+      .populate({
+        path: "trendingProducts.productId",
+        select:
+          "_id name front_image price discount_price quantity rating reviewCount brand category",
+      })
+      .populate({
+        path: "newArrivals.productId",
+        select:
+          "_id name front_image price discount_price quantity rating reviewCount brand category",
+      })
+      .populate({
+        path: "flashDeals.products.productId",
+        select:
+          "_id name front_image price discount_price quantity rating reviewCount brand category",
+      });
+
+    if (!find_all || find_all.length === 0) {
+      return res.status(404).json({ message: "Home section not found" });
+    }
+
+    // ✅ Extract category IDs from featuredCategories
+
+    // ✅ Fetch all products for those categories
+
+    const product_one =  await product_model
+      .find({ category: find_all[0].featuredCategories._id })
+      console.log(product_one)
+    const find_category_product = await product_model
+      .find({ category: find_all[0].featuredCategories._id })
+      .select(
+        "_id name front_image price discount_price quantity rating reviewCount brand category"
+      )
+      .populate("brand", "_id name image") // populate brand info
+      .populate("category", "_id name path image"); // populate category info
+    console.log(find_category_product,'ddd');
+    // ✅ Fetch all brands
+    const find_brand = await brand_model.find().select("_id image");
+
+    // ✅ Transform products into ProductCard-compatible format
+    const categoryProducts = find_category_product.map((p) => ({
+      _id: p._id,
+      name: p.name,
+      discount_price: p.discount_price,
+      price: p.price,
+      front_image: p.front_image,
+      brand: p.brand, // already populated
+      category: p.category, // already populated
+      quantity: p.quantity,
+      rating: p.rating,
+      reviewCount: p.reviewCount,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: find_all[0],
+      brands: find_brand,
+    });
+  } catch (error) {
+    console.error("Error fetching home section:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.get_collection_section_for_user = async (req, res) => {
+  try {
+    const find = await products_list_model.find();
+
+    res.status(200).json({ message: "find", data: find });
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.product_details = async (req, res) => {
+  try {
+    const product_id = req.query.id;
+
+    if (!product_id) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+    // ✅ Find reviews
+    const reviews = await review_model.find({ product_id }).populate("user");
+
+    // ✅ Find orders and populate user details
+    const orders = await order_model
+      .find({ "products.product": product_id })
+      .populate("user");
+
+    // ✅ Extract unique users from populated orders
+    const users = [
+      ...new Map(
+        orders.map((order) => [order.user._id.toString(), order.user])
+      ).values(),
+    ];
+
+    res.status(200).json({
+      message: "success",
+      reviews,
+      users,
+    });
+  } catch (error) {
+    console.error("Error fetching collection section:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.review_action = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const find_review = await review_model.findOne({ _id: id });
+    if (!find_review) {
+      return res.status(400).json({ message: "review not fond" });
+    }
+
+    if (find_review.status == "active") {
+      find_review.status = "inactive";
+    } else {
+      find_review.status = "active";
+    }
+
+    await find_review.save();
+
+    res.status(200).json({ message: "updated" });
+  } catch (error) {
+    console.error("Error fetching collection section:", error);
     res.status(500).json({ message: error.message });
   }
 };

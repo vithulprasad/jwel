@@ -232,7 +232,7 @@ exports.verifyPayment = async (req, res) => {
         "Real Accessories Product purchase details",
         htmlContent
       );
-      console.log(data_mew, "added");
+      
 
       return res.json({
         success: true,

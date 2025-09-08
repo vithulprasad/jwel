@@ -77,7 +77,10 @@ router.post("/api/create_home_settings", home_controller.create_home_settings);
 router.post("/api/create_collection_section", home_controller.create_collection_section);
 router.get('/api/get_home_section',home_controller.get_home_section);
 router.get('/api/get_collection_section',home_controller.get_collection_section);
+router.get('/api/product_details',home_controller.product_details);
+router.get('/api/review_action',home_controller.review_action);
 
+router.delete('/api/delete_product_collection',home_controller.delete_product_collection);
 
 
 

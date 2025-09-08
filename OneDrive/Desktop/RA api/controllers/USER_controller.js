@@ -1002,11 +1002,31 @@ exports.fetch_product = async (req, res) => {
       .findOne({ _id: req.query.id })
       .populate("category")
       .populate("brand");
-    if (find_product) {
-      res.status(200).json({ message: "product fetched", data: find_product });
-    } else {
-      res.status(400).json({ message: "product not fount" });
+
+    if (!find_product) {
+      return res.status(404).json({ message: "Product not found" });
     }
+
+    // Extract categories separately
+    const categories = find_product.category ? find_product.category : [];
+
+    // Convert to plain object and remove category from data
+    const productData = find_product.toObject();
+    delete productData.category;
+
+    const result = categories.map((cat) => {
+      if (cat.path.startsWith("Shop by Bike")) {
+        const parts = cat.path.split(" > ");
+        return parts[2] ?? null; // return third value if exists
+      }
+      return null;
+    });
+
+    res.status(200).json({
+      message: "Product fetched successfully",
+      data: productData,
+      categories: result,
+    });
   } catch (error) {
     console.error(error.message);
 
@@ -1458,8 +1478,7 @@ exports.find_product_review = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const search = req.query.search;
-    let limit = 1
-    
+    let limit = 1;
 
     if (!search) {
       return res.status(200).json({
@@ -1468,14 +1487,14 @@ exports.search = async (req, res) => {
       });
     }
 
-    if(search.length ==1){
-      limit = 2
-    }else if(search.length ==2){
-      limit = 4
-    }else if(search.length ==3){
-      limit = 5
-    }else{
-       limit = 6
+    if (search.length == 1) {
+      limit = 2;
+    } else if (search.length == 2) {
+      limit = 4;
+    } else if (search.length == 3) {
+      limit = 5;
+    } else {
+      limit = 6;
     }
 
     const regexSearch = search.trim().split(/\s+/).join(".*");
@@ -1526,7 +1545,6 @@ exports.search = async (req, res) => {
             .limit(limit);
         }
       } else {
-        
         find_products_watch = products;
       }
     }
